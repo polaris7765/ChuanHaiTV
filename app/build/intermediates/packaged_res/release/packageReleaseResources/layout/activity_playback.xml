@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:use_controller="true"
+        app:controller_layout_id="@layout/playback_controller"
         app:resize_mode="fit" />
 
     <!-- 与 PlayerView 控制器同显隐的控制层 -->

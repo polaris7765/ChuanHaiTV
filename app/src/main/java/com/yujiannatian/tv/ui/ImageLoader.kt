@@ -3,24 +3,34 @@ package com.yujiannatian.tv.ui
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.Outline
+import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.util.LruCache
+import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.yujiannatian.tv.R
 import com.yujiannatian.tv.core.SiteConfig
 import com.yujiannatian.tv.core.SiteHttpClient
 import com.yujiannatian.tv.core.SiteRepository
+import java.net.URI
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 
 /**
- * 轻量封面加载：内存 LRU + 采样解码 + 占位图；图片失败不影响浏览。
- * 图片请求带站点 Referer（部分图床有防盗链），并做最多 3 次重试以应对弱网抖动。
- * 当某张封面最终仍加载失败（例如片源站某个 CDN 已下线、连接超时），不再留下空白块，
- * 而是用影片标题在占位底上渲染文字，保证卡片可辨识、界面不显“破图”。
+ * 轻量封面加载：内存 LRU + 采样解码 + 统一圆角 + App 图标兜底。
+ *
+ * 设计要点（针对「满屏空白占位块」的根因修复）：
+ *  - 图床 CDN 在部分设备 / 网络下不可达，若等「加载失败」才显示兜底，长超时请求会把
+ *    解码线程池占满，几十张卡片排队，兜底永远轮不到。因此**绑定时立即显示 App 图标**，
+ *    只有真正下载并解码成功才替换成海报；失败/超时保持图标，界面任何时刻都有缩略图。
+ *  - 图片请求走 [SiteHttpClient.imageBytes] 的短超时通道，并减少重试次数，快速收敛。
+ *  - 所有封面（真实海报 / App 图标 / 占位）统一由 ViewOutlineProvider 裁成圆角，
+ *    覆盖首页网格、详情页、Leanback 卡片等全部 ImageView，且所有设备表现一致。
  */
 object ImageLoader {
 
@@ -29,11 +39,52 @@ object ImageLoader {
     ) {
         override fun sizeOf(key: String, value: Bitmap): Int = value.byteCount / 1024
     }
-    private val pool = Executors.newFixedThreadPool(4)
+    private val pool = Executors.newFixedThreadPool(6)
     private val main = Handler(Looper.getMainLooper())
 
-    /** 加载封面；label 为加载/解码失败时的文字兜底（通常是影片名） */
+    /**
+     * 图床熔断表：host -> 熔断截止时间。
+     * 站点里混着大量已失效图床（实测 viptulz.com、img.lzipic.com、p.lztutu.com 等
+     * 连接直接超时）。若每次都让它们走完整超时，会占满解码线程池，导致可用图床的
+     * 海报也排不上队。同一 host 连续失败 2 次即熔断 5 分钟，期间直接走 App 图标兜底。
+     */
+    private val blockedHosts = ConcurrentHashMap<String, Long>()
+    private val failCount = ConcurrentHashMap<String, Int>()
+    private const val FAIL_THRESHOLD = 2
+    private const val BLOCK_MS = 5 * 60 * 1000L
+
+    private fun hostOf(url: String): String = runCatching { URI(url).host ?: "" }.getOrDefault("")
+
+    private fun isBlocked(host: String): Boolean {
+        if (host.isBlank()) return false
+        val until = blockedHosts[host] ?: return false
+        if (System.currentTimeMillis() > until) {
+            blockedHosts.remove(host)
+            failCount.remove(host)
+            return false
+        }
+        return true
+    }
+
+    private fun markSuccess(host: String) {
+        if (host.isBlank()) return
+        failCount.remove(host)
+        blockedHosts.remove(host)
+    }
+
+    private fun markFailure(host: String) {
+        if (host.isBlank()) return
+        val n = (failCount[host] ?: 0) + 1
+        failCount[host] = n
+        if (n >= FAIL_THRESHOLD) {
+            blockedHosts[host] = System.currentTimeMillis() + BLOCK_MS
+        }
+    }
+
+    /** label 仅用于未来扩展（如无障碍描述），当前兜底统一用 App 图标 */
     fun load(target: ImageView, raw: String?, label: String = "") {
+        applyRoundedCorners(target)
+
         val url = if (raw.isNullOrBlank()) "" else {
             try {
                 SiteRepository.urlFor(raw)
@@ -42,110 +93,124 @@ object ImageLoader {
             }
         }
         target.setTag(R.id.tag_image_url, url)
-        if (url.isNotBlank()) {
-            target.setImageDrawable(ContextCompat.getDrawable(target.context, R.drawable.cover_placeholder))
-        } else if (label.isNotBlank()) {
-            target.setImageBitmap(textBitmap(target, label))
-        } else {
-            target.setImageDrawable(ContextCompat.getDrawable(target.context, R.drawable.cover_placeholder))
-        }
+
+        // 关键：先立刻放下兜底缩略图（App 图标），保证任何网络状态下都看得见图，
+        // 而不是等异步失败回调（长超时下该回调可能几分钟都轮不到）。
+        target.setImageBitmap(iconFallback(target))
         if (url.isBlank()) return
+
         cache.get(url)?.let {
             target.setImageBitmap(it)
             return
         }
-        // 线程池队列异常或系统资源紧张时也不应拖垮界面
+        val host = hostOf(url)
+        // 已熔断的失效图床：不再发起请求，直接保持 App 图标，避免堵住线程池
+        if (isBlocked(host)) return
+
         runCatching {
             pool.execute {
-                val bitmap = loadBitmapWithRetry(url)
+                val bitmap = loadBitmapWithRetry(url, host)
                 if (bitmap != null) runCatching { cache.put(url, bitmap) }
+                // 只有成功才替换；失败时保持已经显示着的 App 图标，无需再回主线程改图。
+                if (bitmap == null) return@execute
                 main.post {
                     // 仅当本次绑定仍有效（未被快速回收复用）时才落图，避免错位
                     if (target.getTag(R.id.tag_image_url) == url) {
-                        if (bitmap != null) {
-                            target.setImageBitmap(bitmap)
-                        } else if (label.isNotBlank()) {
-                            // 最终失败：用标题文字兜底，避免空白块
-                            target.setImageBitmap(textBitmap(target, label))
-                        }
+                        target.setImageBitmap(bitmap)
                     }
                 }
             }
         }
     }
 
-    /** 带重试的封面下载与解码：最多 3 次，失败后短延迟重试 */
-    private fun loadBitmapWithRetry(url: String): Bitmap? {
+    /** 带重试的封面下载与解码：短超时通道 + 最多 2 次，失败快速返回 null */
+    private fun loadBitmapWithRetry(url: String, host: String): Bitmap? {
         val referer = runCatching { SiteConfig.baseUrl }.getOrDefault("")
-        repeat(3) { attempt ->
+        repeat(2) { attempt ->
             try {
                 val bytes = if (referer.isNotBlank()) {
-                    SiteHttpClient.bytes(url, mapOf("Referer" to referer))
+                    SiteHttpClient.imageBytes(url, mapOf("Referer" to referer))
                 } else {
-                    SiteHttpClient.bytes(url)
+                    SiteHttpClient.imageBytes(url)
                 }
-                decodeBytes(bytes)?.let { return it }
+                decodeBytes(bytes)?.let {
+                    markSuccess(host)
+                    return it
+                }
             } catch (t: Throwable) {
-                // 解码失败 / 网络异常都进入重试；仍失败则最终返回 null（保留占位图）
+                // 解码失败 / 网络异常都进入重试；仍失败则返回 null（保持 App 图标）
             }
-            if (attempt < 2) runCatching { Thread.sleep(300L * (attempt + 1)) }
+            if (attempt < 1) runCatching { Thread.sleep(200L) }
         }
+        markFailure(host)
         return null
     }
 
     /** 采样解码：先读尺寸计算 inSampleSize，再以 RGB_565 解码，降低内存占用 */
-    private fun decodeBytes(bytes: ByteArray): Bitmap? = try {
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
-        val sample = maxOf(1, maxOf(bounds.outWidth, bounds.outHeight) / 640)
-        val opts = BitmapFactory.Options().apply {
-            inSampleSize = sample
-            inPreferredConfig = Bitmap.Config.RGB_565
+    private fun decodeBytes(bytes: ByteArray): Bitmap? {
+        return try {
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) null
+            else {
+                val sample = maxOf(1, maxOf(bounds.outWidth, bounds.outHeight) / 640)
+                val opts = BitmapFactory.Options().apply {
+                    inSampleSize = sample
+                    inPreferredConfig = Bitmap.Config.RGB_565
+                }
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
+            }
+        } catch (t: Throwable) {
+            null
         }
-        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)
-    } catch (t: Throwable) {
-        null
     }
 
-    /** 生成「标题文字占位图」：深色底 + 居中两行影片名，替代空白破图 */
-    private fun textBitmap(target: ImageView, label: String): Bitmap {
-        val w = (target.width.takeIf { it > 0 } ?: 320)
-        val h = (target.height.takeIf { it > 0 } ?: 460)
+    /**
+     * 给任意 ImageView 统一裁圆角：用 ViewOutlineProvider + clipToOutline，
+     * 对 setImageBitmap / setImageDrawable 都生效，无需改布局、无需自定义 View，
+     * 因此首页网格、详情封面、Leanback ImageCardView 全都能保持一致圆角。
+     */
+    private fun applyRoundedCorners(target: ImageView) {
+        val radius = target.resources.getDimension(R.dimen.cover_corner_radius)
+        target.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, radius)
+            }
+        }
+        target.clipToOutline = true
+    }
+
+    /** 兜底图按尺寸缓存：RecyclerView 快速滚动时避免反复创建大 Bitmap 触发 GC */
+    private val fallbackCache = ConcurrentHashMap<String, Bitmap>()
+
+    /**
+     * App 图标兜底缩略图：深色卡片底 + 居中本 App 启动图标，比例随卡片尺寸，
+     * 避免正方形图标被 centerCrop 裁得只剩局部；配合 [applyRoundedCorners] 呈现圆角。
+     */
+    private fun iconFallback(target: ImageView): Bitmap {
+        val w = (target.width.takeIf { it > 0 } ?: 300)
+        val h = (target.height.takeIf { it > 0 } ?: 420)
+        val key = "${w}x$h"
+        fallbackCache[key]?.let { if (!it.isRecycled) return it }
+
         val bmp = try {
             Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         } catch (t: Throwable) {
-            Bitmap.createBitmap(320, 460, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(300, 420, Bitmap.Config.ARGB_8888)
         }
         val canvas = Canvas(bmp)
         canvas.drawColor(0xFF1B2440.toInt()) // 与 card_bg 一致
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = 0xFF9AA8C7.toInt()
-            textAlign = Paint.Align.CENTER
-            typeface = Typeface.DEFAULT_BOLD
+        runCatching {
+            val icon: Drawable? = ContextCompat.getDrawable(target.context, R.mipmap.ic_launcher)
+            if (icon != null) {
+                val side = (minOf(w, h) * 0.46f).toInt()
+                val left = (w - side) / 2
+                val top = (h - side) / 2
+                icon.bounds = Rect(left, top, left + side, top + side)
+                icon.draw(canvas)
+            }
         }
-        // 字号随宽度自适应，最多两行
-        val lines = wrap(label, 8)
-        val textSize = (w / 9f).coerceIn(18f, 30f)
-        paint.textSize = textSize
-        val lineHeight = textSize * 1.2f
-        val totalH = lineHeight * lines.size
-        var y = (h - totalH) / 2f + textSize
-        for (line in lines) {
-            canvas.drawText(line, w / 2f, y, paint)
-            y += lineHeight
-        }
+        fallbackCache[key] = bmp
         return bmp
-    }
-
-    /** 简单按字数折行（中文每约 n 字一行） */
-    private fun wrap(text: String, perLine: Int): List<String> {
-        if (text.length <= perLine) return listOf(text)
-        val out = mutableListOf<String>()
-        var i = 0
-        while (i < text.length) {
-            out.add(text.substring(i, (i + perLine).coerceAtMost(text.length)))
-            i += perLine
-        }
-        return out.take(3) // 至多三行，超出截断由 drawText 省略号处理
     }
 }

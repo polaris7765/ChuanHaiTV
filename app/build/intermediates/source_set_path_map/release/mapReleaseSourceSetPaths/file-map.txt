@@ -30,10 +30,10 @@ com.yujiannatian.tv.app-lifecycle-viewmodel-savedstate-2.7.0-28 /Users/admin/.gr
 com.yujiannatian.tv.app-coordinatorlayout-1.0.0-29 /Users/admin/.gradle/caches/8.14.3/transforms/f1de0ae2c30ddea5aa1cdaabcb0826c5/transformed/coordinatorlayout-1.0.0/res
 com.yujiannatian.tv.app-emoji2-1.2.0-30 /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/res
 com.yujiannatian.tv.app-leanback-1.0.0-31 /Users/admin/.gradle/caches/8.14.3/transforms/f7aabbbca06d1cb263638778a7abd2e3/transformed/leanback-1.0.0/res
-com.yujiannatian.tv.app-pngs-32 /Users/admin/Workspace/WorkBuddy/TVApps/app/build/generated/res/pngs/release
-com.yujiannatian.tv.app-resValues-33 /Users/admin/Workspace/WorkBuddy/TVApps/app/build/generated/res/resValues/release
-com.yujiannatian.tv.app-packageReleaseResources-34 /Users/admin/Workspace/WorkBuddy/TVApps/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
-com.yujiannatian.tv.app-packageReleaseResources-35 /Users/admin/Workspace/WorkBuddy/TVApps/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
-com.yujiannatian.tv.app-release-36 /Users/admin/Workspace/WorkBuddy/TVApps/app/build/intermediates/merged_res/release/mergeReleaseResources
-com.yujiannatian.tv.app-main-37 /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res
-com.yujiannatian.tv.app-release-38 /Users/admin/Workspace/WorkBuddy/TVApps/app/src/release/res
+com.yujiannatian.tv.app-pngs-32 /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/build/generated/res/pngs/release
+com.yujiannatian.tv.app-resValues-33 /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/build/generated/res/resValues/release
+com.yujiannatian.tv.app-packageReleaseResources-34 /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
+com.yujiannatian.tv.app-packageReleaseResources-35 /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
+com.yujiannatian.tv.app-release-36 /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/build/intermediates/merged_res/release/mergeReleaseResources
+com.yujiannatian.tv.app-main-37 /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/res
+com.yujiannatian.tv.app-release-38 /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/release/res

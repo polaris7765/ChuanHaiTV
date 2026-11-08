@@ -16,6 +16,14 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/fragment_settings.xml"
     },
     {
+        "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_spinner_item.xml.flat",
+        "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/spinner_item.xml"
+    },
+    {
+        "merged": "com.yujiannatian.tv.app-debug-36:/drawable_bg_play_pause.xml.flat",
+        "source": "com.yujiannatian.tv.app-main-38:/drawable/bg_play_pause.xml"
+    },
+    {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_item_download.xml.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/item_download.xml"
     },
@@ -72,6 +80,10 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/activity_main.xml"
     },
     {
+        "merged": "com.yujiannatian.tv.app-debug-36:/drawable_cover_placeholder.xml.flat",
+        "source": "com.yujiannatian.tv.app-main-38:/drawable/cover_placeholder.xml"
+    },
+    {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable_ic_launcher.xml.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/ic_launcher.xml"
     },
@@ -84,6 +96,10 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/mipmap-hdpi/ic_launcher.png"
     },
     {
+        "merged": "com.yujiannatian.tv.app-debug-36:/layout_playback_controller.xml.flat",
+        "source": "com.yujiannatian.tv.app-main-38:/layout/playback_controller.xml"
+    },
+    {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_fragment_status.xml.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/fragment_status.xml"
     },
@@ -92,8 +108,8 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/mipmap-mdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.yujiannatian.tv.app-debug-36:/layout_fragment_settings.xml.flat",
-        "source": "com.yujiannatian.tv.app-main-38:/layout/fragment_settings.xml"
+        "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_spinner_dropdown_item.xml.flat",
+        "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/spinner_dropdown_item.xml"
     },
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_activity_splash.xml.flat",
@@ -116,24 +132,12 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/card_text.xml"
     },
     {
-        "merged": "com.yujiannatian.tv.app-debug-36:/layout_activity_main.xml.flat",
-        "source": "com.yujiannatian.tv.app-main-38:/layout/activity_main.xml"
-    },
-    {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable-mdpi_ic_launcher_background.png.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-pngs-32:/drawable-mdpi/ic_launcher_background.png"
     },
     {
-        "merged": "com.yujiannatian.tv.app-debug-36:/layout_spinner_item.xml.flat",
-        "source": "com.yujiannatian.tv.app-main-38:/layout/spinner_item.xml"
-    },
-    {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_item_episode.xml.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/item_episode.xml"
-    },
-    {
-        "merged": "com.yujiannatian.tv.app-debug-36:/layout_spinner_dropdown_item.xml.flat",
-        "source": "com.yujiannatian.tv.app-main-38:/layout/spinner_dropdown_item.xml"
     },
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable-xxxhdpi_ic_launcher_background.png.flat",
@@ -154,10 +158,6 @@
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable_ic_arrow_back.xml.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/ic_arrow_back.xml"
-    },
-    {
-        "merged": "com.yujiannatian.tv.app-debug-36:/layout_activity_playback.xml.flat",
-        "source": "com.yujiannatian.tv.app-main-38:/layout/activity_playback.xml"
     },
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_fragment_detail.xml.flat",
@@ -190,6 +190,10 @@
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable_bg_button.xml.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/bg_button.xml"
+    },
+    {
+        "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_playback_controller.xml.flat",
+        "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/playback_controller.xml"
     },
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable-xxxhdpi_app_banner.png.flat",

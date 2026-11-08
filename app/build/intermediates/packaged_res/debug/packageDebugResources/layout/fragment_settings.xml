@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:nextFocusUp="@+id/edit_url"
-                android:nextFocusDown="@+id/spinner_source"
+                android:nextFocusDown="@+id/btn_source"
                 android:textAllCaps="false" />
         </LinearLayout>
 
@@ -75,15 +75,16 @@
             android:layout_marginTop="22dp"
             android:text="@string/settings_source_title" />
 
-        <Spinner
-            android:id="@+id/spinner_source"
+        <Button
+            android:id="@+id/btn_source"
+            style="@style/TvButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@drawable/bg_edit"
-            android:padding="4dp"
+            android:gravity="center_vertical|start"
             android:nextFocusUp="@+id/btn_allow_download"
-            android:nextFocusDown="@+id/btn_save" />
+            android:nextFocusDown="@+id/btn_save"
+            android:textAllCaps="false" />
 
         <TextView
             style="@style/TvSmall"

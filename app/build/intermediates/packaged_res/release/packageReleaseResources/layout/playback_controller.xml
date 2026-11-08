@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 自定义播放控制条：中间只保留居中的播放 / 暂停按钮。
+     去掉上一集 / 下一集 / 快进快退等，避免遮挡画面；遥控器左 / 右方向键仍可在代码中快退快进。 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <!-- 圆形半透明背景：XML 直接声明的 background 优先级高于 ExoMediaButton 样式里的
+         方形 selectableItemBackground，因此这里能覆盖掉原来的方形底。 -->
+    <ImageButton
+        android:id="@id/exo_play_pause"
+        style="@style/ExoMediaButton.Play"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_play_pause"
+        android:contentDescription="@string/action_play"
+        android:padding="22dp"
+        android:scaleType="fitCenter" />
+</FrameLayout>

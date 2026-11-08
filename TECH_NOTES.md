@@ -1,0 +1,269 @@
+# 川海影视TV · 技术开发文档备忘录
+
+> 项目代号：ChuanHaiTV（早期称 YuJianTV / 遇见影视 TV）
+> 包名：`com.yujiannatian.tv`　版本：`1.0.0 (versionCode 1)`
+> 适用平台：Android TV / Android 手机（横屏）　minSdk 23 / targetSdk 34 / compileSdk 34
+> 文档更新：2026-11-09　作者：polaris7765（董先生）
+
+---
+
+## 1. 项目定位与约束
+
+一个**纯原生 Kotlin** 的影视聚合浏览 / 播放客户端，内容来自赞片 CMS（zanpian cms12 模板）站点。
+无第三方 UI 框架、无图片加载库、无 DI、无 Room，尽量只依赖 AndroidX + media3 + OkHttp + Jsoup + Gson。
+
+设计约束：
+
+| 约束 | 说明 |
+| --- | --- |
+| 双端一致 | TV（遥控器 / D-pad）与手机（触屏）共用同一套页面，靠 `DeviceKind.isTv` 做少量分支 |
+| 强制横屏 | 所有 Activity 在 Manifest 里 `screenOrientation="landscape"` |
+| 弱网友好 | 任何网络失败都不能白屏 / 崩溃；封面必须有兜底图 |
+| 低版本兼容 | minSdk 23，`Error` 级异常（`NoSuchMethodError` 等）也要归一化，不能只 catch `Exception` |
+| 站点地址可换 | 所有 href 存为站点相对路径，换域名不影响已缓存结构 |
+
+---
+
+## 2. 技术栈与关键依赖
+
+| 领域 | 选型 | 版本 | 备注 |
+| --- | --- | --- | --- |
+| 语言 / 构建 | Kotlin + Gradle Kotlin DSL + AGP | JVM 17 | `coreLibraryDesugaring` 必开 |
+| UI | AndroidX AppCompat / Fragment / RecyclerView / Leanback | 1.6.1 / 1.6.2 / 1.3.2 / 1.0.0 | Leanback 仅用于部分 Presenter |
+| 播放 | androidx.media3 ExoPlayer + HLS + UI | 1.3.1 | 自定义 `controller_layout_id` |
+| 网络 | OkHttp | 4.12.0 | 页面 / 图片 / 下载共用，但超时策略分离 |
+| HTML 解析 | Jsoup | 1.17.2 | 依赖 `java.util.function`，故需 desugaring |
+| 本地存储 | SharedPreferences + Gson + 磁盘文件 | — | 无数据库 |
+| 拼音搜索 | pinyin4j | 2.5.1 | 内置 GB2312 首字母表兜底 |
+| 协程 | kotlinx-coroutines-android | 1.7.3 | `guardedLaunch` 统一异常兜底 |
+| 单测 | JUnit4 + org.json | 4.13.2 | 24 个用例，纯 JVM |
+
+> ⚠️ **核心库降级（desugaring）不能去掉**：Jsoup 1.17.x 用到 `java.util.function` / `java.util.stream`，
+> 这些类在 API 24 之前不存在；关掉会在 Android 6.0 电视上直接 `NoClassDefFoundError`。
+
+---
+
+## 3. 模块结构
+
+```
+app/src/main/java/com/yujiannatian/tv/
+├── App.kt                     Application：初始化 SiteRepository / CrashHandler
+├── core/                      纯数据层（不依赖 Android View）
+│   ├── HtmlParser.kt          4 类页面解析：sitemap / 列表 / 详情 / 播放器
+│   ├── SiteRepository.kt      内存 LRU + 磁盘缓存 + TTL + LoadResult 归一化
+│   ├── SiteHttpClient.kt      OkHttp 封装：页面长超时 / 图片短超时双通道
+│   ├── SiteConfig.kt          站点地址、版本、回退地址
+│   ├── CacheStore.kt          磁盘缓存读写
+│   ├── Models.kt              VideoItem / VideoDetail / PlaySource / Episode ...
+│   ├── LibraryStore.kt        历史 / 收藏（含播放进度 position）
+│   ├── AppSettings.kt         允许下载、默认播放源、已知播放源
+│   ├── VideoDownloader.kt     m3u8 分片下载 / AES-128 解密 / 本地合并
+│   ├── HlsPlaylist.kt         m3u8 解析
+│   ├── CastController.kt      DLNA / UPnP SSDP 发现与投屏控制
+│   ├── Pinyin.kt / SearchIndex.kt  拼音首字母搜索索引
+│   ├── DeviceKind.kt          TV / 手机判定（纯函数可单测）
+│   └── CrashHandler.kt / SiteError.kt / LoadResult.kt
+└── ui/
+    ├── BaseTvActivity.kt      公共容器：header + container + overlay 状态层
+    ├── MainActivity.kt        首页 + 设置（Fragment 切换）
+    ├── SplashActivity.kt      启动页
+    ├── HomeFragment.kt        左栏分类 + 右侧封面网格 / 历史 / 收藏
+    ├── DetailFragment.kt      播放源 tab + 选集网格 + 收藏 / 下载
+    ├── PlaybackActivity.kt    ExoPlayer 全屏播放 + 自定义控制层
+    ├── GridActivity / SearchActivity / CategoryIndexActivity / DownloadsActivity
+    ├── SettingsFragment.kt    地址检测 / 下载开关 / 默认播放源 / 版权信息
+    ├── ImageLoader.kt         封面加载（LRU + 圆角裁剪 + App 图标兜底 + 图床熔断）
+    ├── Presenters.kt          Leanback Presenter（VideoCardPresenter / InfoPresenter）
+    └── TvAdapters.kt          VideoGridAdapter / SidebarAdapter / GridSpacingDecoration
+```
+
+---
+
+## 4. 数据流
+
+```
+站点 HTML
+   │  SiteHttpClient.get()（长超时 12s/20s + 3 次重试）
+   ▼
+HtmlParser ──► Models (VideoItem / VideoDetail / PlaySource / Episode)
+   │
+   ▼
+SiteRepository（内存 ConcurrentHashMap + CacheStore 磁盘 + TTL）
+   │  LoadResult.Ok / LoadResult.Err（SiteError 归一化，Error 级也捕获）
+   ▼
+Fragment (guardedLaunch 协程) ──► Adapter ──► RecyclerView / Presenter
+                                      │
+                                      └─► ImageLoader.load()  ──► 封面
+播放链路：
+DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JSON
+             → PlaybackActivity.start(url, paths, names, index, cover, startPositionMs)
+             → media3 HlsMediaSource / ProgressiveMediaSource → 播放
+             → onStop / finish() 保存 position 到 LibraryStore → 历史 / 收藏续播
+```
+
+`LoadResult` 是关键抽象：UI 层只处理 `Ok` / `Err`，不需要知道 HTTP、解析、缓存细节。
+`SiteRepository.load()` 里**必须**捕获 `Throwable`（不只是 `Exception`），因为
+`NoSuchMethodError` / `OutOfMemoryError` 属于 `Error`，漏掉会直接闪退。
+
+---
+
+## 5. HTML 解析要点（易踩坑）
+
+解析目标为赞片 CMS `zanpian cms12` 模板，四类页面：
+
+| 页面 | 关键选择器 | 注意 |
+| --- | --- | --- |
+| sitemap / 分类 | `div.layout-box` → `.box-title h2` → `.sitemap ul li` | 用 `LinkedHashMap` 去重，不能 `putIfAbsent`（API 24+ 才有） |
+| 列表 / 搜索 | `#content > li` 或 `ul.img-list > li` → `a.img-pic` | 搜索页 `#content` 里多包一层 `ul.img-list` |
+| 详情页 | `.vod-detail-pic img`、`a[id^='#con_playlist_']`、`ul#con_playlist_N` | 桌面 tab 是简称、移动下拉是全称，**按 id 去重取更长的名称** |
+| 播放页 | `zanpiancms_player = {...};` 正则 | `url` / `name` / `next` 可能是字符串 `"null"` |
+
+分页规则不统一，务必区分：
+
+- 普通列表：`/dianshiju/` → `/dianshiju/index-2.html`
+- **热播榜**：`/dianshiju/` → `/dianshiju/index_____hits.html`（5 个下划线），第 2 页 `index_____hits_2.html`
+- 搜索：`/search/关键词.html` → `/search/关键词-2.html`
+
+> 早期把热播榜当普通列表翻页，站点会静默返回第一页，导致"翻页无效 / 搜索索引重复"。
+
+### 封面地址（重点）
+
+站点卡片是懒加载结构：
+
+```html
+<img class="lazyload"
+     src="/public/tpl/zanpiancms12/images/pic.png"
+     data-original="https://hhmage.com/cover/xxxx.jpg" alt="似锦">
+```
+
+- `src` 是**本地占位图**，真实地址在 `data-original`；详情页海报则可能直接写在 `src`。
+- 统一走 `coverFromImg()`：**优先 `data-original`，回退 `src`，含 `pic.png` 视为无效**。
+- 相对路径统一由 `SiteRepository.urlFor()` = `URL(URL(base), path)` 解析。
+
+---
+
+## 6. 封面加载设计（历次故障的根治）
+
+### 6.1 现象与根因
+
+用户多轮反馈"缩略图不显示"，TV / 手机表现一致：满屏只有深色圆角空块
+（`cover_placeholder`）。排查结论：
+
+1. 实测站点列表页前 40 张封面里，`viptulz.com`(11) / `img.lzipic.com` /
+   `p.lztutu.com` / `img.lzzyimg.com` 等图床**已失效**（连接超时 8s、HTTP 000），
+   仅 `hongniuzyimage.com` / `hhmage.com` / `image.maimn.com` 可用（200）。
+2. 早期图片请求复用页面抓取的 OkHttp client（connect 12s / read 20s /
+   `retryOnConnectionFailure=true`）外加 `ImageLoader` 自身 3 次重试，
+   单张最坏接近 100 秒；`Executors.newFixedThreadPool(4)` 被首页几十张卡片占满。
+3. 当时的兜底逻辑写在**异步失败回调**里 → 回调永远排不上队 →
+   界面一直停在初始占位块，**连 App 图标兜底都看不到**。
+
+### 6.2 现行方案（`ImageLoader.kt`）
+
+| 措施 | 作用 |
+| --- | --- |
+| **绑定时立即 `setImageBitmap(iconFallback)`** | 不等网络结果，任何时刻都有缩略图；成功才替换成海报，失败保持图标 |
+| `SiteHttpClient.imageBytes()` 独立短超时通道 | connect 4s / read 6s / 不自动重试；图片与页面抓取隔离 |
+| 重试降为 2 次、线程池 6 | 失败快速收敛，不拖累可用图床 |
+| **图床熔断** `blockedHosts` | 同一 host 连续失败 2 次 → 熔断 5 分钟，期间直接走兜底，把线程让给好图床 |
+| `ViewOutlineProvider` + `clipToOutline` | 所有 ImageView 统一裁圆角（`cover_corner_radius` = 12dp），**不依赖布局 / 自定义 View**，覆盖首页网格、详情封面、Leanback `ImageCardView` |
+| `iconFallback` 按尺寸缓存 | 深色卡片底 + 居中 App 启动图标，避免正方形 icon 被 centerCrop 裁切；滚动时复用 Bitmap 减少 GC |
+| `cover_placeholder.xml` 加 `corners` | 占位底本身也圆角，与裁剪叠加不冲突 |
+
+> 经验：**兜底图必须在绑定时同步设置，不要放到异步失败分支**。弱网 / CDN 半死状态下，
+> "失败"可能需要几十秒甚至几分钟才发生，用户看到的就是长时间空白。
+
+### 6.3 已知外部依赖风险
+
+图床失联属于**站点侧问题，App 无法修复**。当前表现：可用图床的海报正常显示，
+失效图床显示圆角 App 图标。若需进一步提升覆盖率，可考虑：
+站点自建封面代理 / 多图床地址回退 / 按 `alt` 片名做本地缓存映射。
+
+---
+
+## 7. 播放与遥控器
+
+- `PlayerView` 关闭 media3 自动显隐（`controllerAutoShow=false`、
+  `controllerShowTimeoutMs=0`），由 `PlaybackActivity` 用 4000ms 定时器统一控制
+  「四角按钮 + 控制条」同显同隐，避免两套计时器错开导致"再次唤起按钮不出来"。
+- 自定义控制条 `res/layout/playback_controller.xml`：**中间只保留播放 / 暂停按钮**，
+  背景为圆形半透明 `bg_play_pause.xml`（覆盖 `ExoMediaButton` 默认的方形波纹）。
+- 遥控器快捷键在 `dispatchKeyEvent` 中处理：OK / 空格暂停、左右 10s 快退快进、
+  上到顶部返回、下到右上设置、MENU 打开设置、播完自动下一集。
+  `focusInPlayer()` 判断焦点归属，焦点在控制按钮上时把按键交还焦点系统。
+- TV 端隐藏投屏入口（TV 是接收端）；手机投屏成功后暂停本机播放。
+- 返回键：面板打开先关面板；TV 控制层显示时只隐藏 UI、不退出播放。
+- 续播：`EXTRA_START_POSITION` → `p.seekTo()`；`onStop()` / `finish()` 把
+  `currentPosition` 写回 `LibraryStore`，历史 / 收藏再进入时自动按上次进度播放。
+
+---
+
+## 8. 设置页（TV 交互专项）
+
+| 项 | 实现 |
+| --- | --- |
+| 地址检测 | `SiteRepository.probe()` 抓 sitemap 并解析出分类数，成功才 `SiteConfig.commit()` |
+| 新地址输入框 | **默认留空**（只显示 hint），进入时不抢焦点，避免弹出输入法选择器 |
+| 默认焦点 | 进设置聚焦左上角 header 的 `btn_back`；`onPause()` / 打开列表时 `hideSoftInput()` |
+| 默认播放源 | 用 **Button + AlertDialog 单选列表**，不用 `Spinner`——Spinner 下拉弹层在 Android TV 上无法用方向键选中条目 |
+| 播放源列表来源 | `AppSettings.knownSources()` = 内置保底线路（新视觉云 / 爱奇艺 / 好好云）+ 详情页累积的真实线路；进设置再异步探测首页首部影片详情补充 |
+| 允许下载 | TV 默认关、其余端默认开；详情页据此显隐单集下载按钮 |
+| 版权信息 | 作者 polaris7765（董先生）+ © 2026 声明 |
+
+> 播放源名称必须与 `HtmlParser.parseDetail` 解析出的名称一致才能匹配生效
+> （`DetailFragment` 用 `indexOfFirst { it.name == def }`，匹配不到退回第一个）。
+
+---
+
+## 9. 缓存、存储与下载
+
+- 内存缓存 `ConcurrentHashMap`，TTL：分类 6h / 列表 20min / 详情 30min / 播放地址 1min。
+- 缓存 key 含 `SiteConfig.version` 与 `baseUrl`，换地址后自动失效。
+- 历史 / 收藏 / 偏好用 SharedPreferences + Gson；下载文件落 `filesDir`。
+- `VideoDownloader` 解析 m3u8、处理 AES-128 key、分片合并，下载进度通过观察者回显到选集按钮。
+
+---
+
+## 10. 构建、签名与发布
+
+```bash
+./gradlew assembleDebug            # 调试包
+./gradlew testDebugUnitTest        # 24 个 JVM 单测
+./gradlew assembleRelease          # 已签名发布包
+```
+
+- 签名配置在 `gradle.properties`（`RELEASE_STORE_FILE=release-key.jks`、alias `yujian`），
+  `app/build.gradle.kts` 读取 4 个属性；缺失时跳过签名，保证无密钥的 CI 也能构建。
+- `apksigner verify --print-certs` 校验 v1 + v2，证书 DN `CN=Chuanhai TV`。
+- `app/release-key.jks` 属于**不可恢复的发布凭证**，已加入 `.gitignore`，务必另行备份。
+- 交付物：`ChuanhaiTV-v1.0.0-release.apk`。
+
+> 曾遇到 `sips` 生成图标时扩展名是 `.png` 但内容仍是 JPEG，AAPT2 直接拒绝；
+> 生成真 PNG 必须带 `-s format png`，并检查头字节 `89 50 4E 47`。
+
+---
+
+## 11. 已知问题与排查清单
+
+| 现象 | 排查结论 / 处理 |
+| --- | --- |
+| 缩略图空白且兜底也不显示 | 图床大量失效 + 长超时堵死线程池；见 §6，已根治 |
+| TV 上 Spinner 选不中其他项 | 改用 AlertDialog 单选列表 |
+| 进设置弹出输入法 / 键盘 | 输入框不抢焦点 + `hideSoftInput()` |
+| SourceTree 提交报 `cannot lock ref 'HEAD'` | `.git/HEAD` 曾指向无效 `refs/heads/.invalid`；用 `git symbolic-ref HEAD refs/heads/main` + `git update-ref` 恢复已生成的 commit |
+| AAPT2 级联报 bg_card / bg_sidebar not found | 通常是同目录某个 drawable XML 命名空间畸形（如只写 `xmlns=` 却用 `android:` 前缀），修第一个报错即可 |
+| API 23 电视闪退 | 检查 desugaring 是否开启、是否用了 API 24+ 的 `Map.putIfAbsent` 等 |
+| 翻页无效 / 索引重复 | 热播榜分页要用 `index_____hits.html` |
+| 投屏按钮 TV 仍显示 | 检查 `applyDeviceRules()` 与 `DeviceKind.isTv()` |
+
+---
+
+## 12. 后续建议
+
+1. `.gitignore` 补上 `app/build/`、`*.apk`（或只放行 release 包）——
+   首次提交曾误把 2000+ 个构建产物纳入版本库。
+2. 版本号发版时递增 `versionCode` / `versionName`（当前仍是 1）。
+3. 真机 TV 回归：D-pad 焦点链、播放源对话框、播放按钮圆角、返回键行为
+   （本机无 TV AVD，这几项主要靠布局 + 代码核对 + 单测覆盖）。
+4. 图床失效是长期外部风险，可评估封面代理或标题兜底图生成策略。
+5. `release-key.jks` 口令与密钥离线备份，避免无法升级发布。

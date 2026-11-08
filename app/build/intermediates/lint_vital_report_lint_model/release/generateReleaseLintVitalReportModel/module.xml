@@ -1,6 +1,6 @@
 <lint-module
     format="1"
-    dir="/Users/admin/Workspace/WorkBuddy/TVApps/app"
+    dir="/Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app"
     name=":app"
     type="APP"
     maven="YuJianTV:app:unspecified"

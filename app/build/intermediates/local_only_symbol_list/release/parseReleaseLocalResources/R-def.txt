@@ -14,6 +14,7 @@ color text_secondary
 dimen card_cover_height
 dimen card_height
 dimen card_width
+dimen cover_corner_radius
 dimen episode_item_height
 dimen lb_basic_card_content_text_size
 dimen lb_basic_card_title_text_size
@@ -35,6 +36,7 @@ drawable banner
 drawable bg_button
 drawable bg_card
 drawable bg_edit
+drawable bg_play_pause
 drawable bg_sidebar
 drawable cover_placeholder
 drawable ic_arrow_back
@@ -73,6 +75,7 @@ id btn_save
 id btn_settings
 id btn_settings_cast
 id btn_settings_close
+id btn_source
 id btn_test
 id card_text
 id cast_devices
@@ -130,7 +133,6 @@ id source_label
 id source_tabs
 id speed_hint
 id speed_row
-id spinner_source
 id status
 id subtitle
 id tag_download_key
@@ -161,6 +163,7 @@ layout item_sidebar
 layout item_source
 layout item_speed
 layout item_video
+layout playback_controller
 layout spinner_dropdown_item
 layout spinner_item
 mipmap ic_launcher
@@ -212,6 +215,7 @@ string settings_download_off
 string settings_download_on
 string settings_download_title
 string settings_source_auto
+string settings_source_current
 string settings_source_hint
 string settings_source_title
 string settings_tip

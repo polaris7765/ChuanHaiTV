@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.yujiannatian.tv.core.CastControllerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-08T14:46:33.187Z" hostname="LeoDongs-MacBook-Pro.local" time="0.037">
+<testsuite name="com.yujiannatian.tv.core.CastControllerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-08T16:33:35.380Z" hostname="LeoDongs-MacBook-Pro.local" time="0.035">
   <properties/>
-  <testcase name="escapesXmlSpecials" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.006"/>
-  <testcase name="parsesSsdpLocationHeader" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.019"/>
-  <testcase name="buildsEscapedSoapEnvelope" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.005"/>
-  <testcase name="findsAvTransportControlUrl" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.007"/>
+  <testcase name="escapesXmlSpecials" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.008"/>
+  <testcase name="parsesSsdpLocationHeader" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.012"/>
+  <testcase name="buildsEscapedSoapEnvelope" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.004"/>
+  <testcase name="findsAvTransportControlUrl" classname="com.yujiannatian.tv.core.CastControllerTest" time="0.011"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

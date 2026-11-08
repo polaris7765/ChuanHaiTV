@@ -1,19 +1,21 @@
 package com.yujiannatian.tv.ui
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Spinner
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.yujiannatian.tv.R
 import com.yujiannatian.tv.core.AppSettings
 import com.yujiannatian.tv.core.LoadResult
 import com.yujiannatian.tv.core.SiteConfig
 import com.yujiannatian.tv.core.SiteRepository
+import com.yujiannatian.tv.core.VideoDetail
+import com.yujiannatian.tv.core.VideoItem
 import com.yujiannatian.tv.core.advice
 import com.yujiannatian.tv.core.title
 
@@ -24,6 +26,10 @@ class SettingsFragment : Fragment() {
     private lateinit var status: TextView
     private lateinit var current: TextView
     private lateinit var btnAllowDownload: Button
+    private lateinit var btnSource: Button
+    /** 「自动」+ 已知播放源；后台探测到真实线路后会重建 */
+    private val sourceItems = mutableListOf<String>()
+    private var sourceSelected = 0
 
     override fun onCreateView(
         inflater: android.view.LayoutInflater,
@@ -50,8 +56,9 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        editUrl.setText(SiteConfig.baseUrl)
-        editUrl.setSelection(editUrl.text.length)
+        // 新地址输入框默认留空（仅显示提示），进入设置时也不抢焦点，避免弹出输入法选择器；
+        // 需要修改时再向下移动焦点到输入框即可。
+        editUrl.setText("")
 
         view.findViewById<Button>(R.id.btn_save).setOnClickListener {
             check(editUrl.text.toString(), applyChange = true)
@@ -72,8 +79,10 @@ class SettingsFragment : Fragment() {
                 check(prev, applyChange = true)
             }
         }
-        setupSourceSpinner(view)
-        view.post { editUrl.requestFocus() }
+        setupSourceButton(view)
+        probeRealSources()
+        // 进入设置默认聚焦左上角「返回」按钮（而非地址输入框），避免输入法/键盘弹窗干扰
+        view.post { focusBackOnEntry() }
     }
 
     private fun refreshCurrent() {
@@ -115,32 +124,87 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    /** 默认播放源选择：列出该站点出现过的播放源，选择后每次进入详情默认选中 */
-    private fun setupSourceSpinner(view: View) {
-        val spinner = view.findViewById<Spinner>(R.id.spinner_source)
-        val sources = AppSettings.knownSources(requireContext())
-        val items = mutableListOf(getString(R.string.settings_source_auto))
-        items.addAll(sources)
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.spinner_item,
-            items
-        ).also { it.setDropDownViewResource(R.layout.spinner_dropdown_item) }
-        spinner.adapter = adapter
-        val def = AppSettings.defaultSource(requireContext())
-        val sel = if (def.isBlank()) 0 else (items.indexOf(def).takeIf { it >= 0 } ?: 0)
-        spinner.setSelection(sel)
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>, v: View?, pos: Int, id: Long
-            ) {
-                AppSettings.setDefaultSource(
-                    requireContext(),
-                    if (pos == 0) "" else items[pos]
-                )
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+    /**
+     * 默认播放源选择（TV 友好）：用按钮 + AlertDialog 单选列表替代 Spinner。
+     * Spinner 的下拉弹层在 Android TV 上无法用方向键选中条目，改用系统对话框列表，
+     * 方向键可正常上下移动并确认，遥控器「确认键」打开列表。
+     */
+    private fun setupSourceButton(view: View) {
+        btnSource = view.findViewById(R.id.btn_source)
+        rebuildSourceItems()
+        btnSource.setOnClickListener {
+            hideSoftInput()
+            val items = sourceItems.toTypedArray()
+            val checked = sourceSelected.coerceIn(0, items.lastIndex)
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_source_title)
+                .setSingleChoiceItems(items, checked) { d, which ->
+                    sourceSelected = which
+                    AppSettings.setDefaultSource(
+                        requireContext(),
+                        if (which == 0) "" else items[which]
+                    )
+                    refreshSourceButton()
+                    d.dismiss()
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
+    }
+
+    /** 依据当前已保存的设置重建列表，保持已选项不丢失 */
+    private fun rebuildSourceItems() {
+        val def = AppSettings.defaultSource(requireContext())
+        sourceItems.clear()
+        sourceItems.add(getString(R.string.settings_source_auto))
+        sourceItems.addAll(AppSettings.knownSources(requireContext()))
+        sourceSelected = if (def.isBlank()) 0 else (sourceItems.indexOf(def).takeIf { it >= 0 } ?: 0)
+        refreshSourceButton()
+    }
+
+    private fun refreshSourceButton() {
+        if (!::btnSource.isInitialized || sourceItems.isEmpty()) return
+        val name = sourceItems[sourceSelected.coerceIn(0, sourceItems.lastIndex)]
+        btnSource.text = getString(R.string.settings_source_current, name)
+    }
+
+    /**
+     * 后台主动探测站点真实播放线路：取首页推荐的第一部影片解析详情页，
+     * 把线路名累积进已知列表并刷新可选源（内置保底源保证探测失败时也不止一项）。
+     * 走 SiteRepository 缓存，不额外阻塞 UI；失败静默忽略。
+     */
+    private fun probeRealSources() {
+        guardedLaunch {
+            val featured = SiteRepository.featured(false)
+            if (featured !is LoadResult.Ok) return@guardedLaunch
+            val first = (featured.value as? List<VideoItem>)?.firstOrNull()
+                ?: return@guardedLaunch
+            val detail = SiteRepository.detail(first.path)
+            if (detail !is LoadResult.Ok) return@guardedLaunch
+            val names = (detail.value as? VideoDetail)?.sources
+                ?.map { it.name }?.filter { it.isNotBlank() } ?: return@guardedLaunch
+            if (names.isEmpty()) return@guardedLaunch
+            AppSettings.addKnownSources(requireContext(), names)
+            if (isAdded) rebuildSourceItems()
+        }
+    }
+
+    /** 进入设置时把焦点放到左上角「返回」按钮，避免输入框抢焦点弹出输入法 */
+    private fun focusBackOnEntry() {
+        hideSoftInput()
+        editUrl.clearFocus()
+        activity?.findViewById<View>(R.id.btn_back)?.requestFocus()
+    }
+
+    /** 隐藏软键盘（离开设置或打开选择列表时调用），避免「输入法选择器」残留 */
+    private fun hideSoftInput() {
+        val imm = ContextCompat.getSystemService(requireContext(), InputMethodManager::class.java)
+        val token = activity?.currentFocus?.windowToken ?: view?.windowToken
+        imm?.hideSoftInputFromWindow(token, 0)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        hideSoftInput()
     }
 }

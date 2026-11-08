@@ -14,6 +14,13 @@ object AppSettings {
     private const val KEY_DEFAULT_SOURCE = "default_source"
     private const val KEY_KNOWN_SOURCES = "known_sources"
 
+    /**
+     * 站点（赞片 CMS 模板）常见播放线路，实采详情页得到。
+     * 作为保底：即使用户从未打开过任何影片，设置页也应有多个可选源，而不是只有「自动」。
+     * 与 HtmlParser.parseDetail 取「更完整的名称」一致，这里用移动端下拉里的全称。
+     */
+    private val BUILTIN_SOURCES = listOf("新视觉云", "爱奇艺", "好好云")
+
     /** 是否允许下载：未设置过则按设备类型给默认值 */
     fun allowDownload(context: Context): Boolean {
         val prefs = context.applicationContext
@@ -48,18 +55,28 @@ object AppSettings {
             .apply()
     }
 
-    /** 已发现过的播放源名称（保持首次出现顺序，用于设置页下拉选择） */
-    fun knownSources(context: Context): List<String> {
+    /** 本地已发现（详情页解析到）的播放源名称，保持首次出现顺序 */
+    private fun discoveredSources(context: Context): List<String> {
         val raw = context.applicationContext
             .getSharedPreferences(PREF, Context.MODE_PRIVATE)
             .getString(KEY_KNOWN_SOURCES, "") ?: ""
         return if (raw.isBlank()) emptyList() else raw.split("\u0001").filter { it.isNotBlank() }
     }
 
-    /** 把详情页解析到的播放源名称累积进已知列表（去重、保序） */
+    /**
+     * 供设置页展示的播放源列表 = 内置保底 + 已发现源，去重保序。
+     * 内置源保证任何时机至少有 3 个可选；已发现源（含站点改版后的新线路）排在后面。
+     */
+    fun knownSources(context: Context): List<String> {
+        val merged = LinkedHashSet<String>(BUILTIN_SOURCES)
+        merged.addAll(discoveredSources(context))
+        return merged.toList()
+    }
+
+    /** 把详情页解析到的真实播放源名称累积进已知列表（去重、保序） */
     fun addKnownSources(context: Context, names: List<String>) {
         if (names.isEmpty()) return
-        val set = LinkedHashSet(knownSources(context))
+        val set = LinkedHashSet(discoveredSources(context))
         set.addAll(names)
         context.applicationContext
             .getSharedPreferences(PREF, Context.MODE_PRIVATE)

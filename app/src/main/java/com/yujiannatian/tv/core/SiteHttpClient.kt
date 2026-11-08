@@ -26,6 +26,21 @@ object SiteHttpClient {
             .build()
     }
 
+    /**
+     * 封面图专用 client：短超时且不做连接层自动重试。
+     * 图床 CDN 在部分设备/网络下不可达，用页面抓取的长超时会让解码线程池被长期占满，
+     * 导致几十张卡片排队、迟迟走不到失败兜底，界面一直停在空白占位块。
+     */
+    private val imageClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(4, TimeUnit.SECONDS)
+            .readTimeout(6, TimeUnit.SECONDS)
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .retryOnConnectionFailure(false)
+            .build()
+    }
+
     fun get(url: String): String = get(url, emptyMap())
 
     fun get(url: String, extraHeaders: Map<String, String>): String {
@@ -87,6 +102,22 @@ object SiteHttpClient {
         extraHeaders.forEach { (k, v) -> builder.header(k, v) }
         val request = builder.build()
         client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+            return response.body?.bytes() ?: throw IOException("empty body")
+        }
+    }
+
+    /** 封面图专用：走短超时 client，快速失败以便立即回退到 App 图标 */
+    fun imageBytes(url: String): ByteArray = imageBytes(url, emptyMap())
+
+    fun imageBytes(url: String, extraHeaders: Map<String, String>): ByteArray {
+        val builder = Request.Builder()
+            .url(url)
+            .header("User-Agent", USER_AGENT)
+            .header("Accept", "image/avif,image/webp,image/apng,image/*,*/*;q=0.8")
+        extraHeaders.forEach { (k, v) -> builder.header(k, v) }
+        val request = builder.build()
+        imageClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
             return response.body?.bytes() ?: throw IOException("empty body")
         }

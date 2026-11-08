@@ -316,6 +316,7 @@
     <dimen name="compat_control_corner_material">2dp</dimen>
     <dimen name="compat_notification_large_icon_max_height">320dp</dimen>
     <dimen name="compat_notification_large_icon_max_width">320dp</dimen>
+    <dimen name="cover_corner_radius">12dp</dimen>
     <item format="float" name="disabled_alpha_material_dark" type="dimen">0.30</item>
     <item format="float" name="disabled_alpha_material_light" type="dimen">0.26</item>
     <dimen name="episode_item_height">54dp</dimen>
@@ -1059,7 +1060,8 @@
     <string name="settings_download_on">允许（显示单集下载按钮）</string>
     <string name="settings_download_title">允许下载</string>
     <string name="settings_source_auto">自动（第一个可用）</string>
-    <string name="settings_source_hint">打开任意影片后，这里会列出该站点出现过的播放源；选择后每次进入详情默认选中该源。</string>
+    <string name="settings_source_current">默认播放源：%s</string>
+    <string name="settings_source_hint">打开任意影片后，这里会列出该站点出现过的播放源；选择后每次进入详情默认选中该源。遥控器确认键打开列表选择。</string>
     <string name="settings_source_title">默认播放源</string>
     <string name="settings_tip">更换地址前会先抓取并解析分类数据，只有验证通过才会生效；失败时原地址保持不变。\n使用遥控器方向键移动焦点，确认键输入 / 点击。</string>
     <string name="settings_title">设置</string>

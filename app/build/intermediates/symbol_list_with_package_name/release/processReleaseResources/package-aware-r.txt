@@ -840,6 +840,7 @@ dimen compat_button_padding_vertical_material
 dimen compat_control_corner_material
 dimen compat_notification_large_icon_max_height
 dimen compat_notification_large_icon_max_width
+dimen cover_corner_radius
 dimen disabled_alpha_material_dark
 dimen disabled_alpha_material_light
 dimen episode_item_height
@@ -1249,6 +1250,7 @@ drawable banner
 drawable bg_button
 drawable bg_card
 drawable bg_edit
+drawable bg_play_pause
 drawable bg_sidebar
 drawable btn_checkbox_checked_mtrl
 drawable btn_checkbox_checked_to_unchecked_mtrl_animation
@@ -1550,6 +1552,7 @@ id btn_save
 id btn_settings
 id btn_settings_cast
 id btn_settings_close
+id btn_source
 id btn_test
 id button
 id buttonPanel
@@ -1883,7 +1886,6 @@ id special_effects_controller_view_tag
 id speed_hint
 id speed_row
 id spherical_gl_surface_view
-id spinner_source
 id split_action_bar
 id src_atop
 id src_in
@@ -2134,6 +2136,7 @@ layout notification_template_media
 layout notification_template_media_custom
 layout notification_template_part_chronometer
 layout notification_template_part_time
+layout playback_controller
 layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
@@ -2325,6 +2328,7 @@ string settings_download_off
 string settings_download_on
 string settings_download_title
 string settings_source_auto
+string settings_source_current
 string settings_source_hint
 string settings_source_title
 string settings_tip
