@@ -187,7 +187,16 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
   `controllerShowTimeoutMs=0`），由 `PlaybackActivity` 用 4000ms 定时器统一控制
   「四角按钮 + 控制条」同显同隐，避免两套计时器错开导致"再次唤起按钮不出来"。
 - 自定义控制条 `res/layout/playback_controller.xml`：**中间只保留播放 / 暂停按钮**，
-  背景为圆形半透明 `bg_play_pause.xml`（覆盖 `ExoMediaButton` 默认的方形波纹）。
+  背景为圆形半透明 `bg_play_pause.xml`（覆盖 `ExoMediaButton` 默认的方形波纹）；
+  **底部保留进度条 + 当前时间 / 总时长**，外层用 `bg_controller_bottom.xml` 渐变遮罩保证可读。
+- ⚠️ 进度条必须用 media3 官方的 `@id/exo_progress_placeholder` 占位 View：
+  `PlayerControlView` 构造时会把它原地替换成库自带的 `DefaultTimeBar`（id=`exo_progress`），
+  并自动接管进度 / 缓冲刷新与拖拽 seek。曾尝试在 XML 里直接手写
+  `<androidx.media3.ui.DefaultTimeBar>` + 自定义 `app:*` 颜色属性，结果 View 存在、尺寸正常、
+  时间文本也刷新，但 **`onDraw` 一个像素都不绘制**（实测截图底部全黑）——属高耗时坑，勿回退。
+  `exo_position` / `exo_duration` 两个 TextView 只要 id 正确即由库自动更新时间。
+- 进度条不设焦点（`focusable=false`），遥控器左右键仍走 `PlaybackActivity` 的快退 / 快进，
+  触屏拖动 seek 不受影响。
 - 遥控器快捷键在 `dispatchKeyEvent` 中处理：OK / 空格暂停、左右 10s 快退快进、
   上到顶部返回、下到右上设置、MENU 打开设置、播完自动下一集。
   `focusInPlayer()` 判断焦点归属，焦点在控制按钮上时把按键交还焦点系统。

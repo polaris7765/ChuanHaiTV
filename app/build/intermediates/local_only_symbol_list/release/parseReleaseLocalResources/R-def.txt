@@ -35,6 +35,7 @@ drawable app_banner
 drawable banner
 drawable bg_button
 drawable bg_card
+drawable bg_controller_bottom
 drawable bg_edit
 drawable bg_play_pause
 drawable bg_sidebar
