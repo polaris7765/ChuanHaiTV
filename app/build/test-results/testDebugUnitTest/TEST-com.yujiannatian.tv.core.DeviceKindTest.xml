@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.yujiannatian.tv.core.DeviceKindTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-08T14:46:33.225Z" hostname="LeoDongs-MacBook-Pro.local" time="0.001">
+  <properties/>
+  <testcase name="leanbackFeatureIsTv" classname="com.yujiannatian.tv.core.DeviceKindTest" time="0.0"/>
+  <testcase name="televisionSystemFeatureIsTv" classname="com.yujiannatian.tv.core.DeviceKindTest" time="0.001"/>
+  <testcase name="televisionUiModeIsTv" classname="com.yujiannatian.tv.core.DeviceKindTest" time="0.0"/>
+  <testcase name="phoneIsNotTv" classname="com.yujiannatian.tv.core.DeviceKindTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

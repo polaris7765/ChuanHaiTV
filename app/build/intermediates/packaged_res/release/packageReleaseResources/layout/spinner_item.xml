@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 设置页「默认播放源」下拉：折叠态显示的当前项（深色背景上的浅色文字） -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@color/text_primary"
+    android:textSize="@dimen/text_card"
+    android:padding="10dp"
+    android:singleLine="true"
+    android:ellipsize="end" />

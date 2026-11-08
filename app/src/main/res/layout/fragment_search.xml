@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 搜索页自适应：左栏固定区（输入框 + 状态）用 wrap_content，
+     键盘用 layout_weight=1 占满剩余高度，6 行按键再按 weight 等分，
+     因此任意屏幕高度/密度下所有按键都完整可见，不会被裁掉。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/overscan_h"
+    android:paddingRight="@dimen/overscan_h"
+    android:paddingTop="@dimen/overscan_v"
+    android:paddingBottom="@dimen/overscan_v">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <!-- 页面标题与返回按钮由 Activity 的单行标题栏提供，这里不再重复 -->
+        <EditText
+            android:id="@+id/query_edit"
+            style="@style/TvUrlEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_hint"
+            android:inputType="text"
+            android:maxLines="1"
+            android:nextFocusDown="@+id/keyboard" />
+
+        <TextView
+            android:id="@+id/search_status"
+            style="@style/TvSub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="2"
+            android:text="@string/search_hint" />
+
+        <LinearLayout
+            android:id="@+id/keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_weight="1"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/result_title"
+            style="@style/TvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="搜索结果"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_grid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants"
+            android:focusable="false" />
+    </LinearLayout>
+</LinearLayout>

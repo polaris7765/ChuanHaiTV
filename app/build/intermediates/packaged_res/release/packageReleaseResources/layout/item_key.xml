@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 高度由键盘行按剩余空间等分决定（SearchFragment 会覆盖 LayoutParams），
+     minHeight/minWidth 归零避免平台 Button 默认最小尺寸把行撑高。 -->
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/TvChip"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:maxLines="1"
+    android:minWidth="0dp"
+    android:minHeight="0dp"
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
+    android:textAllCaps="false" />

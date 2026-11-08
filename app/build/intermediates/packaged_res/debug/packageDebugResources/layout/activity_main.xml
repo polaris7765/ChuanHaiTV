@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 所有页面共用：单行紧凑标题栏（左上角返回）+ 主内容区 + 可覆盖的状态层。
+     标题栏高度固定 44dp，避免像旧版两行标题那样把内容区挤到 0 高度。 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <LinearLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/overscan_v"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/overscan_h"
+            android:paddingRight="@dimen/overscan_h"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btn_back"
+                style="@style/TvChip"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:minWidth="84dp"
+                android:minHeight="0dp"
+                android:drawableStart="@drawable/ic_arrow_back"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:text="@string/action_back" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/TvText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/subtitle"
+                style="@style/TvSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+</FrameLayout>

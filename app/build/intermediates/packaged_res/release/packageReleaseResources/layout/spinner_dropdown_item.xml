@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 设置页「默认播放源」下拉：展开后的列表项（浅色文字 + 抬高背景，便于区分） -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_elevated"
+    android:textColor="@color/text_primary"
+    android:textSize="@dimen/text_card"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:singleLine="true"
+    android:ellipsize="end" />

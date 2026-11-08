@@ -1,0 +1,25 @@
+<lint-module
+    format="1"
+    dir="/Users/admin/Workspace/WorkBuddy/TVApps/app"
+    name=":app"
+    type="APP"
+    maven="YuJianTV:app:unspecified"
+    agpVersion="8.11.1"
+    buildFolder="build"
+    bootClassPath="/Users/admin/Library/Android/sdk/platforms/android-34/android.jar:/Users/admin/Library/Android/sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-34"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true">
+    <severities>
+      <severity
+        id="UnsafeOptInUsageError"
+        severity="WARNING" />
+    </severities>
+  </lintOptions>
+  <variant name="debug"/>
+</lint-module>

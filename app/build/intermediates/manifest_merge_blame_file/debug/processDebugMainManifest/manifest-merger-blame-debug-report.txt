@@ -1,0 +1,248 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.yujiannatian.tv"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="23"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:4:5-67
+11-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:5:5-79
+12-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:5:22-76
+13    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+13-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:6:5-76
+13-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:6:22-73
+14    <!-- SSDP 组播发现投屏设备 -->
+15    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+15-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:8:5-86
+15-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:8:22-83
+16    <uses-permission android:name="android.permission.WAKE_LOCK" />
+16-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:9:5-68
+16-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:9:22-65
+17
+18    <!-- 电视设备：无触摸屏，Leanback 启动器 -->
+19    <uses-feature
+19-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:12:5-87
+20        android:name="android.software.leanback"
+20-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:12:19-59
+21        android:required="false" />
+21-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:12:60-84
+22    <uses-feature
+22-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:13:5-90
+23        android:name="android.hardware.touchscreen"
+23-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:13:19-62
+24        android:required="false" />
+24-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:13:63-87
+25    <uses-feature
+25-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:14:5-89
+26        android:name="android.hardware.microphone"
+26-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:14:19-61
+27        android:required="false" />
+27-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:14:62-86
+28
+29    <permission
+29-->[androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
+30        android:name="com.yujiannatian.tv.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+30-->[androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
+31        android:protectionLevel="signature" />
+31-->[androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
+32
+33    <uses-permission android:name="com.yujiannatian.tv.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+33-->[androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
+33-->[androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
+34
+35    <application
+35-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:16:5-81:19
+36        android:name="com.yujiannatian.tv.App"
+36-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:17:9-28
+37        android:allowBackup="true"
+37-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:18:9-35
+38        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+38-->[androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+39        android:banner="@drawable/banner"
+39-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:19:9-42
+40        android:debuggable="true"
+41        android:extractNativeLibs="false"
+42        android:icon="@mipmap/ic_launcher"
+42-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:20:9-43
+43        android:label="@string/app_name"
+43-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:21:9-41
+44        android:networkSecurityConfig="@xml/network_security_config"
+44-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:22:9-69
+45        android:roundIcon="@mipmap/ic_launcher_round"
+45-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:23:9-54
+46        android:supportsRtl="true"
+46-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:24:9-35
+47        android:theme="@style/AppTheme"
+47-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:25:9-40
+48        android:usesCleartextTraffic="true" >
+48-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:26:9-44
+49        <activity
+49-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:28:9-42:20
+50            android:name="com.yujiannatian.tv.ui.SplashActivity"
+50-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:29:13-46
+51            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize"
+51-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:30:13-94
+52            android:exported="true"
+52-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:31:13-36
+53            android:screenOrientation="landscape"
+53-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:32:13-50
+54            android:theme="@style/AppTheme" >
+54-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:33:13-44
+55            <intent-filter>
+55-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:34:13-37:29
+56                <action android:name="android.intent.action.MAIN" />
+56-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:35:17-69
+56-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:35:25-66
+57
+58                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+58-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:36:17-86
+58-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:36:27-83
+59            </intent-filter>
+60            <intent-filter>
+60-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:38:13-41:29
+61                <action android:name="android.intent.action.MAIN" />
+61-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:35:17-69
+61-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:35:25-66
+62
+63                <category android:name="android.intent.category.LAUNCHER" />
+63-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:40:17-77
+63-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:40:27-74
+64            </intent-filter>
+65        </activity>
+66        <activity
+66-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:44:9-49:53
+67            android:name="com.yujiannatian.tv.ui.MainActivity"
+67-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:45:13-44
+68            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize"
+68-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:46:13-94
+69            android:exported="true"
+69-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:47:13-36
+70            android:launchMode="singleTask"
+70-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:48:13-44
+71            android:screenOrientation="landscape" />
+71-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:49:13-50
+72        <activity
+72-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:51:9-54:53
+73            android:name="com.yujiannatian.tv.ui.GridActivity"
+73-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:52:13-44
+74            android:configChanges="orientation|screenSize"
+74-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:53:13-59
+75            android:screenOrientation="landscape" />
+75-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:54:13-50
+76        <activity
+76-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:56:9-59:53
+77            android:name="com.yujiannatian.tv.ui.DetailActivity"
+77-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:57:13-46
+78            android:configChanges="orientation|screenSize"
+78-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:58:13-59
+79            android:screenOrientation="landscape" />
+79-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:59:13-50
+80        <activity
+80-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:61:9-64:53
+81            android:name="com.yujiannatian.tv.ui.SearchActivity"
+81-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:62:13-46
+82            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+82-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:63:13-83
+83            android:screenOrientation="landscape" />
+83-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:64:13-50
+84        <activity
+84-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:66:9-69:53
+85            android:name="com.yujiannatian.tv.ui.CategoryIndexActivity"
+85-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:67:13-53
+86            android:configChanges="orientation|screenSize"
+86-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:68:13-59
+87            android:screenOrientation="landscape" />
+87-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:69:13-50
+88        <activity
+88-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:71:9-74:53
+89            android:name="com.yujiannatian.tv.ui.DownloadsActivity"
+89-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:72:13-49
+90            android:configChanges="orientation|screenSize"
+90-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:73:13-59
+91            android:screenOrientation="landscape" />
+91-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:74:13-50
+92        <activity
+92-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:76:9-80:52
+93            android:name="com.yujiannatian.tv.ui.PlaybackActivity"
+93-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:77:13-48
+94            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+94-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:78:13-83
+95            android:screenOrientation="landscape"
+95-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:79:13-50
+96            android:theme="@style/PlaybackTheme" />
+96-->/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:80:13-49
+97
+98        <provider
+98-->[androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+99            android:name="androidx.startup.InitializationProvider"
+99-->[androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+100            android:authorities="com.yujiannatian.tv.androidx-startup"
+100-->[androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+101            android:exported="false" >
+101-->[androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
+102            <meta-data
+102-->[androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+103                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+103-->[androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
+104                android:value="androidx.startup" />
+104-->[androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+105            <meta-data
+105-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/admin/.gradle/caches/8.14.3/transforms/4698e4b27dc29447ca1fb80986033719/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+106                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+106-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/admin/.gradle/caches/8.14.3/transforms/4698e4b27dc29447ca1fb80986033719/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+107                android:value="androidx.startup" />
+107-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/admin/.gradle/caches/8.14.3/transforms/4698e4b27dc29447ca1fb80986033719/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+108            <meta-data
+108-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:29:13-31:52
+109                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+109-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:30:17-85
+110                android:value="androidx.startup" />
+110-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:31:17-49
+111        </provider>
+112
+113        <receiver
+113-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:34:9-52:20
+114            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+114-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:35:13-76
+115            android:directBootAware="false"
+115-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:36:13-44
+116            android:enabled="true"
+116-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:37:13-35
+117            android:exported="true"
+117-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:38:13-36
+118            android:permission="android.permission.DUMP" >
+118-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:39:13-57
+119            <intent-filter>
+119-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:40:13-42:29
+120                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+120-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:17-91
+120-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:25-88
+121            </intent-filter>
+122            <intent-filter>
+122-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:43:13-45:29
+123                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+123-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:17-85
+123-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:25-82
+124            </intent-filter>
+125            <intent-filter>
+125-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:46:13-48:29
+126                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+126-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:17-88
+126-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:25-85
+127            </intent-filter>
+128            <intent-filter>
+128-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:49:13-51:29
+129                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+129-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
+129-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d5d6134682fd9b381fffa19c6845585/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+130            </intent-filter>
+131        </receiver>
+132    </application>
+133
+134</manifest>

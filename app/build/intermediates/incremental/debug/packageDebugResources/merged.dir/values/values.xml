@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">#FF54A0FF</color>
+    <color name="accent_dim">#FF2A4C8A</color>
+    <color name="bg">#FF0B1020</color>
+    <color name="bg_elevated">#FF151C33</color>
+    <color name="card_bg">#FF1B2440</color>
+    <color name="card_focus">#FF2F6BFF</color>
+    <color name="danger">#FFFF6B6B</color>
+    <color name="divider">#33FFFFFF</color>
+    <color name="success">#FF4ADE80</color>
+    <color name="text_primary">#FFF2F6FF</color>
+    <color name="text_secondary">#FF9AA8C7</color>
+    <dimen name="card_cover_height">148dp</dimen>
+    <dimen name="card_height">184dp</dimen>
+    <dimen name="card_width">132dp</dimen>
+    <dimen name="episode_item_height">54dp</dimen>
+    <dimen name="lb_basic_card_content_text_size">11sp</dimen>
+    <dimen name="lb_basic_card_title_text_size">13sp</dimen>
+    <dimen name="lb_browse_header_text_size">14sp</dimen>
+    <dimen name="lb_browse_headers_width">140dp</dimen>
+    <dimen name="lb_browse_section_header_text_size">13sp</dimen>
+    <dimen name="lb_browse_title_text_size">16sp</dimen>
+    <dimen name="overscan_h">40dp</dimen>
+    <dimen name="overscan_v">22dp</dimen>
+    <dimen name="sidebar_item_height">40dp</dimen>
+    <dimen name="text_body">14sp</dimen>
+    <dimen name="text_card">14sp</dimen>
+    <dimen name="text_sidebar">12sp</dimen>
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_tiny">11sp</dimen>
+    <dimen name="text_title">20sp</dimen>
+    <item name="tag_download_key" type="id"/>
+    <item name="tag_image_url" type="id"/>
+    <item name="tag_item_path" type="id"/>
+    <string name="action_back">返回</string>
+    <string name="action_cast">投屏</string>
+    <string name="action_change_site">更换地址</string>
+    <string name="action_clear">清空</string>
+    <string name="action_clear_confirm">再按一次清空</string>
+    <string name="action_delete">删除</string>
+    <string name="action_download">下载</string>
+    <string name="action_favorite">收藏</string>
+    <string name="action_load_more">加载更多</string>
+    <string name="action_next_page">下一页</string>
+    <string name="action_play">播放</string>
+    <string name="action_prev_page">上一页</string>
+    <string name="action_prev_site">使用上次可用地址</string>
+    <string name="action_refresh">刷新</string>
+    <string name="action_reset_site">恢复默认地址</string>
+    <string name="action_retry">重试</string>
+    <string name="action_save">保存并检测</string>
+    <string name="action_settings">设置</string>
+    <string name="action_test">仅检测连通性</string>
+    <string name="action_unfavorite">取消收藏</string>
+    <string name="app_name">川海影视TV</string>
+    <string name="categories_title">分类索引</string>
+    <string name="default_site">http://www.yujiannatian.net/</string>
+    <string name="downloads_title">我的下载</string>
+    <string name="empty">没有找到资源</string>
+    <string name="episode_label">选集 · 确认键播放，聚焦「下载」保存到本机（可在「我的下载」离线观看）</string>
+    <string name="hint_url">例如 http://www.yujiannatian.net/</string>
+    <string name="home_title">川海影视TV</string>
+    <string name="loading">正在加载…</string>
+    <string name="nav_categories">分类索引</string>
+    <string name="nav_downloads">我的下载</string>
+    <string name="nav_favorites">我的收藏</string>
+    <string name="nav_history">历史记录</string>
+    <string name="nav_search">搜索</string>
+    <string name="nav_settings">设置</string>
+    <string name="next_episode">下一集</string>
+    <string name="row_all">全部资源</string>
+    <string name="row_hot">热门推荐</string>
+    <string name="row_settings">设置</string>
+    <string name="search_hint">输入片名拼音首字母，如 sj 找《似锦》</string>
+    <string name="search_title">影片搜索</string>
+    <string name="settings_author">作者：polaris7765（董先生）</string>
+    <string name="settings_copyright">© 2026 川海影视TV　仅供个人学习交流，请支持正版</string>
+    <string name="settings_download_off">已关闭（隐藏单集下载按钮）</string>
+    <string name="settings_download_on">允许（显示单集下载按钮）</string>
+    <string name="settings_download_title">允许下载</string>
+    <string name="settings_source_auto">自动（第一个可用）</string>
+    <string name="settings_source_hint">打开任意影片后，这里会列出该站点出现过的播放源；选择后每次进入详情默认选中该源。</string>
+    <string name="settings_source_title">默认播放源</string>
+    <string name="settings_tip">更换地址前会先抓取并解析分类数据，只有验证通过才会生效；失败时原地址保持不变。\n使用遥控器方向键移动焦点，确认键输入 / 点击。</string>
+    <string name="settings_title">设置</string>
+    <string name="source_label">可用播放源</string>
+    <style name="AppTheme" parent="Theme.Leanback">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+    <style name="PlaybackTheme" parent="AppTheme">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+    <style name="TvButton" parent="TvText">
+        <item name="android:textSize">@dimen/text_card</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">18dp</item>
+        <item name="android:paddingRight">18dp</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:background">@drawable/bg_button</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+    <style name="TvChip" parent="TvButton">
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="TvSmall" parent="TvText">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_tiny</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="TvSub" parent="TvText">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_small</item>
+    </style>
+    <style name="TvText">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+    <style name="TvTitle" parent="TvText">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TvUrlEdit" parent="TvText">
+        <item name="android:textSize">@dimen/text_card</item>
+        <item name="android:background">@drawable/bg_edit</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+</resources>

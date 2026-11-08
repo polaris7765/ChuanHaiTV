@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 紧凑详情页：顶部信息、播放源、选集三段，选集网格占据全部剩余高度。
+     去掉了与 Activity 标题栏重复的大标题和底部独立提示行，避免在 1080p 电视上
+     把 episode_grid 压成 0 高度（剧集与下载按钮因此不可见）。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/overscan_h"
+    android:paddingRight="@dimen/overscan_h"
+    android:paddingTop="@dimen/overscan_v"
+    android:paddingBottom="@dimen/overscan_v">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/detail_cover"
+            android:layout_width="64dp"
+            android:layout_height="90dp"
+            android:background="@drawable/cover_placeholder"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/detail_title"
+                style="@style/TvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/detail_meta"
+                style="@style/TvSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="2" />
+
+            <TextView
+                android:id="@+id/detail_desc"
+                style="@style/TvSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="2" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 播放源标签与选项卡同一行，省下一整行高度 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/source_label"
+            style="@style/TvText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source_label"
+            android:textSize="@dimen/text_card"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/source_tabs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants"
+            android:focusable="false" />
+
+        <!-- 收藏开关：与首页「我的收藏」分类联动 -->
+        <Button
+            android:id="@+id/btn_favorite"
+            style="@style/TvChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:focusableInTouchMode="false"
+            android:text="@string/action_favorite"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+    <!-- 选集行：左侧标签已包含操作提示，右侧显示集数与线路 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/episode_label"
+            style="@style/TvText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/episode_label"
+            android:textSize="@dimen/text_card"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/episode_count"
+            style="@style/TvSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/episode_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:descendantFocusability="afterDescendants"
+        android:focusable="false" />
+</LinearLayout>

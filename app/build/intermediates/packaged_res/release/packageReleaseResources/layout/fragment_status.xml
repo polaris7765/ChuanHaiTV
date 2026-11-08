@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 加载 / 错误 / 崩溃报告共用。message 用 weight 占剩余高度，
+     保证底部三个可聚焦按钮在任何电视屏幕上始终可见、可用方向键操作。 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/overscan_h"
+    android:paddingRight="@dimen/overscan_h"
+    android:paddingTop="@dimen/overscan_v"
+    android:paddingBottom="@dimen/overscan_v">
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="!"
+        android:textColor="@color/danger"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/TvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/message"
+        style="@style/TvSub"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:lineSpacingExtra="3dp"
+        android:maxLines="12"
+        android:ellipsize="end"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:id="@+id/actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_retry"
+            style="@style/TvButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:nextFocusRight="@+id/btn_change"
+            android:text="@string/action_retry"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_change"
+            style="@style/TvButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:nextFocusLeft="@id/btn_retry"
+            android:nextFocusRight="@+id/btn_reset"
+            android:text="@string/action_change_site"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            style="@style/TvButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:nextFocusLeft="@id/btn_change"
+            android:text="@string/action_reset_site"
+            android:textAllCaps="false" />
+    </LinearLayout>
+</LinearLayout>

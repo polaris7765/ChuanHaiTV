@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/overscan_h"
+        android:paddingRight="@dimen/overscan_h"
+        android:paddingTop="@dimen/overscan_v"
+        android:paddingBottom="@dimen/overscan_v">
+
+        <TextView
+            style="@style/TvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_title" />
+
+        <TextView
+            android:id="@+id/current"
+            style="@style/TvSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            style="@style/TvSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="新地址" />
+
+        <EditText
+            android:id="@+id/edit_url"
+            style="@style/TvUrlEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/hint_url"
+            android:nextFocusDown="@+id/btn_allow_download"
+            android:textColorHint="@color/text_secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TvSub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_download_title" />
+
+            <Button
+                android:id="@+id/btn_allow_download"
+                style="@style/TvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:nextFocusUp="@+id/edit_url"
+                android:nextFocusDown="@+id/spinner_source"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/TvSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="@string/settings_source_title" />
+
+        <Spinner
+            android:id="@+id/spinner_source"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edit"
+            android:padding="4dp"
+            android:nextFocusUp="@+id/btn_allow_download"
+            android:nextFocusDown="@+id/btn_save" />
+
+        <TextView
+            style="@style/TvSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/settings_source_hint"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/status"
+            style="@style/TvSub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minHeight="44dp"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_save"
+                style="@style/TvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:nextFocusUp="@id/edit_url"
+                android:nextFocusRight="@+id/btn_test"
+                android:text="@string/action_save"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test"
+                style="@style/TvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:nextFocusUp="@id/edit_url"
+                android:nextFocusLeft="@id/btn_save"
+                android:nextFocusRight="@+id/btn_default"
+                android:text="@string/action_test"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_default"
+                style="@style/TvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:nextFocusUp="@id/edit_url"
+                android:nextFocusLeft="@id/btn_test"
+                android:nextFocusRight="@+id/btn_prev"
+                android:text="@string/action_reset_site"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_prev"
+                style="@style/TvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:nextFocusUp="@id/edit_url"
+                android:nextFocusLeft="@id/btn_default"
+                android:text="@string/action_prev_site"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/TvSub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:lineSpacingExtra="6dp"
+            android:text="@string/settings_tip" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                style="@style/TvText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_author"
+                android:textSize="@dimen/text_card"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/TvSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/settings_copyright" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

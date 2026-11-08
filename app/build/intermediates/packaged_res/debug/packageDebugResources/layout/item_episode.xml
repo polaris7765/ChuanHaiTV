@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 每集两个可聚焦按钮：确认键播放 / 下载键保存本地 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/episode_item"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/episode_item_height"
+    android:background="@drawable/bg_card"
+    android:orientation="horizontal"
+    android:padding="2dp">
+
+    <Button
+        android:id="@+id/btn_play"
+        style="@style/TvChip"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:maxLines="1"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_download"
+        style="@style/TvChip"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="4dp"
+        android:minWidth="70dp"
+        android:maxLines="1"
+        android:text="@string/action_download"
+        android:textAllCaps="false" />
+</LinearLayout>

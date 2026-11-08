@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tag_image_url" type="id" />
+    <item name="tag_item_path" type="id" />
+    <item name="tag_download_key" type="id" />
+</resources>

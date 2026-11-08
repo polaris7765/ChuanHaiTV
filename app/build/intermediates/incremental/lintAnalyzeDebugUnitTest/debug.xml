@@ -1,0 +1,27 @@
+<variant
+    name="debug"
+    package="com.yujiannatian.tv"
+    minSdkVersion="23"
+    targetSdkVersion="34"
+    debuggable="true"
+    mergedManifest="build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml"
+    partialResultsDir="build/intermediates/unit_test_lint_partial_results/debug/lintAnalyzeDebugUnitTest/out"
+    desugaredMethodsFiles="/Users/admin/.gradle/caches/8.14.3/transforms/b195e26657d07f248db8fa3d303b97ab/transformed/desugar_jdk_libs_configuration-2.1.5-desugar-lint.txt:/Users/admin/.gradle/caches/8.14.3/transforms/f3310ecbf6c21029d78f7505a71551d4/transformed/D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      coreLibraryDesugaring="true"
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+  </sourceProviders>
+  <testSourceProviders>
+    <sourceProvider
+        manifests="src/test/AndroidManifest.xml"
+        javaDirectories="src/test/java:src/testDebug/java:src/test/kotlin:src/testDebug/kotlin"
+        assetsDirectories="src/test/assets:src/testDebug/assets"
+        unitTest="true"/>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      type="UNIT_TEST">
+  </artifact>
+</variant>

@@ -1,0 +1,2398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.11.1">
+
+    <issue
+        id="OldTargetApi"
+        severity="Warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        category="Correctness"
+        priority="6"
+        summary="Target SDK attribute is not targeting latest version"
+        explanation="When your application or sdk runs on a version of Android that is more recent than your `targetSdkVersion` specifies that it has been tested with, various compatibility modes kick in. This ensures that your application continues to work, but it may look out of place. For example, if the `targetSdkVersion` is less than 14, your app may get an option button in the UI.&#xA;&#xA;To fix this issue, set the `targetSdkVersion` to the highest available value. Then test your app to make sure everything works correctly. You may want to consult the compatibility notes to see what changes apply to each version you are adding support for: https://developer.android.com/reference/android/os/Build.VERSION_CODES.html as well as follow this guide:&#xA;https://developer.android.com/distribute/best-practices/develop/target-sdk.html"
+        url="https://developer.android.com/distribute/best-practices/develop/target-sdk.html"
+        urls="https://developer.android.com/distribute/best-practices/develop/target-sdk.html,https://developer.android.com/reference/android/os/Build.VERSION_CODES.html"
+        errorLine1="        targetSdk = 34"
+        errorLine2="        ~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="13"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        severity="Warning"
+        message="Attribute `networkSecurityConfig` is only used in API level 24 and higher (current min is 23)"
+        category="Correctness"
+        priority="6"
+        summary="Attribute unused on older versions"
+        explanation="This check finds attributes set in XML files that were introduced in a version newer than the oldest version targeted by your application (with the `minSdkVersion` attribute).&#xA;&#xA;This is not an error; the application will simply ignore the attribute. However, if the attribute is important to the appearance or functionality of your application, you should consider finding an alternative way to achieve the same result with only available attributes, and then you can optionally create a copy of the layout in a layout-vNN folder which will be used on API NN or higher where you can take advantage of the newer attribute.&#xA;&#xA;Note: This check does not only apply to attributes. For example, some tags can be unused too, such as the new `&lt;tag>` element in layouts introduced in API 21."
+        errorLine1="        android:networkSecurityConfig=&quot;@xml/network_security_config&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="22"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="CustomSplashScreen"
+        severity="Warning"
+        message="The application should not provide its own launch screen"
+        category="Correctness"
+        priority="5"
+        summary="Application-defined Launch Screen"
+        explanation="Starting in Android 12 (API 31+), the application&apos;s Launch Screen is provided by the system and the application should not create its own, otherwise the user will see two splashscreens. Please check the `SplashScreen` class to check how the Splash Screen can be controlled and customized."
+        url="https://developer.android.com/guide/topics/ui/splash-screen"
+        urls="https://developer.android.com/guide/topics/ui/splash-screen"
+        errorLine1="class SplashActivity : Activity() {"
+        errorLine2="      ~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/SplashActivity.kt"
+            line="15"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="LeanbackUsesWifi"
+        severity="Warning"
+        message="Requiring Wifi permissions limits app availability on TVs that support only Ethernet"
+        category="Correctness"
+        priority="5"
+        summary="Using android.hardware.wifi on TV"
+        explanation="WiFi is not required for Android TV and many devices connect to the internet via alternative methods e.g. Ethernet.&#xA;&#xA;If your app is not focused specifically on WiFi functionality and only wishes to connect to the internet, please modify your Manifest to contain: `&lt;uses-feature android:name=&quot;android.hardware.wifi&quot; android:required=&quot;false&quot; />`&#xA;&#xA;Un-metered or non-roaming connections can be detected in software using `NetworkCapabilities#NET_CAPABILITY_NOT_METERED` and `NetworkCapabilities#NET_CAPABILITY_NOT_ROAMING.`"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.CHANGE_WIFI_MULTICAST_STATE&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="VectorRaster"
+        severity="Warning"
+        message="Limit vector icons sizes to 200×200 to keep icon drawing fast; see https://developer.android.com/studio/write/vector-asset-studio#when for more"
+        category="Correctness"
+        priority="5"
+        summary="Vector Image Generation"
+        explanation="Vector icons require API 21 or API 24 depending on used features, but when `minSdkVersion` is less than 21 or 24 and Android Gradle plugin 1.4 or higher is used, a vector drawable placed in the `drawable` folder is automatically moved to `drawable-anydpi-v21` or `drawable-anydpi-v24` and bitmap images are generated for different screen resolutions for backwards compatibility.&#xA;&#xA;However, there are some limitations to this raster image generation, and this lint check flags elements and attributes that are not fully supported. You should manually check whether the generated output is acceptable for those older devices."
+        errorLine1="    android:width=&quot;320dp&quot;"
+        errorLine2="                   ~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable/app_banner.xml"
+            line="5"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        severity="Warning"
+        message="A newer version of Gradle than 8.14.3 is available: 8.14.6"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Android Gradle Plugin Version"
+        explanation="This detector looks for usage of the Android Gradle Plugin where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/gradle/wrapper/gradle-wrapper.properties"
+            line="3"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of `compileSdkVersion` than 34 is available: 36"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="    compileSdk = 34"
+        errorLine2="    ~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.17.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="    implementation(&quot;androidx.core:core-ktx:1.12.0&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="68"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="    implementation(&quot;androidx.appcompat:appcompat:1.6.1&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="69"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        severity="Warning"
+        message="A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.5.1"
+        category="Correctness"
+        priority="4"
+        summary="Newer Library Versions Available"
+        explanation="This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the `GradleDependency` check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also **much** slower."
+        errorLine1="    implementation(&quot;com.squareup.okhttp3:okhttp:4.12.0&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="81"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        severity="Warning"
+        message="A newer version of org.jsoup:jsoup than 1.17.2 is available: 1.24.1"
+        category="Correctness"
+        priority="4"
+        summary="Newer Library Versions Available"
+        explanation="This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the `GradleDependency` check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also **much** slower."
+        errorLine1="    implementation(&quot;org.jsoup:jsoup:1.17.2&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="82"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        severity="Warning"
+        message="A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.15.0"
+        category="Correctness"
+        priority="4"
+        summary="Newer Library Versions Available"
+        explanation="This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the `GradleDependency` check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also **much** slower."
+        errorLine1="    implementation(&quot;com.google.code.gson:gson:2.10.1&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="83"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        severity="Warning"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.7.3 is available: 1.11.0"
+        category="Correctness"
+        priority="4"
+        summary="Newer Library Versions Available"
+        explanation="This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the `GradleDependency` check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also **much** slower."
+        errorLine1="    implementation(&quot;org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3&quot;)"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="84"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        severity="Warning"
+        message="A newer version of org.json:json than 20240303 is available: 20260814"
+        category="Correctness"
+        priority="4"
+        summary="Newer Library Versions Available"
+        explanation="This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the `GradleDependency` check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also **much** slower."
+        errorLine1="    testImplementation(&quot;org.json:json:20240303&quot;)"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/build.gradle.kts"
+            line="91"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        severity="Warning"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        category="Correctness"
+        priority="4"
+        summary="Unsafe opt-in usage intended to be error-level severity"
+        explanation="This API has been flagged as opt-in with error-level severity.&#xA;&#xA;Any declaration annotated with this marker is considered part of an unstable or&#xA;otherwise non-standard API surface and its call sites should accept the opt-in&#xA;aspect of it by using the `@OptIn` annotation, using the marker annotation --&#xA;effectively causing further propagation of the opt-in aspect -- or configuring&#xA;the `UnsafeOptInUsageError` check&apos;s options for project-wide opt-in.&#xA;&#xA;To configure project-wide opt-in, specify the `opt-in` option value in `lint.xml`&#xA;as a comma-delimited list of opted-in annotations:&#xA;&#xA;```&#xA;&lt;lint>&#xA;    &lt;issue id=&quot;UnsafeOptInUsageError&quot;>&#xA;        &lt;option name=&quot;opt-in&quot; value=&quot;com.foo.ExperimentalBarAnnotation&quot; />&#xA;    &lt;/issue>&#xA;&lt;/lint>&#xA;```"
+        errorLine1="            PlaybackActivity.start("
+        errorLine2="            ~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="249"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        severity="Warning"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        category="Correctness"
+        priority="4"
+        summary="Unsafe opt-in usage intended to be error-level severity"
+        explanation="This API has been flagged as opt-in with error-level severity.&#xA;&#xA;Any declaration annotated with this marker is considered part of an unstable or&#xA;otherwise non-standard API surface and its call sites should accept the opt-in&#xA;aspect of it by using the `@OptIn` annotation, using the marker annotation --&#xA;effectively causing further propagation of the opt-in aspect -- or configuring&#xA;the `UnsafeOptInUsageError` check&apos;s options for project-wide opt-in.&#xA;&#xA;To configure project-wide opt-in, specify the `opt-in` option value in `lint.xml`&#xA;as a comma-delimited list of opted-in annotations:&#xA;&#xA;```&#xA;&lt;lint>&#xA;    &lt;issue id=&quot;UnsafeOptInUsageError&quot;>&#xA;        &lt;option name=&quot;opt-in&quot; value=&quot;com.foo.ExperimentalBarAnnotation&quot; />&#xA;    &lt;/issue>&#xA;&lt;/lint>&#xA;```"
+        errorLine1="            PlaybackActivity.start("
+        errorLine2="                             ~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="249"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        severity="Warning"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        category="Correctness"
+        priority="4"
+        summary="Unsafe opt-in usage intended to be error-level severity"
+        explanation="This API has been flagged as opt-in with error-level severity.&#xA;&#xA;Any declaration annotated with this marker is considered part of an unstable or&#xA;otherwise non-standard API surface and its call sites should accept the opt-in&#xA;aspect of it by using the `@OptIn` annotation, using the marker annotation --&#xA;effectively causing further propagation of the opt-in aspect -- or configuring&#xA;the `UnsafeOptInUsageError` check&apos;s options for project-wide opt-in.&#xA;&#xA;To configure project-wide opt-in, specify the `opt-in` option value in `lint.xml`&#xA;as a comma-delimited list of opted-in annotations:&#xA;&#xA;```&#xA;&lt;lint>&#xA;    &lt;issue id=&quot;UnsafeOptInUsageError&quot;>&#xA;        &lt;option name=&quot;opt-in&quot; value=&quot;com.foo.ExperimentalBarAnnotation&quot; />&#xA;    &lt;/issue>&#xA;&lt;/lint>&#xA;```"
+        errorLine1="            PlaybackActivity.startLocal("
+        errorLine2="            ~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="268"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        severity="Warning"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        category="Correctness"
+        priority="4"
+        summary="Unsafe opt-in usage intended to be error-level severity"
+        explanation="This API has been flagged as opt-in with error-level severity.&#xA;&#xA;Any declaration annotated with this marker is considered part of an unstable or&#xA;otherwise non-standard API surface and its call sites should accept the opt-in&#xA;aspect of it by using the `@OptIn` annotation, using the marker annotation --&#xA;effectively causing further propagation of the opt-in aspect -- or configuring&#xA;the `UnsafeOptInUsageError` check&apos;s options for project-wide opt-in.&#xA;&#xA;To configure project-wide opt-in, specify the `opt-in` option value in `lint.xml`&#xA;as a comma-delimited list of opted-in annotations:&#xA;&#xA;```&#xA;&lt;lint>&#xA;    &lt;issue id=&quot;UnsafeOptInUsageError&quot;>&#xA;        &lt;option name=&quot;opt-in&quot; value=&quot;com.foo.ExperimentalBarAnnotation&quot; />&#xA;    &lt;/issue>&#xA;&lt;/lint>&#xA;```"
+        errorLine1="            PlaybackActivity.startLocal("
+        errorLine2="                             ~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="268"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        severity="Warning"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        category="Correctness"
+        priority="4"
+        summary="Unsafe opt-in usage intended to be error-level severity"
+        explanation="This API has been flagged as opt-in with error-level severity.&#xA;&#xA;Any declaration annotated with this marker is considered part of an unstable or&#xA;otherwise non-standard API surface and its call sites should accept the opt-in&#xA;aspect of it by using the `@OptIn` annotation, using the marker annotation --&#xA;effectively causing further propagation of the opt-in aspect -- or configuring&#xA;the `UnsafeOptInUsageError` check&apos;s options for project-wide opt-in.&#xA;&#xA;To configure project-wide opt-in, specify the `opt-in` option value in `lint.xml`&#xA;as a comma-delimited list of opted-in annotations:&#xA;&#xA;```&#xA;&lt;lint>&#xA;    &lt;issue id=&quot;UnsafeOptInUsageError&quot;>&#xA;        &lt;option name=&quot;opt-in&quot; value=&quot;com.foo.ExperimentalBarAnnotation&quot; />&#xA;    &lt;/issue>&#xA;&lt;/lint>&#xA;```"
+        errorLine1="            onPlay = { PlaybackActivity.startLocal(requireContext(), it.title, it.episode, it.file) },"
+        errorLine2="                       ~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DownloadsFragment.kt"
+            line="38"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        severity="Warning"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
+        category="Correctness"
+        priority="4"
+        summary="Unsafe opt-in usage intended to be error-level severity"
+        explanation="This API has been flagged as opt-in with error-level severity.&#xA;&#xA;Any declaration annotated with this marker is considered part of an unstable or&#xA;otherwise non-standard API surface and its call sites should accept the opt-in&#xA;aspect of it by using the `@OptIn` annotation, using the marker annotation --&#xA;effectively causing further propagation of the opt-in aspect -- or configuring&#xA;the `UnsafeOptInUsageError` check&apos;s options for project-wide opt-in.&#xA;&#xA;To configure project-wide opt-in, specify the `opt-in` option value in `lint.xml`&#xA;as a comma-delimited list of opted-in annotations:&#xA;&#xA;```&#xA;&lt;lint>&#xA;    &lt;issue id=&quot;UnsafeOptInUsageError&quot;>&#xA;        &lt;option name=&quot;opt-in&quot; value=&quot;com.foo.ExperimentalBarAnnotation&quot; />&#xA;    &lt;/issue>&#xA;&lt;/lint>&#xA;```"
+        errorLine1="            onPlay = { PlaybackActivity.startLocal(requireContext(), it.title, it.episode, it.file) },"
+        errorLine2="                                        ~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DownloadsFragment.kt"
+            line="38"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="32"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="49"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="54"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="59"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="64"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="69"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="74"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            android:screenOrientation=&quot;landscape&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml"
+            line="79"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        severity="Warning"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        category="Correctness"
+        priority="2"
+        summary="Using discouraged APIs"
+        explanation="Discouraged APIs are allowed and are not deprecated, but they may be unfit for common use (e.g. due to slow performance or subtle behavior)."
+        errorLine1="            val builtinId = resources.getIdentifier(&quot;exo_settings&quot;, &quot;id&quot;, packageName)"
+        errorLine2="                                      ~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="436"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="InsecureBaseConfiguration"
+        severity="Warning"
+        message="Insecure Base Configuration"
+        category="Security"
+        priority="5"
+        summary="Insecure Base Configuration"
+        explanation="Permitting cleartext traffic could allow eavesdroppers to intercept data sent by your app, which impacts the privacy of your users. Consider only allowing encrypted traffic by setting the `cleartextTrafficPermitted` tag to `false`."
+        url="https://goo.gle/InsecureBaseConfiguration"
+        urls="https://goo.gle/InsecureBaseConfiguration,https://developer.android.com/preview/features/security-config.html"
+        errorLine1="    &lt;base-config cleartextTrafficPermitted=&quot;true&quot;>"
+        errorLine2="                                            ~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/xml/network_security_config.xml"
+            line="4"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        severity="Warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        category="Performance"
+        priority="8"
+        summary="Invalidating All RecyclerView Data"
+        explanation="The `RecyclerView` adapter&apos;s `onNotifyDataSetChanged` method does not specify what about the data set has changed, forcing any observers to assume that all existing items and structure may no longer be valid. `LayoutManager`s will be forced to fully rebind and relayout all visible views."
+        errorLine1="            notifyDataSetChanged()"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="314"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        severity="Warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        category="Performance"
+        priority="8"
+        summary="Invalidating All RecyclerView Data"
+        explanation="The `RecyclerView` adapter&apos;s `onNotifyDataSetChanged` method does not specify what about the data set has changed, forcing any observers to assume that all existing items and structure may no longer be valid. `LayoutManager`s will be forced to fully rebind and relayout all visible views."
+        errorLine1="            notifyDataSetChanged()"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="355"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        severity="Warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        category="Performance"
+        priority="8"
+        summary="Invalidating All RecyclerView Data"
+        explanation="The `RecyclerView` adapter&apos;s `onNotifyDataSetChanged` method does not specify what about the data set has changed, forcing any observers to assume that all existing items and structure may no longer be valid. `LayoutManager`s will be forced to fully rebind and relayout all visible views."
+        errorLine1="            notifyDataSetChanged()"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DownloadsFragment.kt"
+            line="84"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        severity="Warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        category="Performance"
+        priority="8"
+        summary="Invalidating All RecyclerView Data"
+        explanation="The `RecyclerView` adapter&apos;s `onNotifyDataSetChanged` method does not specify what about the data set has changed, forcing any observers to assume that all existing items and structure may no longer be valid. `LayoutManager`s will be forced to fully rebind and relayout all visible views."
+        errorLine1="        notifyDataSetChanged()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/TvAdapters.kt"
+            line="54"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        severity="Warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
+        category="Performance"
+        priority="8"
+        summary="Invalidating All RecyclerView Data"
+        explanation="The `RecyclerView` adapter&apos;s `onNotifyDataSetChanged` method does not specify what about the data set has changed, forcing any observers to assume that all existing items and structure may no longer be valid. `LayoutManager`s will be forced to fully rebind and relayout all visible views."
+        errorLine1="        notifyDataSetChanged()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/TvAdapters.kt"
+            line="98"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="DisableBaselineAlignment"
+        severity="Warning"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance"
+        category="Performance"
+        priority="3"
+        summary="Missing `baselineAligned` attribute"
+        explanation="When a `LinearLayout` is used to distribute the space proportionally between nested layouts, the baseline alignment property should be turned off to make the layout computation faster."
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2=" ~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_search.xml"
+            line="5"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="NestedWeights"
+        severity="Warning"
+        message="Nested weights are bad for performance"
+        category="Performance"
+        priority="3"
+        summary="Nested layout weights"
+        explanation="Layout weights require a widget to be measured twice. When a `LinearLayout` with non-zero weights is nested inside another `LinearLayout` with non-zero weights, then the number of measurements increase exponentially."
+        errorLine1="            android:layout_weight=&quot;1&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_search.xml"
+            line="46"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="NestedWeights"
+        severity="Warning"
+        message="Nested weights are bad for performance"
+        category="Performance"
+        priority="3"
+        summary="Nested layout weights"
+        explanation="Layout weights require a widget to be measured twice. When a `LinearLayout` with non-zero weights is nested inside another `LinearLayout` with non-zero weights, then the number of measurements increase exponentially."
+        errorLine1="            android:layout_weight=&quot;1&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_search.xml"
+            line="70"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@color/bg&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_main.xml"
+            line="7"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@android:color/black` with a theme that also paints a background (inferred theme is `@style/PlaybackTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@android:color/black&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="9"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@android:color/black` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@android:color/black&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_splash.xml"
+            line="6"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_detail.xml"
+            line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_downloads.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_home.xml"
+            line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_search.xml"
+            line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_settings.xml"
+            line="5"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        severity="Warning"
+        message="Possible overdraw: Root element paints background `@color/bg` with a theme that also paints a background (inferred theme is `@style/AppTheme`)"
+        category="Performance"
+        priority="3"
+        summary="Overdraw: Painting regions more than once"
+        explanation="If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called &quot;overdraw&quot;.&#xA;&#xA;NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it&apos;s currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.&#xA;&#xA;If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.&#xA;&#xA;Of course it&apos;s possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead."
+        errorLine1="    android:background=&quot;@color/bg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_status.xml"
+            line="7"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.drawable.app_banner` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable/app_banner.xml"
+            line="3"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.color.success` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;color name=&quot;success&quot;>#FF4ADE80&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/colors.xml"
+            line="12"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.card_width` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;card_width&quot;>132dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="8"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.card_height` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;card_height&quot;>184dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="9"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.lb_browse_title_text_size` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;lb_browse_title_text_size&quot;>16sp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="23"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.lb_browse_header_text_size` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;lb_browse_header_text_size&quot;>14sp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="24"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.lb_browse_section_header_text_size` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;lb_browse_section_header_text_size&quot;>13sp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="25"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.lb_browse_headers_width` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;lb_browse_headers_width&quot;>140dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="26"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.lb_basic_card_title_text_size` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;lb_basic_card_title_text_size&quot;>13sp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="27"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.dimen.lb_basic_card_content_text_size` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;dimen name=&quot;lb_basic_card_content_text_size&quot;>11sp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/dimens.xml"
+            line="28"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.drawable.ic_launcher` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="&lt;layer-list xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable/ic_launcher.xml"
+            line="4"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.drawable.ic_launcher_background` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable/ic_launcher_background.xml"
+            line="3"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.drawable.ic_launcher_foreground` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable/ic_launcher_foreground.xml"
+            line="3"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.string.default_site` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;string name=&quot;default_site&quot;>http://www.yujiannatian.net/&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/strings.xml"
+            line="4"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.string.row_settings` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;string name=&quot;row_settings&quot;>设置&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/strings.xml"
+            line="8"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.string.row_all` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;string name=&quot;row_all&quot;>全部资源&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/strings.xml"
+            line="9"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.string.action_load_more` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;string name=&quot;action_load_more&quot;>加载更多&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/strings.xml"
+            line="14"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.string.loading` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;string name=&quot;loading&quot;>正在加载…&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/strings.xml"
+            line="23"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.string.empty` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;string name=&quot;empty&quot;>没有找到资源&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/strings.xml"
+            line="24"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        severity="Warning"
+        message="The resource `R.string.next_episode` appears to be unused"
+        category="Performance"
+        priority="3"
+        summary="Unused resources"
+        explanation="Unused resources make applications larger and slow down builds.&#xA;&#xA;&#xA;The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.&#xA;&#xA;You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.&#xA;,"
+        errorLine1="    &lt;string name=&quot;next_episode&quot;>下一集&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/values/strings.xml"
+            line="27"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="IconXmlAndPng"
+        severity="Warning"
+        message="The following images appear both as density independent `.xml` files and as bitmap files: src/main/res/drawable-v26/ic_launcher.xml, src/main/res/mipmap-hdpi/ic_launcher.png"
+        category="Usability:Icons"
+        priority="7"
+        summary="Icon is specified both as `.xml` file and as a bitmap"
+        explanation="If a drawable resource appears as an `.xml` file in the `drawable/` folder, it&apos;s usually not intentional for it to also appear as a bitmap using the same name; generally you expect the drawable XML file to define states and each state has a corresponding drawable bitmap.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xhdpi/ic_launcher.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-mdpi/ic_launcher.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-hdpi/ic_launcher.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable/ic_launcher.xml"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable-v26/ic_launcher.xml"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-hdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-mdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icon used as round icon did not have a circular shape"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icon used as round icon did not have a circular shape"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-mdpi/ic_launcher_round.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icon used as round icon did not have a circular shape"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icon used as round icon did not have a circular shape"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        severity="Warning"
+        message="Launcher icon used as round icon did not have a circular shape"
+        category="Usability:Icons"
+        priority="6"
+        summary="The launcher icon shape should use a distinct silhouette"
+        explanation="According to the Android Design Guide (https://d.android.com/r/studio-ui/designer/material/iconography) your launcher icons should &quot;use a distinct silhouette&quot;, a &quot;three-dimensional, front view, with a slight perspective as if viewed from above, so that users perceive some depth.&quot;&#xA;&#xA;The unique silhouette implies that your launcher icon should not be a filled square.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        severity="Warning"
+        message="The application adaptive icon is missing a monochrome tag"
+        category="Usability:Icons"
+        priority="6"
+        summary="Monochrome icon is not defined"
+        explanation="If `android:roundIcon` and `android:icon` are both in your manifest, you must either remove the reference to `android:roundIcon` if it is not needed; or, supply the monochrome icon in the drawable defined by the `android:roundIcon` and `android:icon` attribute.&#xA;&#xA;For example, if `android:roundIcon` and `android:icon` are both in the manifest, a launcher might choose to use `android:roundIcon` over `android:icon` to display the adaptive app icon. Therefore, your themed application iconwill not show if your monochrome attribute is not also specified in `android:roundIcon`."
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/drawable-v26/ic_launcher.xml"
+            line="3"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        severity="Warning"
+        message="The following unrelated icon files have identical contents: ic_launcher.png, ic_launcher_round.png"
+        category="Usability:Icons"
+        priority="3"
+        summary="Duplicated icons under different names"
+        explanation="If an icon is repeated under different names, you can consolidate and just use one of the icons and delete the others to make your application smaller. However, duplicated icons usually are not intentional and can sometimes point to icons that were accidentally overwritten or accidentally not updated.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-hdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        severity="Warning"
+        message="The following unrelated icon files have identical contents: ic_launcher.png, ic_launcher_round.png"
+        category="Usability:Icons"
+        priority="3"
+        summary="Duplicated icons under different names"
+        explanation="If an icon is repeated under different names, you can consolidate and just use one of the icons and delete the others to make your application smaller. However, duplicated icons usually are not intentional and can sometimes point to icons that were accidentally overwritten or accidentally not updated.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-mdpi/ic_launcher_round.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-mdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        severity="Warning"
+        message="The following unrelated icon files have identical contents: ic_launcher.png, ic_launcher_round.png"
+        category="Usability:Icons"
+        priority="3"
+        summary="Duplicated icons under different names"
+        explanation="If an icon is repeated under different names, you can consolidate and just use one of the icons and delete the others to make your application smaller. However, duplicated icons usually are not intentional and can sometimes point to icons that were accidentally overwritten or accidentally not updated.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        severity="Warning"
+        message="The following unrelated icon files have identical contents: ic_launcher.png, ic_launcher_round.png"
+        category="Usability:Icons"
+        priority="3"
+        summary="Duplicated icons under different names"
+        explanation="If an icon is repeated under different names, you can consolidate and just use one of the icons and delete the others to make your application smaller. However, duplicated icons usually are not intentional and can sometimes point to icons that were accidentally overwritten or accidentally not updated.">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"/>
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        severity="Warning"
+        message="This text field does not specify an `inputType`"
+        category="Usability"
+        priority="5"
+        summary="Missing `inputType`"
+        explanation="Providing an `inputType` attribute on a text field improves usability because depending on the data to be input, optimized keyboards can be shown to the user (such as just digits and parentheses for a phone number). &#xA;&#xA;The lint detector also looks at the `id` of the view, and if the id offers a hint of the purpose of the field (for example, the `id` contains the phrase `phone` or `email`), then lint will also ensure that the `inputType` contains the corresponding type attributes.&#xA;&#xA;If you really want to keep the text field generic, you can suppress this warning by setting `inputType=&quot;text&quot;`."
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_settings.xml"
+            line="37"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        severity="Warning"
+        message="Missing `autofillHints` attribute"
+        category="Usability"
+        priority="3"
+        summary="Use Autofill"
+        explanation="Specify an `autofillHints` attribute when targeting SDK version 26 or higher or explicitly specify that the view is not important for autofill. Your app can help an autofill service classify the data correctly by providing the meaning of each view that could be autofillable, such as views representing usernames, passwords, credit card fields, email addresses, etc.&#xA;&#xA;The hints can have any value, but it is recommended to use predefined values like &apos;username&apos; for a username or &apos;creditCardNumber&apos; for a credit card number. For a list of all predefined autofill hint constants, see the `AUTOFILL_HINT_` constants in the `View` reference at https://developer.android.com/reference/android/view/View.html.&#xA;&#xA;You can mark a view unimportant for autofill by specifying an `importantForAutofill` attribute on that view or a parent view. See https://developer.android.com/reference/android/view/View.html#setImportantForAutofill(int)."
+        url="https://developer.android.com/guide/topics/text/autofill.html"
+        urls="https://developer.android.com/guide/topics/text/autofill.html"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="247"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        severity="Warning"
+        message="Missing `autofillHints` attribute"
+        category="Usability"
+        priority="3"
+        summary="Use Autofill"
+        explanation="Specify an `autofillHints` attribute when targeting SDK version 26 or higher or explicitly specify that the view is not important for autofill. Your app can help an autofill service classify the data correctly by providing the meaning of each view that could be autofillable, such as views representing usernames, passwords, credit card fields, email addresses, etc.&#xA;&#xA;The hints can have any value, but it is recommended to use predefined values like &apos;username&apos; for a username or &apos;creditCardNumber&apos; for a credit card number. For a list of all predefined autofill hint constants, see the `AUTOFILL_HINT_` constants in the `View` reference at https://developer.android.com/reference/android/view/View.html.&#xA;&#xA;You can mark a view unimportant for autofill by specifying an `importantForAutofill` attribute on that view or a parent view. See https://developer.android.com/reference/android/view/View.html#setImportantForAutofill(int)."
+        url="https://developer.android.com/guide/topics/text/autofill.html"
+        urls="https://developer.android.com/guide/topics/text/autofill.html"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_search.xml"
+            line="22"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        severity="Warning"
+        message="Missing `autofillHints` attribute"
+        category="Usability"
+        priority="3"
+        summary="Use Autofill"
+        explanation="Specify an `autofillHints` attribute when targeting SDK version 26 or higher or explicitly specify that the view is not important for autofill. Your app can help an autofill service classify the data correctly by providing the meaning of each view that could be autofillable, such as views representing usernames, passwords, credit card fields, email addresses, etc.&#xA;&#xA;The hints can have any value, but it is recommended to use predefined values like &apos;username&apos; for a username or &apos;creditCardNumber&apos; for a credit card number. For a list of all predefined autofill hint constants, see the `AUTOFILL_HINT_` constants in the `View` reference at https://developer.android.com/reference/android/view/View.html.&#xA;&#xA;You can mark a view unimportant for autofill by specifying an `importantForAutofill` attribute on that view or a parent view. See https://developer.android.com/reference/android/view/View.html#setImportantForAutofill(int)."
+        url="https://developer.android.com/guide/topics/text/autofill.html"
+        urls="https://developer.android.com/guide/topics/text/autofill.html"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_settings.xml"
+            line="37"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        context.applicationContext"
+        errorLine2="        ^">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/core/AppSettings.kt"
+            line="27"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        if (findViewById&lt;FrameLayout>(R.id.overlay).visibility == View.VISIBLE) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/BaseTvActivity.kt"
+            line="91"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        it.isAttachedToWindow &amp;&amp; it.visibility == VISIBLE &amp;&amp; it.isFocusable"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/FocusRoot.kt"
+            line="44"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX function `createBitmap` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/ImageLoader.kt"
+            line="115"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX function `createBitmap` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            Bitmap.createBitmap(320, 460, Bitmap.Config.ARGB_8888)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/ImageLoader.kt"
+            line="117"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            prefs(context).edit().putString(KEY, gson.toJson(value)).apply()"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/core/LibraryStore.kt"
+            line="48"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        val overlayVisible = findViewById&lt;FrameLayout>(R.id.overlay).visibility == View.VISIBLE"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/MainActivity.kt"
+            line="55"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        val mediaItem = if (local) MediaItem.fromUri(Uri.parse(url)) else MediaItem.fromUri(url)"
+        errorLine2="                                                     ~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="322"
+            column="54"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            if (settingsPanel.visibility == View.VISIBLE) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="680"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            if (castPanel.visibility == View.VISIBLE) {"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="684"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="            if (isTv &amp;&amp; controlOverlay.visibility == View.VISIBLE) {"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="688"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        if (castPanel.visibility == View.VISIBLE) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="702"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension property `View.isVisible` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        if (settingsPanel.visibility == View.VISIBLE) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="706"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        p().edit()"
+        errorLine2="        ~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/core/SiteConfig.kt"
+            line="64"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        severity="Warning"
+        message="`onTouch` lambda should call `View#performClick` when a click is detected"
+        category="Accessibility"
+        priority="6"
+        summary="Accessibility in Custom Views"
+        explanation="If a `View` that overrides `onTouchEvent` or uses an `OnTouchListener` does not also implement `performClick` and call it when clicks are detected, the `View` may not handle accessibility actions properly. Logic handling the click actions should ideally be placed in `View#performClick` as some accessibility services invoke `performClick` when a click action should occur."
+        errorLine1="        playerView.setOnTouchListener { _, _ -> revealControls(); false }"
+        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="196"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        severity="Warning"
+        message="Missing `contentDescription` attribute on image"
+        category="Accessibility"
+        priority="3"
+        summary="Image without `contentDescription`"
+        explanation="Non-textual widgets like ImageViews and ImageButtons should use the `contentDescription` attribute to specify a textual description of the widget such that screen readers and other accessibility tools can adequately describe the user interface.&#xA;&#xA;Note that elements in application screens that are purely decorative and do not provide any content or enable a user action should not have accessibility content descriptions. In this case, set their descriptions to `@null`. If your app&apos;s minSdkVersion is 16 or higher, you can instead set these graphical elements&apos; `android:importantForAccessibility` attributes to `no`.&#xA;&#xA;Note that for text fields, you should not set both the `hint` and the `contentDescription` attributes since the hint will never be shown. Just set the `hint`."
+        url="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        urls="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_splash.xml"
+            line="8"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        severity="Warning"
+        message="Missing `contentDescription` attribute on image"
+        category="Accessibility"
+        priority="3"
+        summary="Image without `contentDescription`"
+        explanation="Non-textual widgets like ImageViews and ImageButtons should use the `contentDescription` attribute to specify a textual description of the widget such that screen readers and other accessibility tools can adequately describe the user interface.&#xA;&#xA;Note that elements in application screens that are purely decorative and do not provide any content or enable a user action should not have accessibility content descriptions. In this case, set their descriptions to `@null`. If your app&apos;s minSdkVersion is 16 or higher, you can instead set these graphical elements&apos; `android:importantForAccessibility` attributes to `no`.&#xA;&#xA;Note that for text fields, you should not set both the `hint` and the `contentDescription` attributes since the hint will never be shown. Just set the `hint`."
+        url="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        urls="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/card_info.xml"
+            line="9"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        severity="Warning"
+        message="Missing `contentDescription` attribute on image"
+        category="Accessibility"
+        priority="3"
+        summary="Image without `contentDescription`"
+        explanation="Non-textual widgets like ImageViews and ImageButtons should use the `contentDescription` attribute to specify a textual description of the widget such that screen readers and other accessibility tools can adequately describe the user interface.&#xA;&#xA;Note that elements in application screens that are purely decorative and do not provide any content or enable a user action should not have accessibility content descriptions. In this case, set their descriptions to `@null`. If your app&apos;s minSdkVersion is 16 or higher, you can instead set these graphical elements&apos; `android:importantForAccessibility` attributes to `no`.&#xA;&#xA;Note that for text fields, you should not set both the `hint` and the `contentDescription` attributes since the hint will never be shown. Just set the `hint`."
+        url="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        urls="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        errorLine1="        &lt;ImageView"
+        errorLine2="         ~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_detail.xml"
+            line="20"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        severity="Warning"
+        message="Missing `contentDescription` attribute on image"
+        category="Accessibility"
+        priority="3"
+        summary="Image without `contentDescription`"
+        explanation="Non-textual widgets like ImageViews and ImageButtons should use the `contentDescription` attribute to specify a textual description of the widget such that screen readers and other accessibility tools can adequately describe the user interface.&#xA;&#xA;Note that elements in application screens that are purely decorative and do not provide any content or enable a user action should not have accessibility content descriptions. In this case, set their descriptions to `@null`. If your app&apos;s minSdkVersion is 16 or higher, you can instead set these graphical elements&apos; `android:importantForAccessibility` attributes to `no`.&#xA;&#xA;Note that for text fields, you should not set both the `hint` and the `contentDescription` attributes since the hint will never be shown. Just set the `hint`."
+        url="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        urls="https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/item_video.xml"
+            line="14"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        episodeCount.text = &quot;共 ${episodes.size} 集 · 当前线路：${d.sources[index].name}&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="227"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            holder.button.text = &quot;${item.name} · ${item.count}集&quot;"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DetailFragment.kt"
+            line="336"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            holder.title.text = &quot;${r.title}  ·  ${r.episode}&quot;"
+        errorLine2="                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DownloadsFragment.kt"
+            line="99"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            holder.info.text = &quot;${formatSize(r.size)}  ·  ${fmt.format(Date(r.time))}&quot;"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/DownloadsFragment.kt"
+            line="100"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        sectionInfo.text = &quot;正在加载第 $target 页…&quot;"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/HomeFragment.kt"
+            line="318"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            titleView.text = &quot;$videoTitle  ·  已播完&quot;"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="389"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            btn.text = &quot;${speed}x&quot;"
+        errorLine2="                       ~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="449"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        speedHint.text = &quot;倍速播放（当前 ${playbackSpeed}x）&quot;"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="470"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        btnSettings.text = &quot;${getString(R.string.action_settings)} · ${playbackSpeed}x&quot;"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="471"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        castUrlHint.text = &quot;当前播放地址：$currentUrl\n（点击本行可复制地址，供手动投屏使用）&quot;"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="500"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                castStatus.text = &quot;未发现设备。请确认播放设备与本设备在同一 Wi-Fi，&quot; +"
+        errorLine2="                                  ^">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="558"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                castStatus.text = &quot;未发现设备。请确认播放设备与本设备在同一 Wi-Fi，&quot; +"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="558"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                    &quot;并已开启 DLNA / 投屏接收；也可点「手动添加」输入设备描述地址。&quot;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="559"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                castStatus.text = &quot;发现 ${devices.size} 台设备，选择后按确认键投屏：&quot;"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="561"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="            castStatus.text = &quot;请填写设备描述地址（rootDesc.xml）。&quot;"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="579"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                castStatus.text = &quot;已添加设备：${device.name}&quot;"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="591"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        castStatus.text = &quot;正在向「${device.name}」发送播放指令…&quot;"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="603"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                    &quot;投屏失败：$error\n设备可能不支持该视频格式，可换播放源或手动复制地址。&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/PlaybackActivity.kt"
+            line="622"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                edit.setText(edit.text.toString() + label.lowercase())"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/SearchFragment.kt"
+            line="138"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        edit.setText(edit.text.toString() + c.lowercaseChar())"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/SearchFragment.kt"
+            line="146"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="        current.text = &quot;当前地址：${SiteConfig.baseUrl}\n上次可用：$prev  ·  配置版本 #${SiteConfig.version}&quot;"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/SettingsFragment.kt"
+            line="80"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                        status.text = &quot;检测成功：解析到 ${r.value} 个分类项，新地址已生效，正在重新加载…&quot;"
+        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/SettingsFragment.kt"
+            line="99"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        severity="Warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        category="Internationalization"
+        priority="6"
+        summary="TextView Internationalization"
+        explanation="When calling `TextView#setText`&#xA;* Never call `Number#toString()` to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using `String#format` with proper format specifications (`%d` or `%f`) instead.&#xA;* Do not pass a string literal (e.g. &quot;Hello&quot;) to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.&#xA;* Do not build messages by concatenating text chunks. Such messages can not be properly translated."
+        url="https://developer.android.com/guide/topics/resources/localization.html"
+        urls="https://developer.android.com/guide/topics/resources/localization.html"
+        errorLine1="                        status.text = &quot;检测成功：解析到 ${r.value} 个分类项，该地址可用（当前地址未改动）。&quot;"
+        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/java/com/yujiannatian/tv/ui/SettingsFragment.kt"
+            line="102"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;播放设置&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;播放设置&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="110"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;倍速播放（当前 1.0x）&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;倍速播放（当前 1.0x）&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="120"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;关闭&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;关闭&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="146"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;返回换源&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="                android:text=&quot;返回换源&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="192"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;投屏到设备（DLNA / UPnP）&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;投屏到设备（DLNA / UPnP）&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="214"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;本机继续播放&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;本机继续播放&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="243"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;设备描述地址，如 http://192.168.1.8:8200/rootDesc.xml&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:hint=&quot;设备描述地址，如 http://192.168.1.8:8200/rootDesc.xml&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="253"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;重新搜索&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="                android:text=&quot;重新搜索&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="268"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;手动添加&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="                android:text=&quot;手动添加&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="277"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;确定&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="                android:text=&quot;确定&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="286"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;停止投屏&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="                android:text=&quot;停止投屏&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="296"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;关闭&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="                android:text=&quot;关闭&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/activity_playback.xml"
+            line="305"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;上下选择 · OK 切换&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;上下选择 · OK 切换&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_home.xml"
+            line="50"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;方向键移动 · 确认键进入详情 · 向左回到分类栏&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;方向键移动 · 确认键进入详情 · 向左回到分类栏&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_home.xml"
+            line="169"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;搜索结果&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;搜索结果&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_search.xml"
+            line="63"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;新地址&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="            android:text=&quot;新地址&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_settings.xml"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;!&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="        android:text=&quot;!&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/fragment_status.xml"
+            line="27"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        severity="Warning"
+        message="Consider replacing `android:paddingLeft` with `android:paddingStart=&quot;6dp&quot;` to better support right-to-left layouts"
+        category="Internationalization:Bidirectional Text"
+        priority="5"
+        summary="Using left/right instead of start/end attributes"
+        explanation="Using `Gravity#LEFT` and `Gravity#RIGHT` can lead to problems when a layout is rendered in locales where text flows from right to left. Use `Gravity#START` and `Gravity#END` instead. Similarly, in XML `gravity` and `layout_gravity` attributes, use `start` rather than `left`.&#xA;&#xA;For XML attributes such as paddingLeft and `layout_marginLeft`, use `paddingStart` and `layout_marginStart`. **NOTE**: If your `minSdkVersion` is less than 17, you should add **both** the older left/right attributes **as well as** the new start/end attributes. On older platforms, where RTL is not supported and the start/end attributes are unknown and therefore ignored, you need the older left/right attributes. There is a separate lint check which catches that type of error.&#xA;&#xA;(Note: For `Gravity#LEFT` and `Gravity#START`, you can use these constants even when targeting older platforms, because the `start` bitmask is a superset of the `left` bitmask. Therefore, you can use `gravity=&quot;start&quot;` rather than `gravity=&quot;left|start&quot;`.)"
+        errorLine1="    android:paddingLeft=&quot;6dp&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/item_sidebar.xml"
+            line="13"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        severity="Warning"
+        message="Consider replacing `android:paddingRight` with `android:paddingEnd=&quot;3dp&quot;` to better support right-to-left layouts"
+        category="Internationalization:Bidirectional Text"
+        priority="5"
+        summary="Using left/right instead of start/end attributes"
+        explanation="Using `Gravity#LEFT` and `Gravity#RIGHT` can lead to problems when a layout is rendered in locales where text flows from right to left. Use `Gravity#START` and `Gravity#END` instead. Similarly, in XML `gravity` and `layout_gravity` attributes, use `start` rather than `left`.&#xA;&#xA;For XML attributes such as paddingLeft and `layout_marginLeft`, use `paddingStart` and `layout_marginStart`. **NOTE**: If your `minSdkVersion` is less than 17, you should add **both** the older left/right attributes **as well as** the new start/end attributes. On older platforms, where RTL is not supported and the start/end attributes are unknown and therefore ignored, you need the older left/right attributes. There is a separate lint check which catches that type of error.&#xA;&#xA;(Note: For `Gravity#LEFT` and `Gravity#START`, you can use these constants even when targeting older platforms, because the `start` bitmask is a superset of the `left` bitmask. Therefore, you can use `gravity=&quot;start&quot;` rather than `gravity=&quot;left|start&quot;`.)"
+        errorLine1="    android:paddingRight=&quot;3dp&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/res/layout/item_sidebar.xml"
+            line="14"
+            column="5"/>
+    </issue>
+
+</issues>

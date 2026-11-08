@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/overscan_h"
+    android:paddingRight="@dimen/overscan_h"
+    android:paddingTop="@dimen/overscan_v"
+    android:paddingBottom="@dimen/overscan_v">
+
+    <!-- 页面标题与返回按钮由 Activity 单行标题栏提供，避免重复 -->
+    <TextView
+        android:id="@+id/dl_status"
+        style="@style/TvSub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dl_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:descendantFocusability="afterDescendants"
+        android:focusable="false" />
+</LinearLayout>

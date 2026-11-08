@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.yujiannatian.tv.app-mergeReleaseResources-34:/values-hdpi-v4/values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "/Users/admin/.gradle/caches/8.14.3/transforms/83fcee7aa25dfd712b4be5811faa50fb/transformed/appcompat-1.6.1/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}

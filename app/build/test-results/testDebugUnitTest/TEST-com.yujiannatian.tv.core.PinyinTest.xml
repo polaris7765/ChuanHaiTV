@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.yujiannatian.tv.core.PinyinTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-08T14:46:33.316Z" hostname="LeoDongs-MacBook-Pro.local" time="0.049">
+  <properties/>
+  <testcase name="normalizesAndFiltersTheIndex" classname="com.yujiannatian.tv.core.PinyinTest" time="0.048"/>
+  <testcase name="matchesByInitialsPrefixContainsAndSubsequence" classname="com.yujiannatian.tv.core.PinyinTest" time="0.001"/>
+  <testcase name="convertsCommonTitlesToInitials" classname="com.yujiannatian.tv.core.PinyinTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

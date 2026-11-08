@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.Leanback">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+
+    <style name="PlaybackTheme" parent="AppTheme">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="TvText">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+
+    <style name="TvTitle" parent="TvText">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TvSub" parent="TvText">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_small</item>
+    </style>
+
+    <style name="TvSmall" parent="TvText">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_tiny</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <!-- 大号按钮：设置页、状态页 -->
+    <style name="TvButton" parent="TvText">
+        <item name="android:textSize">@dimen/text_card</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">18dp</item>
+        <item name="android:paddingRight">18dp</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:background">@drawable/bg_button</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <!-- 紧凑按钮：列表页翻页、剧集播放/下载、投屏面板 -->
+    <style name="TvChip" parent="TvButton">
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TvUrlEdit" parent="TvText">
+        <item name="android:textSize">@dimen/text_card</item>
+        <item name="android:background">@drawable/bg_edit</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 低版本（API < 26）启动图标：圆角渐变底 + 白色屏幕播放标记。
+     API 26+ 会优先使用 drawable-v26/ic_launcher.xml 的自适应图标。 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="22dp" />
+            <gradient
+                android:type="linear"
+                android:angle="135"
+                android:startColor="#13357A"
+                android:endColor="#1E9FE0" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>

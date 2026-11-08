@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TV 横幅（Leanback 启动器）：海蓝渐变底 + 白色屏幕播放标记，与应用图标一致 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path android:pathData="M0,0h320v180h-320z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="320"
+                android:endY="180">
+                <item android:offset="0" android:color="#13357A" />
+                <item android:offset="1" android:color="#1E9FE0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- 屏幕外框 -->
+    <path
+        android:pathData="M97,40 h126 a12,12 0 0 1 12,12 v76 a12,12 0 0 1 -12,12 h-126 a12,12 0 0 1 -12,-12 v-76 a12,12 0 0 1 12,-12 z"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="6"
+        android:strokeLineJoin="round" />
+    <!-- 播放三角 -->
+    <path
+        android:pathData="M150,60 L150,120 L200,90 Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

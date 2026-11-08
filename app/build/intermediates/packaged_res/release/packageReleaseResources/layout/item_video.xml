@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 统一的小尺寸封面卡片：首页热播、搜索结果、分类列表、相关推荐共用 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/video_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <ImageView
+        android:id="@+id/video_cover"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/card_cover_height"
+        android:background="@drawable/cover_placeholder"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/video_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_card" />
+
+    <TextView
+        android:id="@+id/video_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_tiny" />
+</LinearLayout>

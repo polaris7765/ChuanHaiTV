@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 电视过扫描安全边距（约 5%） -->
+    <dimen name="overscan_h">40dp</dimen>
+    <dimen name="overscan_v">22dp</dimen>
+
+    <!-- 统一缩小后的卡片与字号 -->
+    <dimen name="card_width">132dp</dimen>
+    <dimen name="card_height">184dp</dimen>
+    <dimen name="card_cover_height">148dp</dimen>
+    <dimen name="text_title">20sp</dimen>
+    <dimen name="text_body">14sp</dimen>
+    <dimen name="text_card">14sp</dimen>
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_tiny">11sp</dimen>
+    <!-- 左栏收窄到屏幕 1/10 后仍要单行显示「历史记录 / 我的收藏」 -->
+    <dimen name="text_sidebar">12sp</dimen>
+
+    <dimen name="sidebar_item_height">40dp</dimen>
+    <dimen name="episode_item_height">54dp</dimen>
+
+    <!-- 覆盖 Leanback 库默认字号：库内标题栏/卡片文字原本按 10-foot 大屏设计得过大 -->
+    <dimen name="lb_browse_title_text_size">16sp</dimen>
+    <dimen name="lb_browse_header_text_size">14sp</dimen>
+    <dimen name="lb_browse_section_header_text_size">13sp</dimen>
+    <dimen name="lb_browse_headers_width">140dp</dimen>
+    <dimen name="lb_basic_card_title_text_size">13sp</dimen>
+    <dimen name="lb_basic_card_content_text_size">11sp</dimen>
+</resources>
