@@ -54,12 +54,18 @@ data class PageCache(val result: PageResult = PageResult())
 data class DetailCache(val detail: VideoDetail = VideoDetail())
 data class SearchIndexCache(val items: List<VideoItem> = emptyList())
 
-/** 已下载剧集的本地记录 */
+/**
+ * 下载记录：既包含「下载中」也包含「下载完成」。
+ * status: downloading / done / failed；旧版本记录的缺失字段由默认值补齐（兼容升级）。
+ */
 data class DownloadRecord(
     val key: String = "",
     val title: String = "",
     val episode: String = "",
     val file: String = "",
     val size: Long = 0L,
-    val time: Long = 0L
+    val time: Long = 0L,
+    val status: String = "done",
+    val progress: Int = 100,
+    val episodePath: String = ""
 )

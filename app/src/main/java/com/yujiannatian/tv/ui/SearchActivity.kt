@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.EditText
 import com.yujiannatian.tv.R
-import com.yujiannatian.tv.core.SiteConfig
 
 /** 拼音首字母模糊搜索页 */
 @SuppressLint("RestrictedApi")
@@ -13,7 +12,7 @@ class SearchActivity : BaseTvActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        showHeader(getString(R.string.search_title), "拼音首字母 / 中文片名 · ${SiteConfig.baseUrl}")
+        showHeader(getString(R.string.search_title), "拼音首字母 / 中文片名")
         setContent(SearchFragment())
     }
 

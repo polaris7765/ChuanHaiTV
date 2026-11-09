@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 联系作者：左侧作者 / 版权信息，右侧赞赏二维码。横屏下左右分栏，避免出现纵向滚动条。 -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/overscan_h"
+        android:paddingRight="@dimen/overscan_h"
+        android:paddingTop="@dimen/overscan_v"
+        android:paddingBottom="@dimen/overscan_v">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_author" />
+
+            <TextView
+                style="@style/TvText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:lineSpacingExtra="6dp"
+                android:text="@string/contact_support"
+                android:textSize="@dimen/text_card" />
+
+            <TextView
+                style="@style/TvText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:lineSpacingExtra="6dp"
+                android:text="@string/contact_copyright"
+                android:textColor="@color/accent"
+                android:textSize="@dimen/text_card" />
+
+            <TextView
+                style="@style/TvSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:lineSpacingExtra="6dp"
+                android:text="@string/contact_tip" />
+
+            <TextView
+                style="@style/TvSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/settings_copyright" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:background="@drawable/bg_card"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/contact_qr"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:background="@android:color/white"
+                android:contentDescription="@string/contact_qr_hint"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/pay" />
+
+            <TextView
+                style="@style/TvSub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/contact_qr_hint" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

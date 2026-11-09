@@ -258,7 +258,10 @@ class PlaybackActivity : FragmentActivity() {
      */
     private fun applyDeviceRules() {
         btnCast.visibility = View.GONE
-        findViewById<Button>(R.id.btn_settings_cast).visibility = View.GONE
+        // 设置面板里的「投屏」：手机端是发送端，必须保留；TV 是接收端才隐藏。
+        // 之前这里无条件 GONE，导致手机端播放页设置里没有投屏功能。
+        findViewById<Button>(R.id.btn_settings_cast).visibility =
+            if (isTv) View.GONE else View.VISIBLE
         castPanel.visibility = View.GONE
         btnResumeLocal.visibility = View.GONE
         // 焦点导航两端一致：左上「返回」⇄ 右上「设置」，向下落到播放器

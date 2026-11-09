@@ -217,7 +217,13 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | 默认播放源 | 用 **Button + AlertDialog 单选列表**，不用 `Spinner`——Spinner 下拉弹层在 Android TV 上无法用方向键选中条目 |
 | 播放源列表来源 | `AppSettings.knownSources()` = 内置保底线路（新视觉云 / 爱奇艺 / 好好云）+ 详情页累积的真实线路；进设置再异步探测首页首部影片详情补充 |
 | 允许下载 | TV 默认关、其余端默认开；详情页据此显隐单集下载按钮 |
-| 版权信息 | 作者 polaris7765（董先生）+ © 2026 声明 |
+| 标题栏 | 设置 / 搜索 / 分类索引 / 子菜单 / 详情统一 `showHeader(title)`，不再显示 `SiteConfig.baseUrl` |
+| 版权信息 | 已迁移到左栏「联系作者」页（`ContactFragment`）：作者信息 + `pay.png` 赞赏二维码 + 支持文案 + 侵权联系邮箱 |
+
+> 侧栏顺序：热门推荐 → 历史记录 → 我的收藏 → **搜索** → 各大类 → 分类索引 → 我的下载 → 设置 → **联系作者**。
+> 侧栏 `RecyclerView` 关闭滚动条与 overscroll（`scrollbars="none"` / `overScrollMode="never"`）。
+> 分类索引从 Leanback `BrowseSupportFragment`（ListRow 横向滚动）改为 RecyclerView 垂直单列，
+> 结构上只允许上下滑动。
 
 > 播放源名称必须与 `HtmlParser.parseDetail` 解析出的名称一致才能匹配生效
 > （`DetailFragment` 用 `indexOfFirst { it.name == def }`，匹配不到退回第一个）。
@@ -228,8 +234,31 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 
 - 内存缓存 `ConcurrentHashMap`，TTL：分类 6h / 列表 20min / 详情 30min / 播放地址 1min。
 - 缓存 key 含 `SiteConfig.version` 与 `baseUrl`，换地址后自动失效。
-- 历史 / 收藏 / 偏好用 SharedPreferences + Gson；下载文件落 `filesDir`。
-- `VideoDownloader` 解析 m3u8、处理 AES-128 key、分片合并，下载进度通过观察者回显到选集按钮。
+- 历史 / 收藏 / 偏好用 SharedPreferences + Gson；下载文件落 `getExternalFilesDir(MOVIES)/yujian_downloads`。
+- **封面磁盘缓存**：`cacheDir/covers/<url 的 MD5>.img` 存原始图片字节，原子写入（tmp + rename），
+  超过 64MB 按 lastModified 裁剪到 48MB。加载顺序：内存 LRU → 磁盘 → 网络；命中磁盘完全不发请求。
+  图床熔断只作用于网络阶段，不影响已缓存封面。
+- `VideoDownloader`：m3u8 解析 + AES-128 解密 + 分片合并；进度通过观察者回显到选集按钮，
+  按钮背景用 `bg_download_progress.xml` 的 `ClipDrawable`（level = progress × 100）从左向右填充。
+- **断点续传**：
+  - m3u8：`stem(key).part` 记录「分片 URL 列表指纹 + 已完成分片数 + 总数」，
+    指纹一致且目标文件存在时从下一片 `FileOutputStream(target, append=true)` 继续；换源/直播导致指纹变化则从头开始。
+  - MP4：`SiteHttpClient.openRange()` 带 `Range: bytes=<len>-`，206 才追加写、200 从头覆盖；
+    用 64KB 缓冲流式写入并按字节数回传进度，避免整包读进内存 OOM。
+  - 同步 OkHttp 调用不响应协程取消，两个下载循环里每片／每 64KB 都显式检查 `isActive(key)`，
+    否则点「取消」后任务仍会把整部片写完并误标为完成。
+  - 取消任务保留文件与 `.part`，并把记录标为 `paused`；「我的下载」直接给「继续」按钮，
+    点击后 `enqueue()` 重新解析播放地址并从断点续写，不必再回详情页。删除任务才清除文件与 `.part`。
+  - `App.onCreate()` 调用 `VideoDownloader.reconcile()` 校正上次进程被回收时的残留记录：
+    文件完整且进度已到 100 → 判定 `done`；否则 → `paused`。避免列表永远停在「下载中 100%」。
+    删除记录后同步复位内存状态，否则详情页按钮会一直显示「重试」。
+- **我的下载分组**：`enqueue()` 立即写 `status=downloading` 记录，`update()` 每 2% 节流持久化，
+  `DownloadsFragment` 分「下载中 / 下载完成」两组并 `observe()` 实时刷新；下载中显示 ProgressBar 与取消按钮。
+  `DownloadsStore.list()` 对 `done` 记录才校验文件存在（下载中的文件还没生成，不能过滤掉）。
+  - 进度每秒多次回调，**不能每次都 `notifyDataSetChanged()`**：整表重建会让渲染线程掉到 3fps、
+    界面持续非 idle，且「取消／删除」的点击会被 rebind 吃掉。现在 `submit(newRows, host)` 先比对
+    行结构键（`H:标题` / `E:record.key`），结构不变时只原地刷新屏幕上可见的条目，不触发任何 notify；
+    只有增删条目／分组计数变化才整体刷新。
 
 ---
 
@@ -263,7 +292,14 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | AAPT2 级联报 bg_card / bg_sidebar not found | 通常是同目录某个 drawable XML 命名空间畸形（如只写 `xmlns=` 却用 `android:` 前缀），修第一个报错即可 |
 | API 23 电视闪退 | 检查 desugaring 是否开启、是否用了 API 24+ 的 `Map.putIfAbsent` 等 |
 | 翻页无效 / 索引重复 | 热播榜分页要用 `index_____hits.html` |
-| 投屏按钮 TV 仍显示 | 检查 `applyDeviceRules()` 与 `DeviceKind.isTv()` |
+| 投屏按钮 TV 仍显示 / 手机端设置里没有投屏 | 检查 `applyDeviceRules()` 与 `DeviceKind.isTv()`；曾因无条件 `btn_settings_cast = GONE` 把手机端投屏也一起隐藏，现改为仅 TV 隐藏 |
+| `ZMSR` 搜不到《走马上任》 | 站点 `/search/{kw}.html` 只支持中文，拼音首字母直接丢过去必然零结果；且本地索引只抓各大类前 8 页热播榜，长尾片名不在其中。修复：索引页数提到 12 页 + `SearchIndex.remoteByInitials()` 用 `Pinyin.candidateChars()` 取首字常见汉字（Z → 「走」）并发站内搜索补索引，再由 `Pinyin.filter()` 按首字母过滤 |
+| 分类索引能左右滑动 | 旧 BrowseSupportFragment 的 ListRow 是 HorizontalGridView；已改为 RecyclerView 垂直单列 |
+| 手写 `DefaultTimeBar` 不绘制 | 必须用 `exo_progress_placeholder`，见 §7 |
+| `ZMSR` 搜出两张一模一样的卡片 | 多个候选汉字反查会带进同片名不同 path 的条目；`Pinyin.filter()` 排序后按片名 `distinctBy` 去重。同步完成后状态文案改为「已同步站内搜索结果」，不再长期停在「正在同步…」 |
+| 下载列表卡在「下载中 100%」 | 进程被回收时最后一次 100% 已落盘但 `done` 状态没写入；`App.onCreate()` 的 `reconcile()` 按文件完整性校正为 done / paused |
+| 下载中点不到「取消」、界面卡顿 | 进度每次回调都 `notifyDataSetChanged()` 整表重建；改为结构不变时只原地更新可见条目，见 §9 |
+| 取消后条目消失、无处续传 | `cancel()` 由删除记录改为标记 `paused`，「我的下载」提供「继续」按钮 |
 
 ---
 

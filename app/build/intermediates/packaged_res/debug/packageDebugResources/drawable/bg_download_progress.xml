@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 下载按钮背景：底层沿用按钮 selector（保留焦点/按下态），
+     上层用 ClipDrawable 按 level(0..10000) 从左向右填充半透明进度色。
+     文字绘制在 background 之上，不会被进度层遮住。 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_button" />
+
+    <item android:id="@+id/download_progress_fill">
+        <clip
+            android:clipOrientation="horizontal"
+            android:gravity="start">
+            <shape android:shape="rectangle">
+                <solid android:color="#9954A0FF" />
+                <corners android:radius="6dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import com.yujiannatian.tv.R
 import com.yujiannatian.tv.core.CrashHandler
-import com.yujiannatian.tv.core.SiteConfig
 
 class MainActivity : BaseTvActivity() {
 
@@ -40,8 +39,17 @@ class MainActivity : BaseTvActivity() {
     fun showSettings() {
         CrashHandler.clear(this)
         clearOverlay()
-        showHeader(getString(R.string.settings_title), SiteConfig.baseUrl)
+        // 标题栏不再显示站点 http 地址（搜索 / 分类索引 / 设置统一）
+        showHeader(getString(R.string.settings_title))
         setContent(SettingsFragment())
+    }
+
+    /** 「联系作者」：作者信息、赞赏二维码与版权联系邮箱 */
+    fun showContact() {
+        CrashHandler.clear(this)
+        clearOverlay()
+        showHeader(getString(R.string.contact_title))
+        setContent(ContactFragment())
     }
 
     /** 首页加载失败或崩溃报告页的重试：清除记录并强制跳过缓存重新抓取分类 */
@@ -56,7 +64,7 @@ class MainActivity : BaseTvActivity() {
         val current: Fragment? = supportFragmentManager.findFragmentById(R.id.container)
         when {
             overlayVisible -> clearOverlay()
-            current is SettingsFragment -> showHome(false)
+            current is SettingsFragment || current is ContactFragment -> showHome(false)
             else -> super.onBackPressed()
         }
     }

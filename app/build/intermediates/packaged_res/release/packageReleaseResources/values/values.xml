@@ -56,7 +56,16 @@
     <string name="action_unfavorite">取消收藏</string>
     <string name="app_name">川海影视TV</string>
     <string name="categories_title">分类索引</string>
+    <string name="contact_copyright">支持正版，如有侵权请联系，polairs7765@qq.com</string>
+    <string name="contact_qr_hint">微信扫码 · 赞赏作者</string>
+    <string name="contact_support">支持一下作者，您的鼓励是我持续更新的动力</string>
+    <string name="contact_tip">本项目仅供个人学习与技术交流，不存储、不上传、不分发任何影视资源。\n如涉及版权问题，请通过下方邮箱联系作者处理。</string>
+    <string name="contact_title">联系作者</string>
     <string name="default_site">http://www.yujiannatian.net/</string>
+    <string name="downloads_doing">下载中</string>
+    <string name="downloads_done">下载完成</string>
+    <string name="downloads_failed">下载失败</string>
+    <string name="downloads_resume">断点续传</string>
     <string name="downloads_title">我的下载</string>
     <string name="empty">没有找到资源</string>
     <string name="episode_label">选集 · 确认键播放，聚焦「下载」保存到本机（可在「我的下载」离线观看）</string>
@@ -64,6 +73,7 @@
     <string name="home_title">川海影视TV</string>
     <string name="loading">正在加载…</string>
     <string name="nav_categories">分类索引</string>
+    <string name="nav_contact">联系作者</string>
     <string name="nav_downloads">我的下载</string>
     <string name="nav_favorites">我的收藏</string>
     <string name="nav_history">历史记录</string>

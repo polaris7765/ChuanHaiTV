@@ -154,12 +154,22 @@ class SearchFragment : Fragment() {
         if (q.length < 2) return
         remoteJob = viewLifecycleOwner.lifecycleScope.launch {
             delay(450)
-            runCatching { SearchIndex.remote(q, 2) }
-            if (isAdded) refreshResults(edit.text.toString())
+            if (q.all { it in 'a'..'z' }) {
+                // 纯拼音首字母：站点搜索只认中文，直接搜 q 必然零结果。
+                // 一律用候选汉字反查（例：ZMSR → 取 Z 对应的「走」等常见首字搜索 →
+                // 找到《走马上任》并补进索引），不能因本地有模糊匹配结果就跳过：
+                // 曾出现长片名被子序列误命中、反查被挡住导致真正目标搜不到的情况。
+                // SearchIndex 内部按「站点 + 关键词」去重，重复输入不会重复发请求。
+                runCatching { SearchIndex.remoteByInitials(q) }
+            } else {
+                // 中文关键词：直接用站内搜索补齐长尾片名
+                runCatching { SearchIndex.remote(q, 2) }
+            }
+            if (isAdded) refreshResults(edit.text.toString(), synced = true)
         }
     }
 
-    private fun refreshResults(raw: String) {
+    private fun refreshResults(raw: String, synced: Boolean = false) {
         val q = Pinyin.normalize(raw)
         val results = if (q.isEmpty()) emptyList()
         else Pinyin.filter(q, SearchIndex.snapshot(), 120)
@@ -169,7 +179,11 @@ class SearchFragment : Fragment() {
             SearchIndex.message
         } else {
             "关键词：$raw  ·  命中 ${results.size} 部  ·  本地索引 ${SearchIndex.size()} 部" +
-                "\n正在同步站内搜索结果…"
+                when {
+                    synced -> "\n已同步站内搜索结果"
+                    results.isEmpty() -> "\n本地未命中，正在用站内搜索反查…"
+                    else -> "\n正在同步站内搜索结果…"
+                }
         }
     }
 

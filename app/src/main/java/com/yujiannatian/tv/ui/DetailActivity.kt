@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import com.yujiannatian.tv.R
 import com.yujiannatian.tv.core.LibraryEntry
-import com.yujiannatian.tv.core.SiteConfig
 import com.yujiannatian.tv.core.VideoItem
 
 /** 节目详情 + 播放源 / 选集页（紧凑排版，剧集卡片自带下载按钮） */
@@ -47,9 +46,8 @@ class DetailActivity : BaseTvActivity() {
         val cover = intent.getStringExtra(EXTRA_COVER).orEmpty()
         val resumePath = intent.getStringExtra(EXTRA_RESUME_PATH).orEmpty()
         val resumePosition = intent.getLongExtra(EXTRA_RESUME_POSITION, 0L)
-        // 单行紧凑标题栏：左上角返回 + 片名 + 当前站点，不再使用旧版两行大标题
-        // （两行标题会把 1080p 的选集网格压成 0 高度）。
-        showHeader(title, SiteConfig.baseUrl)
+        // 单行紧凑标题栏：左上角返回 + 片名（不再显示站点 http 地址）
+        showHeader(title)
         val fragment = if (resumePath.isNotBlank()) {
             DetailFragment.newInstance(path, title, cover, resumePath, resumePosition)
         } else {

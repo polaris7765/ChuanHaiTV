@@ -31,6 +31,7 @@
             android:textSize="@dimen/text_body"
             android:textStyle="bold" />
 
+        <!-- 左栏上下滑动时不显示滚动条 / 边缘光晕：TV 上滚动条会压住窄栏文字 -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sidebar"
             android:layout_width="match_parent"
@@ -39,7 +40,8 @@
             android:clipToPadding="false"
             android:descendantFocusability="afterDescendants"
             android:focusable="false"
-            android:scrollbars="vertical" />
+            android:overScrollMode="never"
+            android:scrollbars="none" />
 
         <TextView
             android:layout_width="match_parent"

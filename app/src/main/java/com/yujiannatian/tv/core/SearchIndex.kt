@@ -7,6 +7,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 拼音搜索的本地片名索引。
@@ -18,13 +19,16 @@ import kotlinx.coroutines.withContext
 object SearchIndex {
 
     private const val TTL = 6 * 60 * 60 * 1000L
-    private const val PAGES_PER_GROUP = 8
-    private const val MAX_ITEMS = 4000
+    /** 每个大类抓取的热播榜页数：太少会让长尾片名（如《走马上任》）不在索引里 */
+    private const val PAGES_PER_GROUP = 12
+    private const val MAX_ITEMS = 8000
 
     private val mutex = Mutex()
     private val pool = mutableListOf<VideoItem>()
     private var loadedKey = ""
     private var building = false
+    /** 已做过首字母反查的关键词（含站点与配置版本），避免逐字输入时重复并发请求 */
+    private val reversedQueries = ConcurrentHashMap.newKeySet<String>()
 
     @Volatile
     var message: String = "索引尚未建立"
@@ -133,4 +137,36 @@ object SearchIndex {
             val known = snapshot().mapTo(HashSet()) { it.path }
             out.distinctBy { it.path }.filter { it.path !in known }.also { merge(it) }
         }
+
+    /**
+     * 拼音首字母兜底：站点搜索只认中文，直接把「ZMSR」丢给 /search/ 必然零结果。
+     *
+     * 做法是取首字母对应的若干常见片名首字（Pinyin.candidateChars，如 Z → 「走」），
+     * 并发请求站内搜索第 1 页，把结果补进本地索引；随后调用方再用 Pinyin.filter
+     * 按首字母过滤，即可让「ZMSR」命中《走马上任》。
+     * 返回本次新增的影片数，便于调用方决定是否需要刷新提示。
+     */
+    suspend fun remoteByInitials(query: String): Int = withContext(Dispatchers.IO) {
+        val q = Pinyin.normalize(query)
+        if (q.isEmpty() || !q.all { it in 'a'..'z' }) return@withContext 0
+        val marker = "${SiteConfig.baseUrl}|${SiteConfig.version}|$q"
+        if (!reversedQueries.add(marker)) return@withContext 0
+        val chars = Pinyin.candidateChars(q[0])
+        if (chars.isEmpty()) return@withContext 0
+
+        val found = coroutineScope {
+            chars.map { c ->
+                async {
+                    when (val r = SiteRepository.search(c.toString(), 1)) {
+                        is LoadResult.Ok -> r.value.items
+                        is LoadResult.Err -> emptyList()
+                    }
+                }
+            }.awaitAll().flatten()
+        }
+        val known = snapshot().mapTo(HashSet()) { it.path }
+        val fresh = found.distinctBy { it.path }.filter { it.path !in known }
+        merge(fresh)
+        fresh.size
+    }
 }

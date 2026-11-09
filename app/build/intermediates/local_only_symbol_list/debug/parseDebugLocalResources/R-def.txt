@@ -36,6 +36,7 @@ drawable banner
 drawable bg_button
 drawable bg_card
 drawable bg_controller_bottom
+drawable bg_download_progress
 drawable bg_edit
 drawable bg_play_pause
 drawable bg_sidebar
@@ -48,6 +49,7 @@ drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_refresh
 drawable ic_settings
+drawable pay
 drawable splash
 id actions
 id brand
@@ -84,6 +86,9 @@ id cast_manual_url
 id cast_panel
 id cast_status
 id cast_url_hint
+id category_list
+id category_name
+id contact_qr
 id container
 id control_overlay
 id current
@@ -95,8 +100,10 @@ id dl_delete
 id dl_info
 id dl_list
 id dl_play
+id dl_progress
 id dl_status
 id dl_title
+id download_progress_fill
 id edit_url
 id episode_count
 id episode_grid
@@ -125,6 +132,7 @@ id result_grid
 id result_title
 id right_pane
 id search_status
+id section_header
 id section_info
 id section_title
 id settings_panel
@@ -150,6 +158,8 @@ layout activity_playback
 layout activity_splash
 layout card_info
 layout card_text
+layout fragment_category_index
+layout fragment_contact
 layout fragment_detail
 layout fragment_downloads
 layout fragment_home
@@ -157,6 +167,8 @@ layout fragment_search
 layout fragment_settings
 layout fragment_status
 layout item_cast_device
+layout item_category
+layout item_category_header
 layout item_download
 layout item_episode
 layout item_key
@@ -191,7 +203,16 @@ string action_test
 string action_unfavorite
 string app_name
 string categories_title
+string contact_copyright
+string contact_qr_hint
+string contact_support
+string contact_tip
+string contact_title
 string default_site
+string downloads_doing
+string downloads_done
+string downloads_failed
+string downloads_resume
 string downloads_title
 string empty
 string episode_label
@@ -199,6 +220,7 @@ string hint_url
 string home_title
 string loading
 string nav_categories
+string nav_contact
 string nav_downloads
 string nav_favorites
 string nav_history

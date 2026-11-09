@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.yujiannatian.tv.core.HtmlParserTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-08T16:41:32.705Z" hostname="LeoDongs-MacBook-Pro.local" time="0.048">
+<testsuite name="com.yujiannatian.tv.core.HtmlParserTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-09T03:13:38.742Z" hostname="LeoDongs-MacBook-Pro.local" time="0.044">
   <properties/>
-  <testcase name="rejectsUnparseableCategoryPage" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.028"/>
-  <testcase name="buildsPaginationPaths" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.008"/>
+  <testcase name="rejectsUnparseableCategoryPage" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.029"/>
+  <testcase name="buildsPaginationPaths" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.002"/>
   <testcase name="buildsHotAndSearchPaths" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.001"/>
   <testcase name="parsesDetailSourcesWithFullNamesAndEpisodes" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.004"/>
   <testcase name="deduplicatesRepeatedCategoryPaths" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.001"/>
   <testcase name="parsesAllCategoryGroupsAndFilters" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.001"/>
   <testcase name="parsesPlaybackUrlAndNextEpisode" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.002"/>
-  <testcase name="parsesSearchResultsWithNestedListAndPagination" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.001"/>
+  <testcase name="parsesSearchResultsWithNestedListAndPagination" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.002"/>
   <testcase name="parsesListItemsAndPagination" classname="com.yujiannatian.tv.core.HtmlParserTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

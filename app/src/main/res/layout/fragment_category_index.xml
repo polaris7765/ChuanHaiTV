@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 分类索引：纯垂直单列列表。
+     原 Leanback BrowseSupportFragment 的 ListRow 是横向网格，遥控器左右键会在行内
+     横向滚动；这里改成 LinearLayoutManager(VERTICAL) 的单列列表，从结构上杜绝左右滑动，
+     只保留上下导航；同时关闭滚动条与边缘光晕。 -->
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/category_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:clipToPadding="false"
+    android:descendantFocusability="afterDescendants"
+    android:focusable="false"
+    android:overScrollMode="never"
+    android:paddingLeft="@dimen/overscan_h"
+    android:paddingRight="@dimen/overscan_h"
+    android:paddingTop="@dimen/overscan_v"
+    android:paddingBottom="@dimen/overscan_v"
+    android:scrollbars="none" />

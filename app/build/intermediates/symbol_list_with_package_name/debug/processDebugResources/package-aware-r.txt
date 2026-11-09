@@ -1250,6 +1250,7 @@ drawable banner
 drawable bg_button
 drawable bg_card
 drawable bg_controller_bottom
+drawable bg_download_progress
 drawable bg_edit
 drawable bg_play_pause
 drawable bg_sidebar
@@ -1418,6 +1419,7 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable pay
 drawable splash
 drawable test_level_drawable
 drawable tooltip_frame_dark
@@ -1565,6 +1567,8 @@ id cast_manual_url
 id cast_panel
 id cast_status
 id cast_url_hint
+id category_list
+id category_name
 id center
 id center_horizontal
 id center_vertical
@@ -1575,6 +1579,7 @@ id clip_horizontal
 id clip_vertical
 id collapseActionView
 id column
+id contact_qr
 id container
 id container_list
 id content
@@ -1618,8 +1623,10 @@ id dl_delete
 id dl_info
 id dl_list
 id dl_play
+id dl_progress
 id dl_status
 id dl_title
+id download_progress_fill
 id dummy
 id edit_query
 id edit_text_id
@@ -1867,6 +1874,7 @@ id search_src_text
 id search_status
 id search_voice_btn
 id secondary_controls_dock
+id section_header
 id section_info
 id section_title
 id select_dialog_listview
@@ -2047,6 +2055,8 @@ layout exo_styled_settings_list
 layout exo_styled_settings_list_item
 layout exo_styled_sub_settings_list_item
 layout exo_track_selection_dialog
+layout fragment_category_index
+layout fragment_contact
 layout fragment_detail
 layout fragment_downloads
 layout fragment_home
@@ -2056,6 +2066,8 @@ layout fragment_status
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
 layout item_cast_device
+layout item_category
+layout item_category_header
 layout item_download
 layout item_episode
 layout item_key
@@ -2210,7 +2222,16 @@ string call_notification_incoming_text
 string call_notification_ongoing_text
 string call_notification_screening_text
 string categories_title
+string contact_copyright
+string contact_qr_hint
+string contact_support
+string contact_tip
+string contact_title
 string default_site
+string downloads_doing
+string downloads_done
+string downloads_failed
+string downloads_resume
 string downloads_title
 string empty
 string episode_label
@@ -2310,6 +2331,7 @@ string lb_search_bar_hint_with_title
 string lb_search_bar_hint_with_title_speech
 string loading
 string nav_categories
+string nav_contact
 string nav_downloads
 string nav_favorites
 string nav_history

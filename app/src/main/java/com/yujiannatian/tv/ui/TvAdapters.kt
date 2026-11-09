@@ -31,7 +31,7 @@ class GridSpacingDecoration(
 }
 
 /** 左栏条目类型 */
-enum class NavType { HOT, GROUP, HISTORY, FAVORITES, SEARCH, CATEGORIES, DOWNLOADS, SETTINGS }
+enum class NavType { HOT, GROUP, HISTORY, FAVORITES, SEARCH, CATEGORIES, DOWNLOADS, SETTINGS, CONTACT }
 
 data class SidebarItem(
     val id: String,

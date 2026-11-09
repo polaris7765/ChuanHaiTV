@@ -139,6 +139,9 @@
 -keep class j$.util.Spliterators {
   public static j$.util.Spliterator spliteratorUnknownSize(java.util.Iterator, int);
 }
+-keep class j$.util.concurrent.ConcurrentHashMap$KeySetView {
+  public boolean add(java.lang.Object);
+}
 -keep class j$.util.concurrent.ConcurrentHashMap {
   public <init>();
   public <init>(int, float, int);
@@ -147,6 +150,7 @@
   public java.util.Set entrySet();
   public java.lang.Object get(java.lang.Object);
   public boolean isEmpty();
+  public static j$.util.concurrent.ConcurrentHashMap$KeySetView newKeySet();
   public java.lang.Object put(java.lang.Object, java.lang.Object);
   public java.lang.Object putIfAbsent(java.lang.Object, java.lang.Object);
   public java.lang.Object remove(java.lang.Object);

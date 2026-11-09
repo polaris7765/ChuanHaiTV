@@ -154,13 +154,15 @@ class HomeFragment : Fragment() {
                 // 本地分类放最前面，左栏不用滚动就能看到
                 add(SidebarItem("history", getString(R.string.nav_history), NavType.HISTORY))
                 add(SidebarItem("favorites", getString(R.string.nav_favorites), NavType.FAVORITES))
+                // 搜索紧随「我的收藏」，常用功能不用来回滚动左栏
+                add(SidebarItem("search", getString(R.string.nav_search), NavType.SEARCH))
                 groups.forEach {
                     add(SidebarItem("g_${it.path}", it.name, NavType.GROUP, it.path))
                 }
-                add(SidebarItem("search", getString(R.string.nav_search), NavType.SEARCH))
                 add(SidebarItem("categories", getString(R.string.nav_categories), NavType.CATEGORIES))
                 add(SidebarItem("downloads", getString(R.string.nav_downloads), NavType.DOWNLOADS))
                 add(SidebarItem("settings", getString(R.string.nav_settings), NavType.SETTINGS))
+                add(SidebarItem("contact", getString(R.string.nav_contact), NavType.CONTACT))
             }
             sidebarAdapter.submit(items)
             act.clearOverlay()
@@ -186,6 +188,7 @@ class HomeFragment : Fragment() {
             NavType.CATEGORIES -> startActivity(Intent(requireContext(), CategoryIndexActivity::class.java))
             NavType.DOWNLOADS -> startActivity(Intent(requireContext(), DownloadsActivity::class.java))
             NavType.SETTINGS -> (activity as? MainActivity)?.showSettings()
+            NavType.CONTACT -> (activity as? MainActivity)?.showContact()
             NavType.HOT, NavType.GROUP, NavType.HISTORY, NavType.FAVORITES -> selectSection(item)
         }
     }

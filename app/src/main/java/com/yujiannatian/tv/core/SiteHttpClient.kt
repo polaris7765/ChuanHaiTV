@@ -92,6 +92,29 @@ object SiteHttpClient {
         throw last ?: SiteError(ErrorKind.NETWORK, "网络连接失败", url)
     }
 
+    /**
+     * 打开一个支持 HTTP Range 的响应流，用于 MP4 流式下载与断点续传。
+     * from>0 时带 `Range: bytes=from-`；调用方负责 use{} 关闭 Response，
+     * 并通过 response.code == 206 判断是否真的从断点继续（200 表示服务端忽略了 Range）。
+     */
+    fun openRange(
+        url: String,
+        from: Long,
+        extraHeaders: Map<String, String>
+    ): okhttp3.Response {
+        val builder = Request.Builder()
+            .url(url)
+            .header("User-Agent", USER_AGENT)
+        if (from > 0) builder.header("Range", "bytes=$from-")
+        extraHeaders.forEach { (k, v) -> builder.header(k, v) }
+        val response = client.newCall(builder.build()).execute()
+        if (!response.isSuccessful) {
+            response.close()
+            throw IOException("HTTP ${response.code}")
+        }
+        return response
+    }
+
     /** 图片等二进制资源；失败由调用方降级为占位图 */
     fun bytes(url: String): ByteArray = bytes(url, emptyMap())
 

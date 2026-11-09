@@ -24,6 +24,54 @@ object Pinyin {
 
     private val cache = ConcurrentHashMap<Char, String>()
 
+    /**
+     * 常见影视片名首字（按首字母大致分组排列）。
+     *
+     * 站点搜索接口只支持中文关键词，输入「ZMSR」这类拼音首字母时站内搜索必然无结果。
+     * 因此本地索引也没命中时，取首字母对应的若干常见汉字去站内搜索（例如 Z → 「走」），
+     * 把结果补进本地索引后再用 [score] 过滤，就能找到《走马上任》。
+     * 分组不写死：运行时用 [firstLetter] 动态归类，保证与匹配逻辑用的是同一套拼音映射。
+     */
+    private const val COMMON_TITLE_CHARS =
+        "爱安傲暗阿埃艾案熬奥澳" +
+        "不白北半八冰别宝暴爸霸百" +
+        "陈春城超苍柴长常成初楚从错" +
+        "大东都第独岛道灯地帝点电丁定" +
+        "恶儿二而饿恩" +
+        "风非凡反犯方放飞分封福父富复" +
+        "高古光归国果刚哥歌格故关官广鬼" +
+        "好海花黄回火还孩汉和河黑红狐虎画" +
+        "家江今金惊九就居局剧绝军几机集剑" +
+        "卡开看康考科可克客空口哭苦快" +
+        "来蓝老乐雷冷离李里立连恋林龙楼路" +
+        "马美梦魔秘母明名满漫猫迷蜜命门木" +
+        "那南难内能你年娘鸟宁牛农女暖" +
+        "朋平破普漂拍排派盘跑皮片品评" +
+        "七奇齐千前钱强亲青清情秋球去全群" +
+        "任人日如热让燃忍认柔若荣惹然" +
+        "上似三四神少生死世十使始事深身首双" +
+        "他天太唐特田甜铁听停通同童头图土团" +
+        "我王万为未文问无五舞物雾外完晚网" +
+        "西希息洗喜下夏仙先现相香想小笑心新" +
+        "一衣医依已以义艺忆亦异雨语玉遇元园远月云" +
+        "走最在再战追主之中终至真捉纸咒赘昨醉重招"
+
+    private const val CANDIDATES_PER_LETTER = 12
+
+    private val candidatesByLetter: Map<Char, List<Char>> by lazy {
+        val map = LinkedHashMap<Char, MutableList<Char>>()
+        for (c in COMMON_TITLE_CHARS) {
+            val letter = firstLetter(c) ?: continue
+            val bucket = map.getOrPut(letter) { mutableListOf() }
+            if (bucket.size < CANDIDATES_PER_LETTER && c !in bucket) bucket.add(c)
+        }
+        map
+    }
+
+    /** 某个拼音首字母对应的常见片名首字（用于站内中文搜索兜底） */
+    fun candidateChars(letter: Char): List<Char> =
+        candidatesByLetter[letter.lowercaseChar()] ?: emptyList()
+
     // GB2312 一级字库按拼音排序的区位码分界（24 个边界 → 23 个声母区间）
     private val SEC = intArrayOf(
         1601, 1637, 1833, 2078, 2274, 2302, 2433, 2594, 2787, 3106,
@@ -129,7 +177,9 @@ object Pinyin {
                 t.contains(f, ignoreCase = true) -> 0
                 ini.startsWith(f) -> 1
                 ini.contains(f) -> 2
-                f.length >= 2 && isSubsequence(f, ini) -> 3
+                // 子序列匹配限制长度差：否则「zmsr」会在超长片名的首字母串里
+                // 凑出假阳性，既污染结果又阻止拼音反查兜底触发
+                f.length >= 2 && ini.length <= f.length + 3 && isSubsequence(f, ini) -> 3
                 else -> -1
             }
             if (s >= 0 && (best < 0 || s < best)) best = s
@@ -145,6 +195,9 @@ object Pinyin {
             if (s < 0) null else s to v
         }
             .sortedWith(compareBy<Pair<Int, VideoItem>> { it.first }.thenBy { it.second.title })
+            // 站内反查会用多个候选汉字搜到同一部片（path 不同、片名相同），
+            // 展示层按片名去重，避免搜索结果里出现两张一模一样的卡片。
+            .distinctBy { it.second.title }
             .take(limit)
             .map { it.second }
     }

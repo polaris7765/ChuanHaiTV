@@ -1,5 +1,7 @@
 package com.yujiannatian.tv.ui
 
+import android.graphics.drawable.ClipDrawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.KeyEvent
@@ -9,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -296,13 +299,30 @@ class DetailFragment : Fragment() {
         DownloadStatus.FAILED -> "重试"
     }
 
+    /**
+     * 下载按钮视觉：文字显示百分比 / 已下载，背景用 ClipDrawable 从左向右填充进度。
+     * 底层仍是 bg_button selector，焦点高亮不受影响。
+     */
+    private fun applyDownloadVisual(btn: Button, state: DownloadState) {
+        btn.text = downloadLabel(state)
+        val progress = if (state.status == DownloadStatus.DOWNLOADING) state.progress else 0
+        val layer = (btn.background as? LayerDrawable)
+            ?.takeIf { it.findDrawableByLayerId(R.id.download_progress_fill) != null }
+            ?: (ContextCompat.getDrawable(btn.context, R.drawable.bg_download_progress)
+                ?.mutate() as? LayerDrawable)?.also { btn.background = it }
+            ?: return
+        (layer.findDrawableByLayerId(R.id.download_progress_fill) as? ClipDrawable)?.level =
+            progress.coerceIn(0, 100) * 100
+        layer.invalidateSelf()
+    }
+
     private fun updateDownloadButton(key: String) {
         if (!isAdded) return
-        val label = downloadLabel(VideoDownloader.state(requireContext().applicationContext, key))
+        val state = VideoDownloader.state(requireContext().applicationContext, key)
         for (i in 0 until episodeGrid.childCount) {
             val v = episodeGrid.getChildAt(i)
             if (v.getTag(R.id.tag_download_key) == key) {
-                v.findViewById<Button>(R.id.btn_download)?.text = label
+                v.findViewById<Button>(R.id.btn_download)?.let { applyDownloadVisual(it, state) }
             }
         }
     }
@@ -376,7 +396,8 @@ class DetailFragment : Fragment() {
             val ep = items[position]
             holder.play.text = ep.name
             holder.itemView.setTag(R.id.tag_download_key, ep.path)
-            holder.download.text = downloadLabel(
+            applyDownloadVisual(
+                holder.download,
                 VideoDownloader.state(holder.itemView.context.applicationContext, ep.path)
             )
             holder.play.setOnClickListener { onPlay(ep, position) }
