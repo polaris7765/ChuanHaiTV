@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.yujiannatian.tv.R
 import com.yujiannatian.tv.core.AppSettings
+import com.yujiannatian.tv.core.DeviceKind
 import com.yujiannatian.tv.core.LoadResult
 import com.yujiannatian.tv.core.SiteConfig
 import com.yujiannatian.tv.core.SiteRepository
@@ -193,7 +194,12 @@ class SettingsFragment : Fragment() {
     private fun focusBackOnEntry() {
         hideSoftInput()
         editUrl.clearFocus()
-        activity?.findViewById<View>(R.id.btn_back)?.requestFocus()
+        // 「进入设置默认选中返回按钮」是 TV 遥控器需求。手机端 TouchFocus 已清掉
+        // focusableInTouchMode，触摸模式下 requestFocus 会失败，且手机不需要 D-pad 焦点，
+        // 因此只在 TV 端抢焦点；两端的输入框焦点与软键盘都已在上面清掉。
+        if (DeviceKind.isTv(requireContext())) {
+            activity?.findViewById<View>(R.id.btn_back)?.requestFocus()
+        }
     }
 
     /** 隐藏软键盘（离开设置或打开选择列表时调用），避免「输入法选择器」残留 */

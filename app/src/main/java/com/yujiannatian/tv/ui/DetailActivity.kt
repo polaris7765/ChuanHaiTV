@@ -26,7 +26,7 @@ class DetailActivity : BaseTvActivity() {
             )
         }
 
-        /** 从历史 / 收藏进入：带上次观看的剧集与进度，详情页加载后直接续播 */
+        /** 从历史记录进入：带上次观看的剧集与进度，详情页加载后直接续播（收藏不续播） */
         fun startResume(context: Context, entry: LibraryEntry) {
             context.startActivity(
                 Intent(context, DetailActivity::class.java)

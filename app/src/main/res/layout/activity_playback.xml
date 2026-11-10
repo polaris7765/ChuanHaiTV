@@ -28,6 +28,7 @@
         <Button
             android:id="@+id/btn_back_top"
             style="@style/TvChip"
+            android:background="@drawable/bg_overlay_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
@@ -59,6 +60,7 @@
         <Button
             android:id="@+id/btn_cast"
             style="@style/TvChip"
+            android:background="@drawable/bg_overlay_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
@@ -74,6 +76,7 @@
         <Button
             android:id="@+id/btn_settings"
             style="@style/TvChip"
+            android:background="@drawable/bg_overlay_chip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"

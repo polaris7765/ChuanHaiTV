@@ -276,9 +276,18 @@ class HomeFragment : Fragment() {
         }
     }
 
-    /** 网格点击：历史 / 收藏里的影片优先按上次进度直接续播，其余进详情页 */
+    /**
+     * 网格点击：
+     * · 我的收藏只当书签用，进剧集详情 / 选集列表，不自动起播；
+     * · 历史记录按上次观看的剧集与进度续播；
+     * · 其余（热播 / 分类 / 搜索）只进详情页。
+     */
     private fun onGridClick(item: VideoItem) {
         val cur = current
+        if (cur?.type == NavType.FAVORITES) {
+            DetailActivity.start(requireContext(), item)
+            return
+        }
         if (cur != null && isLocalSection(cur)) {
             val entry = localEntries.firstOrNull { it.video.path == item.path }
             val resumeEntry = entry?.takeIf { it.episodePath.isNotBlank() }

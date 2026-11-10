@@ -137,6 +137,7 @@ class VideoGridAdapter(
 
     override fun onViewRecycled(holder: VH) {
         holder.cover.setTag(R.id.tag_image_url, null)
+        holder.cover.setTag(R.id.tag_image_shown, null)
         holder.cover.setImageDrawable(null)
         holder.itemView.setOnFocusChangeListener(null)
     }

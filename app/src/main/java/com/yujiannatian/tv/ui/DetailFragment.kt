@@ -48,7 +48,7 @@ class DetailFragment : Fragment() {
                 arguments = bundleOf(K_PATH to path, K_TITLE to title, K_COVER to cover)
             }
 
-        /** 从历史 / 收藏进入：带上次观看的剧集与进度，加载后直接续播 */
+        /** 从历史记录进入：带上次观看的剧集与进度，加载后直接续播（收藏不续播） */
         fun newInstance(
             path: String,
             title: String,
@@ -205,7 +205,7 @@ class DetailFragment : Fragment() {
             d.sources.indexOfFirst { it.name == def }.takeIf { it >= 0 } ?: 0
         } else 0
         fillEpisodes(startIndex)
-        // 从历史 / 收藏带着进度进来：加载完成后直接跳到上次那集续播
+        // 从历史记录带着进度进来：加载完成后直接跳到上次那集续播
         if (resumeEpisodePath.isNotBlank()) attemptResume()
     }
 

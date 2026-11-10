@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 分类下的影片列表：与首页一致的多列封面网格。
+     列数由 GridFragment 按屏幕宽度动态计算（3~6 列），卡片复用 item_video.xml。
+     关闭滚动条与边缘光晕，列表只做纵向滚动；方向键左右换列、上下换行。 -->
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/grid_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:clipToPadding="false"
+    android:descendantFocusability="afterDescendants"
+    android:focusable="false"
+    android:overScrollMode="never"
+    android:paddingLeft="@dimen/overscan_h"
+    android:paddingRight="@dimen/overscan_h"
+    android:paddingTop="@dimen/overscan_v"
+    android:paddingBottom="@dimen/overscan_v"
+    android:scrollbars="none" />

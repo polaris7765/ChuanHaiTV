@@ -1252,6 +1252,7 @@ drawable bg_card
 drawable bg_controller_bottom
 drawable bg_download_progress
 drawable bg_edit
+drawable bg_overlay_chip
 drawable bg_play_pause
 drawable bg_sidebar
 drawable btn_checkbox_checked_mtrl
@@ -1705,6 +1706,7 @@ id forever
 id fragment_container_view_tag
 id grid_frame
 id grid_hint
+id grid_list
 id group_divider
 id guidance_breadcrumb
 id guidance_container
@@ -1912,6 +1914,7 @@ id tag_accessibility_clickable_spans
 id tag_accessibility_heading
 id tag_accessibility_pane_title
 id tag_download_key
+id tag_image_shown
 id tag_image_url
 id tag_item_path
 id tag_on_apply_window_listener
@@ -2059,6 +2062,7 @@ layout fragment_category_index
 layout fragment_contact
 layout fragment_detail
 layout fragment_downloads
+layout fragment_grid
 layout fragment_home
 layout fragment_search
 layout fragment_settings

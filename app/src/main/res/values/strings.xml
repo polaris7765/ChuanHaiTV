@@ -50,7 +50,7 @@
     <string name="settings_source_auto">自动（第一个可用）</string>
     <string name="settings_source_current">默认播放源：%s</string>
     <string name="settings_source_hint">打开任意影片后，这里会列出该站点出现过的播放源；选择后每次进入详情默认选中该源。遥控器确认键打开列表选择。</string>
-    <string name="settings_author">作者：polaris7765（董先生）</string>
+    <string name="settings_author">作者：polaris7765</string>
     <string name="settings_copyright">© 2026 川海影视TV　仅供个人学习交流，请支持正版</string>
     <string name="action_favorite">收藏</string>
     <string name="action_unfavorite">取消收藏</string>

@@ -38,6 +38,7 @@ drawable bg_card
 drawable bg_controller_bottom
 drawable bg_download_progress
 drawable bg_edit
+drawable bg_overlay_chip
 drawable bg_play_pause
 drawable bg_sidebar
 drawable cover_placeholder
@@ -112,6 +113,7 @@ id episode_label
 id error_panel
 id error_text
 id grid_hint
+id grid_list
 id header
 id home_root
 id icon
@@ -145,6 +147,7 @@ id speed_row
 id status
 id subtitle
 id tag_download_key
+id tag_image_shown
 id tag_image_url
 id tag_item_path
 id title
@@ -162,6 +165,7 @@ layout fragment_category_index
 layout fragment_contact
 layout fragment_detail
 layout fragment_downloads
+layout fragment_grid
 layout fragment_home
 layout fragment_search
 layout fragment_settings

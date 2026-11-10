@@ -3,7 +3,7 @@
 > 项目代号：ChuanHaiTV（早期称 YuJianTV / 遇见影视 TV）
 > 包名：`com.yujiannatian.tv`　版本：`1.0.0 (versionCode 1)`
 > 适用平台：Android TV / Android 手机（横屏）　minSdk 23 / targetSdk 34 / compileSdk 34
-> 文档更新：2026-11-09　作者：polaris7765（董先生）
+> 文档更新：2026-11-10　作者：polaris7765
 
 ---
 
@@ -72,7 +72,7 @@ app/src/main/java/com/yujiannatian/tv/
     ├── PlaybackActivity.kt    ExoPlayer 全屏播放 + 自定义控制层
     ├── GridActivity / SearchActivity / CategoryIndexActivity / DownloadsActivity
     ├── SettingsFragment.kt    地址检测 / 下载开关 / 默认播放源 / 版权信息
-    ├── ImageLoader.kt         封面加载（LRU + 圆角裁剪 + App 图标兜底 + 图床熔断）
+    ├── ImageLoader.kt         封面加载（内存 LRU + 磁盘 + 负缓存 / 分池 / 圆角裁剪 / 图床熔断 / 命中统计）
     ├── Presenters.kt          Leanback Presenter（VideoCardPresenter / InfoPresenter）
     └── TvAdapters.kt          VideoGridAdapter / SidebarAdapter / GridSpacingDecoration
 ```
@@ -98,7 +98,7 @@ Fragment (guardedLaunch 协程) ──► Adapter ──► RecyclerView / Prese
 DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JSON
              → PlaybackActivity.start(url, paths, names, index, cover, startPositionMs)
              → media3 HlsMediaSource / ProgressiveMediaSource → 播放
-             → onStop / finish() 保存 position 到 LibraryStore → 历史 / 收藏续播
+             → onStop / finish() 保存 position 到 LibraryStore → 历史记录续播（收藏只到详情页）
 ```
 
 `LoadResult` 是关键抽象：UI 层只处理 `Ok` / `Err`，不需要知道 HTTP、解析、缓存细节。
@@ -164,16 +164,51 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | --- | --- |
 | **绑定时立即 `setImageBitmap(iconFallback)`** | 不等网络结果，任何时刻都有缩略图；成功才替换成海报，失败保持图标 |
 | `SiteHttpClient.imageBytes()` 独立短超时通道 | connect 4s / read 6s / 不自动重试；图片与页面抓取隔离 |
-| 重试降为 2 次、线程池 6 | 失败快速收敛，不拖累可用图床 |
+| 重试降为 2 次；现拆为磁盘池 2 / 网络池 4 | 失败快速收敛，且失败任务不再堵住缓存命中任务，见 §6.3 |
 | **图床熔断** `blockedHosts` | 同一 host 连续失败 2 次 → 熔断 5 分钟，期间直接走兜底，把线程让给好图床 |
 | `ViewOutlineProvider` + `clipToOutline` | 所有 ImageView 统一裁圆角（`cover_corner_radius` = 12dp），**不依赖布局 / 自定义 View**，覆盖首页网格、详情封面、Leanback `ImageCardView` |
 | `iconFallback` 按尺寸缓存 | 深色卡片底 + 居中 App 启动图标，避免正方形 icon 被 centerCrop 裁切；滚动时复用 Bitmap 减少 GC |
 | `cover_placeholder.xml` 加 `corners` | 占位底本身也圆角，与裁剪叠加不冲突 |
+| **磁盘池 / 网络池分离** | 见 §6.3，避免失败网络任务堵住磁盘命中任务 |
+| **缓存写 `filesDir`** | `cacheDir` 会被系统在存储紧张时整体清掉，导致「缓存莫名其妙没了」 |
+| **URL 负缓存** | 失效封面 6 小时内直接兜底，不再每次启动重复联网 |
 
 > 经验：**兜底图必须在绑定时同步设置，不要放到异步失败分支**。弱网 / CDN 半死状态下，
 > "失败"可能需要几十秒甚至几分钟才发生，用户看到的就是长时间空白。
+> 但注意：这条只适用于「需要异步加载」的情况，内存命中 / 同图重绑必须先判断，
+> 否则每次重绑都会先闪一下兜底图，看起来反而像「缓存没生效」。
 
-### 6.3 已知外部依赖风险
+### 6.3 缓存命中率专项（本轮修复）
+
+用户反馈「缩略图缓存命中率不高，是不是没优先从缓存读」。核查结论：**旧代码顺序确实是
+内存 → 磁盘 → 网络**，但以下几个实现细节让命中在体感上不成立：
+
+| 根因 | 修复 |
+| --- | --- |
+| 磁盘读取和「2 次网络重试 + 200ms sleep」共用同一个 6 线程**无界**队列；失效图床的失败任务长期占满线程，磁盘命中任务被堵在队尾，用户只看到兜底图 | 拆成 `diskPool`(2 线程，读盘) 与 `netPool`(4 线程，有界队列 48 + `DiscardOldestPolicy`)；磁盘命中不再受网络排队影响 |
+| 每次 bind 无条件先 `setImageBitmap(iconFallback)`，哪怕内存已命中或 View 上已经是同一张图 | 新增 `tag_image_shown`：内存命中同步直接显示；同图重绑直接 return，不排队也不闪图 |
+| 离屏 / 已复用的 View 仍会跑完整个读盘 + 网络流程，白白占线程 | 每个异步任务开工前 `isStillBound(target, key)` 校验；落图时主线程二次校验 |
+| 缓存写在 `cacheDir`，系统清理后全部丢失；同一张图列表页 `http`、详情页 `https`、HTML 残留 `&amp;` / `#` 会被当成不同 key | 改 `filesDir/covers/`；`normalizeCoverKey()` 归一化；读取时兼容 4 种旧目录 / 旧 key 组合并自愈迁移 |
+| 写盘 `.tmp` 文件名固定，同一 URL 并发下载会互相覆盖导致 `renameTo` 失败 | 临时文件名加 `System.nanoTime()` 唯一后缀 |
+| 图床熔断表只在进程内，重启后要把失效 URL 全部重试一遍 | `filesDir/covers_failed/<md5>.fail` 记录时间戳，`NEGATIVE_TTL_MS = 6h`，期间直接兜底；下载成功时清除标记 |
+
+统计口径：`requests` 只在请求**有结论**后自增（内存 / 磁盘 / 负缓存 / 网络成功 / 确定失败），
+每 10 次在 logcat 打一行 `ImageLoader` 快照，命中率 = 未发起网络请求的比例。
+调用 `ImageLoader.cacheStats()` 也可主动取快照。
+
+实测（Pixel 3a API 34 模拟器，release 包）：
+
+```
+冷启动     请求=10 内存=0 磁盘=0 负缓存=0 网络=4 失败=6 缓存命中率=0%
+二次启动   请求=10 内存=0 磁盘=4 负缓存=6 网络=0 失败=0 缓存命中率=100%
+三次启动   请求=10 内存=0 磁盘=4 负缓存=6 网络=0 失败=0 缓存命中率=100%
+```
+
+> 注意：10 张封面里 6 张来自已失效图床，**这部分永远无法变成真实海报**；
+> 负缓存只是把它们从「每次都联网失败」变成「零请求直接兜底」。要提升真实海报覆盖率，
+> 仍需站点侧修图床或引入封面代理。
+
+### 6.4 已知外部依赖风险
 
 图床失联属于**站点侧问题，App 无法修复**。当前表现：可用图床的海报正常显示，
 失效图床显示圆角 App 图标。若需进一步提升覆盖率，可考虑：
@@ -203,7 +238,12 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 - TV 端隐藏投屏入口（TV 是接收端）；手机投屏成功后暂停本机播放。
 - 返回键：面板打开先关面板；TV 控制层显示时只隐藏 UI、不退出播放。
 - 续播：`EXTRA_START_POSITION` → `p.seekTo()`；`onStop()` / `finish()` 把
-  `currentPosition` 写回 `LibraryStore`，历史 / 收藏再进入时自动按上次进度播放。
+  `currentPosition` 写回 `LibraryStore`，**仅历史记录**再进入时自动按上次进度播放。
+  「我的收藏」只作书签：`HomeFragment.onGridClick()` 对 `NavType.FAVORITES` 直接调
+  `DetailActivity.start()`（不带 resume 参数），只打开剧集详情 / 选集列表，不自动起播。
+- 顶部「片名 · 第X集」(`play_title`) 与左上「返回」、右上「设置」共用
+  `bg_overlay_chip.xml`：默认态仍是原来的 `#99000000` 半透明黑，焦点 / 按下态提亮加描边，
+  在 XML 里覆盖 `TvChip` 样式自带的 `bg_button`，TV 上依然看得见焦点。
 
 ---
 
@@ -213,7 +253,7 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | --- | --- |
 | 地址检测 | `SiteRepository.probe()` 抓 sitemap 并解析出分类数，成功才 `SiteConfig.commit()` |
 | 新地址输入框 | **默认留空**（只显示 hint），进入时不抢焦点，避免弹出输入法选择器 |
-| 默认焦点 | 进设置聚焦左上角 header 的 `btn_back`；`onPause()` / 打开列表时 `hideSoftInput()` |
+| 默认焦点 | **TV 专属**：进设置聚焦左上角 header 的 `btn_back`；手机端 `TouchFocus` 已清掉 `focusableInTouchMode`，触摸模式下 `requestFocus()` 会失败且手机不需要 D-pad 焦点，故只清输入框焦点 + `hideSoftInput()`（`onPause()` / 打开列表时同样处理） |
 | 默认播放源 | 用 **Button + AlertDialog 单选列表**，不用 `Spinner`——Spinner 下拉弹层在 Android TV 上无法用方向键选中条目 |
 | 播放源列表来源 | `AppSettings.knownSources()` = 内置保底线路（新视觉云 / 爱奇艺 / 好好云）+ 详情页累积的真实线路；进设置再异步探测首页首部影片详情补充 |
 | 允许下载 | TV 默认关、其余端默认开；详情页据此显隐单集下载按钮 |
@@ -225,6 +265,25 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 > 分类索引从 Leanback `BrowseSupportFragment`（ListRow 横向滚动）改为 RecyclerView 垂直单列，
 > 结构上只允许上下滑动。
 
+**分类下的影片列表为多列封面网格**：`GridFragment` 用普通 `Fragment` + `RecyclerView` +
+`GridLayoutManager`，列数按屏幕宽度以 132dp 卡片基准动态计算（`3~6` 列）；卡片直接复用首页
+`item_video.xml`，因此海报尺寸、12dp 圆角、字号、焦点高亮与「热播榜」完全一致。方向键
+上下换行、左右换列，同一行任意一列都能选中；`canScrollHorizontally()` 恒为 false、
+`overScrollMode=never`，列表只做纵向滚动，不会出现整页左右滑动。
+
+配套细节：`GridSpacingDecoration(columns, 8dp)` 给列间距与行间距；分页为「焦点接近尾部」+
+「滚动接近尾部」双触发（阈值 12 项）；`focusFirstItem()` 分 120ms / 600ms 两波把首次焦点交给
+第一项（状态层移除与系统把焦点给「返回」按钮是分帧完成的），且只要焦点已在列表内就不再抢
+焦点，不打断用户操作。
+
+> 演进：这一页先后用过 Leanback `VerticalGridPresenter(5 列)` → 单列行卡片
+> (`item_video_row.xml`) → 现行多列网格。单列方案虽彻底禁掉左右键，但一屏只能看到 3 部，
+> 用户要求恢复与首页一致的紧凑网格，因此删除 `item_video_row.xml` 与
+> `VideoGridAdapter.layoutRes` 参数，左右键重新用于同行换列（这是多列网格能被完整操作的前提）。
+
+> 实机验证：进入「国产剧」后首行首列呈焦点高亮，左右键在同一行换列、下键换行。
+> 注意 `uiautomator dump` 不报告 RecyclerView 项的 `focused=true`，这个页面要用截图高亮判断焦点。
+
 > 播放源名称必须与 `HtmlParser.parseDetail` 解析出的名称一致才能匹配生效
 > （`DetailFragment` 用 `indexOfFirst { it.name == def }`，匹配不到退回第一个）。
 
@@ -235,9 +294,11 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 - 内存缓存 `ConcurrentHashMap`，TTL：分类 6h / 列表 20min / 详情 30min / 播放地址 1min。
 - 缓存 key 含 `SiteConfig.version` 与 `baseUrl`，换地址后自动失效。
 - 历史 / 收藏 / 偏好用 SharedPreferences + Gson；下载文件落 `getExternalFilesDir(MOVIES)/yujian_downloads`。
-- **封面磁盘缓存**：`cacheDir/covers/<url 的 MD5>.img` 存原始图片字节，原子写入（tmp + rename），
-  超过 64MB 按 lastModified 裁剪到 48MB。加载顺序：内存 LRU → 磁盘 → 网络；命中磁盘完全不发请求。
-  图床熔断只作用于网络阶段，不影响已缓存封面。
+- **封面三级缓存**：`filesDir/covers/<归一化 key 的 MD5>.img` 存原始图片字节，原子写入
+  （唯一 tmp 名 + rename）；`cacheDir/covers/` 与「原始 URL 作 key」的旧文件仍只读兼容并自愈迁移。
+  超过 64MB 按 lastModified 裁剪到 48MB。加载顺序：内存 LRU → 磁盘 → 负缓存 → 网络；
+  命中磁盘 / 负缓存完全不发请求。图床熔断只作用于网络阶段，不影响已缓存封面。
+  `filesDir/covers_failed/<md5>.fail` 保存失效时间戳（6h TTL），避免重启后重复联网，见 §6.3。
 - `VideoDownloader`：m3u8 解析 + AES-128 解密 + 分片合并；进度通过观察者回显到选集按钮，
   按钮背景用 `bg_download_progress.xml` 的 `ClipDrawable`（level = progress × 100）从左向右填充。
 - **断点续传**：
@@ -295,18 +356,23 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | 投屏按钮 TV 仍显示 / 手机端设置里没有投屏 | 检查 `applyDeviceRules()` 与 `DeviceKind.isTv()`；曾因无条件 `btn_settings_cast = GONE` 把手机端投屏也一起隐藏，现改为仅 TV 隐藏 |
 | `ZMSR` 搜不到《走马上任》 | 站点 `/search/{kw}.html` 只支持中文，拼音首字母直接丢过去必然零结果；且本地索引只抓各大类前 8 页热播榜，长尾片名不在其中。修复：索引页数提到 12 页 + `SearchIndex.remoteByInitials()` 用 `Pinyin.candidateChars()` 取首字常见汉字（Z → 「走」）并发站内搜索补索引，再由 `Pinyin.filter()` 按首字母过滤 |
 | 分类索引能左右滑动 | 旧 BrowseSupportFragment 的 ListRow 是 HorizontalGridView；已改为 RecyclerView 垂直单列 |
+| 分类下影片列表一屏只有 1 部 / 与首页网格不一致 | 曾用 `LinearLayoutManager` 单列行卡片；现统一为 `GridLayoutManager` 动态 3~6 列 + `item_video.xml`，见 §8 |
+| 封面缓存命中率低 / 每次都像重新加载 | 顺序本来就是缓存优先，但磁盘读取被失败网络任务堵在无界队列里、每次 bind 先闪兜底图、`cacheDir` 会被系统清理、失效 URL 每次重启都重试；修复与实测见 §6.3 |
 | 手写 `DefaultTimeBar` 不绘制 | 必须用 `exo_progress_placeholder`，见 §7 |
 | `ZMSR` 搜出两张一模一样的卡片 | 多个候选汉字反查会带进同片名不同 path 的条目；`Pinyin.filter()` 排序后按片名 `distinctBy` 去重。同步完成后状态文案改为「已同步站内搜索结果」，不再长期停在「正在同步…」 |
 | 下载列表卡在「下载中 100%」 | 进程被回收时最后一次 100% 已落盘但 `done` 状态没写入；`App.onCreate()` 的 `reconcile()` 按文件完整性校正为 done / paused |
 | 下载中点不到「取消」、界面卡顿 | 进度每次回调都 `notifyDataSetChanged()` 整表重建；改为结构不变时只原地更新可见条目，见 §9 |
 | 取消后条目消失、无处续传 | `cancel()` 由删除记录改为标记 `paused`，「我的下载」提供「继续」按钮 |
+| 手机端点按钮要按两次才生效 | `TvButton` / `TvChip` 样式与 `item_sidebar` / `item_video` / `card_text` 都设了 `focusableInTouchMode=true`，触摸模式下第一次点按只聚焦、第二次才触发点击。由 `TouchFocus` 在非 TV 设备统一清掉该属性（`EditText` 除外，否则输入框唤不起键盘），TV 设备完全跳过、焦点属性一个都不改 |
+| 从「我的收藏」点剧集直接开始播放 | `HomeFragment.onGridClick()` 原先对历史 / 收藏都查 `LibraryEntry` 并走 `startResume()`；现对 `FAVORITES` 直接 `DetailActivity.start()`，续播只保留给历史记录 |
 
 ---
 
 ## 12. 后续建议
 
-1. `.gitignore` 补上 `app/build/`、`*.apk`（或只放行 release 包）——
-   首次提交曾误把 2000+ 个构建产物纳入版本库。
+1. `.gitignore` 已补（忽略 `*.jks`、根级 `/build`、`/.gradle`、`/local.properties`），
+   但还需补 `app/build/`、`*.apk`，并用 `git rm -r --cached` 清理首次提交误入的
+   2000+ 个构建产物；根目录仍留有两个 `copy.apk`。
 2. 版本号发版时递增 `versionCode` / `versionName`（当前仍是 1）。
 3. 真机 TV 回归：D-pad 焦点链、播放源对话框、播放按钮圆角、返回键行为
    （本机无 TV AVD，这几项主要靠布局 + 代码核对 + 单测覆盖）。

@@ -57,6 +57,7 @@ class VideoCardPresenter : Presenter() {
     override fun onUnbindViewHolder(viewHolder: ViewHolder) {
         val image = (viewHolder.view as? ImageCardView)?.mainImageView ?: return
         image.setTag(R.id.tag_image_url, null)
+        image.setTag(R.id.tag_image_shown, null)
         image.setImageDrawable(null)
     }
 }

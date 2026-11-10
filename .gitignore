@@ -1,0 +1,9 @@
+# Release signing keystore & local signing config (含口令，禁止入库)
+app/release-key.jks
+*.jks
+*.keystore
+
+# Local build artifacts
+/build
+/.gradle
+/local.properties

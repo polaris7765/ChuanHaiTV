@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 播放页顶部「片名 · 第X集」信息、返回按钮、设置按钮共用的半透明底。
+     默认态与原来 play_title 的 #99000000 完全一致（纯色矩形，无圆角），
+     焦点 / 按下态提亮并加描边，保证 TV 遥控器上仍看得见焦点。 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#CC2F6BFF" />
+            <stroke android:width="2dp" android:color="#FFF2F6FF" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#B32F6BFF" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#99000000" />
+        </shape>
+    </item>
+</selector>
