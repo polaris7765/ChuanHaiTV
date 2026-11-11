@@ -11,6 +11,7 @@
     <color name="success">#FF4ADE80</color>
     <color name="text_primary">#FFF2F6FF</color>
     <color name="text_secondary">#FF9AA8C7</color>
+    <dimen name="button_corner_radius">8dp</dimen>
     <dimen name="card_cover_height">148dp</dimen>
     <dimen name="card_height">184dp</dimen>
     <dimen name="card_width">132dp</dimen>
@@ -27,14 +28,18 @@
     <dimen name="sidebar_item_height">40dp</dimen>
     <dimen name="text_body">14sp</dimen>
     <dimen name="text_card">14sp</dimen>
+    <dimen name="text_key">20sp</dimen>
+    <dimen name="text_key_function">14sp</dimen>
     <dimen name="text_sidebar">12sp</dimen>
     <dimen name="text_small">12sp</dimen>
     <dimen name="text_tiny">11sp</dimen>
     <dimen name="text_title">20sp</dimen>
+    <dimen name="top_chip_height">36dp</dimen>
     <item name="tag_download_key" type="id"/>
     <item name="tag_image_shown" type="id"/>
     <item name="tag_image_url" type="id"/>
     <item name="tag_item_path" type="id"/>
+    <item name="tag_rounded_clip" type="id"/>
     <string name="action_back">返回</string>
     <string name="action_cast">投屏</string>
     <string name="action_change_site">更换地址</string>

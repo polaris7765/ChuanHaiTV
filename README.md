@@ -85,7 +85,7 @@ java -version   # 需为 17；若不是，请自行设置 JAVA_HOME 指向 JDK 1
 ```bash
 ./gradlew assembleDebug          # 调试包：app/build/outputs/apk/debug/app-debug.apk
 ./gradlew assembleRelease        # 发布包：app/build/outputs/apk/release/app-release.apk
-./gradlew testDebugUnitTest      # 纯 JVM 单元测试（24 个用例）
+./gradlew testDebugUnitTest      # 纯 JVM 单元测试（32 个用例）
 ./gradlew clean assembleRelease  # 增量缓存异常时用 clean 重建
 ```
 
@@ -195,7 +195,9 @@ ChuanHaiTV/
 - 控制条中间只有圆形半透明底的播放／暂停按钮，底部为进度条与时间文本。**进度条必须用 media3 官方占位符 `exo_progress_placeholder`**，详见 TECH_NOTES §7。
 - 遥控器：OK／空格暂停，左右 10 秒快退快进，上到返回、下到设置，MENU 打开设置，播完自动下一集。
 - 设置面板：倍速播放 + 投屏入口。**手机端**（发送端）显示投屏，TV 端（接收端）隐藏；标题栏在所有页面都不再显示站点 http 地址。
+- 顶部「返回」「片名 · 第X集」「设置」三块统一 `36dp` 高（`top_chip_height`）、同一 `bg_overlay_chip` 半透明底；按钮显式 `minHeight=0dp` 并去掉纵向 padding，避免 Button 默认 minHeight 把按钮撑得比剧集信息高。
 - `onStop()` 把 `currentPosition` 写入 `LibraryStore`；从**历史记录**进入时经 `EXTRA_START_POSITION` → `seekTo()` 自动续播。「我的收藏」在 `HomeFragment.onGridClick()` 中直接走 `DetailActivity.start()`，不带续播参数，只到剧集详情 / 选集列表。
+- **本地下载视频也记忆进度**：`DownloadRecord.position` 按下载 key 存在 `index.json`，`PlaybackActivity.startLocal(..., downloadKey)` 读取并在 `prepare()` 里 `seekTo()`；`onStop()` / `finish()` 均写回进度，「我的下载」完成项显示「上次看到 mm:ss」。播放结束（`STATE_ENDED`）或距片尾不足 3 秒时写 0，下次从头播。清空历史记录不影响下载进度。
 
 ### 下载与断点续传
 
@@ -205,6 +207,8 @@ ChuanHaiTV/
 - 取消任务保留已下载部分并把记录标为「已暂停」，「我的下载」里直接点「继续」即从断点续传；只有「删除」才清除文件与 `.part`。
 - 应用启动时会自动校正上次被中断的下载记录：文件已完整则归入「下载完成」，否则归入可续传的「下载中 / 已暂停」，不会卡在「下载中 100%」。
 - 「我的下载」分「下载中」「下载完成」两组：下载中显示百分比、已缓存大小、横向进度条与「取消」；已完成显示「播放」「删除」。进度刷新只更新可见行，不会因整表重建导致卡顿或按钮点不中。
+- **退到后台仍继续下载**：`enqueue()` 启动 `DownloadService`（`dataSync` 前台服务），持有 `PARTIAL_WAKE_LOCK`，通知栏常驻显示任务数与平均进度，点通知回到「我的下载」；所有任务结束后自动 `stopService`。Manifest 已声明 `FOREGROUND_SERVICE`、`FOREGROUND_SERVICE_DATA_SYNC`、`POST_NOTIFICATIONS`。
+- 剧集按钮的百分比填充用 `ClipDrawable` + `bg_download_progress.xml` 四边 2dp 内缩，再由 `DetailFragment.ensureRoundedClip()` 给按钮挂 `ViewOutlineProvider` / `clipToOutline`，蓝色填充不会溢出圆角方框。
 
 ### 封面图
 
@@ -216,9 +220,24 @@ ChuanHaiTV/
 4. 负缓存命中（近期确认下载失败的 URL）→ 保持兜底图，不再重复联网；
 5. 以上都未命中 → 才走独立网络线程池的短超时通道，成功后写磁盘 + 内存。
 
-命中率优化要点：磁盘读取与网络下载**分池**，失效图床的失败任务不会堵住缓存命中任务；网络队列有界、优先保留新任务；离屏 View 的任务在开工前即被丢弃；缓存写到 `filesDir/covers/`（旧版 `cacheDir` 会被系统在存储紧张时清空），读取时兼容旧目录与旧 key 并自愈迁移；缓存 key 归一化 `http/https`、`&amp;`、fragment 差异；失效 URL 记入 `filesDir/covers_failed/`，6 小时后自动重试；写盘临时文件名唯一，避免并发覆盖。超过 64MB 按时间裁剪到 48MB，所有设备统一 12dp 圆角裁剪。
+命中率优化要点：磁盘读取与网络下载**分池**，失效图床的失败任务不会堵住缓存命中任务；网络队列有界、优先保留新任务；离屏 View 的任务在开工前即被丢弃；缓存写到 `filesDir/covers/`（旧版 `cacheDir` 会被系统在存储紧张时清空），读取时兼容旧目录与旧 key 并自愈迁移；缓存 key 归一化 `http/https`、`&amp;`、fragment 差异；失效 URL 记入 `filesDir/covers_failed/`，手机 6 小时 / TV 10 分钟后自动重试；写盘临时文件名唯一，避免并发覆盖。超过 64MB 按时间裁剪到 48MB，所有设备统一 12dp 圆角裁剪。
 
 实测（`adb logcat -s ImageLoader:I`，每 10 次请求打一行快照）：冷启动 `网络=4 失败=6 命中率=0%`，杀进程重启后 `磁盘=4 负缓存=6 网络=0 命中率=100%`，第三次启动仍为 100%。站点里失效的封面仍显示圆角 App 图标，但不再反复发起注定失败的请求。
+
+**TV 端封面专项**：手机有封面、TV 没有，不是缓存路径差异，而是 TV 系统版本 / WebView 内核较旧导致图片请求链路更脆弱：TLS 套件协商、`Accept` 里带 AVIF/WebP 时 CDN 返回 TV 无法解码的格式、HTTPS 图床证书或协议异常、以及一次失败被写进 6 小时负缓存后长期不再重试。现按 TV 走兼容链：`ConnectionSpec` 覆盖 MODERN_TLS / COMPATIBLE_TLS / CLEARTEXT，首次去掉 AVIF、第二次强制 `image/jpeg,image/png`，HTTPS 失败回退 HTTP，TV 放宽 connect/read 超时并允许连接层重试，整条链 25 秒总时限；TV 负缓存 TTL 缩到 10 分钟，且进程内 host 熔断不再给「未真正请求过的 URL」写长时负缓存。若仍显示 App 图标，可在「设置 → 重试封面」清除失效记录后立即重新拉取。
+
+### 错误页与返回
+
+网络失败 / 解析异常 / 地址异常 / 崩溃报告都用全屏 `StatusFragment` 覆盖层，下层标题栏的「返回」按钮会被遮住，因此错误态自带一个可方向键聚焦的「**返回**」按钮（位于「重试」左侧，带返回图标）：
+
+- `MainActivity`（根页面）→ 清掉崩溃记录并 `showHome(false)` 回到**主菜单**；
+- 其它页面（详情 / 分类列表 / 搜索 / 分类索引 / 我的下载）→ `finish()` 回到**上一级页面**；
+- 加载态只显示中央动画和文案，不显示任何按钮；「重试 / 更换地址 / 恢复默认地址」行为不变。
+
+### 搜索键与加载提示
+
+- 屏上键盘字母 / 数字由 `text_key` 统一放大到 `20sp`；多字功能键用 `text_key_function`（14sp）并按字数分配行权重（单字符 1、两字 2、四字 4），避免「中文输入」在 TV 上被截断成「中文输...」。
+- 所有加载态统一为「中间一个旋转 loading 小动画 + 下方文字说明」：`fragment_status.xml` 的全屏状态页显示调用方 `showLoading(text)` 的文案与副提示「请稍候，正在从站点获取数据…」；首页内容区有 `home_loading` 局部动画，搜索页索引 / 搜索状态带 `search_progress` 小 spinner。加载态不再显示感叹号与重试按钮，只有失败态才出现。
 
 ---
 
@@ -228,7 +247,7 @@ ChuanHaiTV/
 ./gradlew testDebugUnitTest
 ```
 
-纯 JVM 单元测试共 24 个，覆盖 `HtmlParser`（4 类页面解析）、`HlsPlaylist`、`Pinyin`、`DeviceKind`、`CastController`。测试报告在 `app/build/reports/tests/testDebugUnitTest/`。
+纯 JVM 单元测试共 32 个，覆盖 `HtmlParser`（4 类页面解析 + 多种懒加载封面属性）、`HlsPlaylist`、`Pinyin`、`DeviceKind`、`CastController` 等。测试报告在 `app/build/reports/tests/testDebugUnitTest/`。
 
 TV 真机的 D-pad 焦点链、对话框选择、返回键行为目前依赖布局＋代码核对与构建验证，建议在实机 TV 上复验一次。
 
@@ -266,7 +285,8 @@ apksigner verify --print-certs ChuanhaiTV-v1.0.0-release.apk
 
 | 项 | 说明 |
 | --- | --- |
-| 封面图床失效 | 站点侧部分图床已不可达（如 `viptulz.com`、`img.lzipic.com` 等），端内无法修复；表现为显示圆角 App 图标。现已用 6 小时负缓存避免每次启动重复请求，若要真正显示海报仍需自建封面代理或多图床回退，见 TECH_NOTES §12 |
+| 封面图床失效 | 站点侧部分图床已不可达（如 `viptulz.com`、`img.lzipic.com` 等），端内无法修复；表现为显示圆角 App 图标。手机端 6 小时 / TV 端 10 分钟负缓存避免反复请求，TV 另有 TLS、Accept、HTTPS→HTTP 兼容链与「设置 → 重试封面」入口；要真正提高海报覆盖率仍需自建封面代理或多图床回退，见 TECH_NOTES §6.5 |
+| TV 真机未复验 | 本机只有手机 AVD，TV D-pad 焦点链与 TV 封面兼容链靠代码逻辑、Manifest 与手机 AVD 侧验证；上电视盒子后建议走一遍「设置 → 重试封面」与分类索引网格的方向键导航 |
 | 构建产物入库 | 首次提交把 `.gradle/`、`app/build/` 等 2000+ 个构建产物纳入了版本控制；现已补 `.gitignore`，但只忽略根级 `/build`、`/.gradle`，尚未覆盖 `app/build/` 与 `*.apk`，建议补齐后用 `git rm -r --cached` 清理索引 |
 | 默认播放源 | 设置页内置 3 条保底线路，并在进入设置时异步探测站点真实线路；网络不通时仍可用保底项 |
 | 版本号 | 当前仍为 `1.0.0 / versionCode 1`，对外发新版前需手动递增 |

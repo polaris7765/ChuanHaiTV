@@ -2,6 +2,7 @@ package com.yujiannatian.tv.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
@@ -56,6 +57,13 @@ class MainActivity : BaseTvActivity() {
     override fun onStatusRetry() {
         CrashHandler.clear(this)
         showHome(true)
+    }
+
+    /** 首页的错误 / 崩溃报告页点「返回」：清掉崩溃记录并回到主菜单，不再重复弹报告 */
+    override fun onStatusBack() {
+        Log.i("YuJianTV", "状态页返回：MainActivity → 主菜单")
+        CrashHandler.clear(this)
+        showHome(false)
     }
 
     @Suppress("OVERRIDE_DEPRECATION")

@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:2:1-83:12
-INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:2:1-83:12
-INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:2:1-83:12
-INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:2:1-83:12
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:2:1-93:12
+INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:2:1-93:12
+INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:2:1-93:12
+INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:2:1-93:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/admin/.gradle/caches/8.14.3/transforms/b9e6577729817f0823a7d58333fd61bd/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/admin/.gradle/caches/8.14.3/transforms/83fcee7aa25dfd712b4be5811faa50fb/transformed/appcompat-1.6.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.leanback:leanback:1.0.0] /Users/admin/.gradle/caches/8.14.3/transforms/f7aabbbca06d1cb263638778a7abd2e3/transformed/leanback-1.0.0/AndroidManifest.xml:17:1-22:12
@@ -63,58 +63,70 @@ MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/admin/.gradle/cach
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/admin/.gradle/caches/8.14.3/transforms/750c1a3c119cc757c8d50f87baa0ef23/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.print:print:1.0.0] /Users/admin/.gradle/caches/8.14.3/transforms/b47f0283b14dc439359245faa7f7f040/transformed/print-1.0.0/AndroidManifest.xml:17:1-22:12
 	package
-		INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
 	android:versionCode
-		INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:2:11-69
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:2:11-69
 uses-permission#android.permission.INTERNET
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:4:5-67
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:4:5-67
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:4:22-64
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:4:22-64
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:5:5-79
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:5:5-79
 MERGED from [androidx.media3:media3-exoplayer:1.3.1] /Users/admin/.gradle/caches/8.14.3/transforms/55b59ed249baa0f136b00398f8f2bfea/transformed/media3-exoplayer-1.3.1/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-exoplayer:1.3.1] /Users/admin/.gradle/caches/8.14.3/transforms/55b59ed249baa0f136b00398f8f2bfea/transformed/media3-exoplayer-1.3.1/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-common:1.3.1] /Users/admin/.gradle/caches/8.14.3/transforms/b8a6e214c4f4ca34ad7d546b8f52df02/transformed/media3-common-1.3.1/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-common:1.3.1] /Users/admin/.gradle/caches/8.14.3/transforms/b8a6e214c4f4ca34ad7d546b8f52df02/transformed/media3-common-1.3.1/AndroidManifest.xml:22:5-79
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:5:22-76
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:5:22-76
 uses-permission#android.permission.ACCESS_WIFI_STATE
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:6:5-76
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:6:5-76
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:6:22-73
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:6:22-73
 uses-permission#android.permission.CHANGE_WIFI_MULTICAST_STATE
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:8:5-86
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:8:5-86
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:8:22-83
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:8:22-83
 uses-permission#android.permission.WAKE_LOCK
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:9:5-68
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:9:5-68
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:9:22-65
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:9:22-65
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:11:5-77
+	android:name
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:11:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_DATA_SYNC
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:12:5-87
+	android:name
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:12:22-84
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:13:5-77
+	android:name
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:13:22-74
 uses-feature#android.software.leanback
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:12:5-87
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:16:5-87
 	android:required
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:12:60-84
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:16:60-84
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:12:19-59
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:16:19-59
 uses-feature#android.hardware.touchscreen
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:13:5-90
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:17:5-90
 	android:required
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:13:63-87
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:17:63-87
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:13:19-62
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:17:19-62
 uses-feature#android.hardware.microphone
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:14:5-89
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:18:5-89
 	android:required
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:14:62-86
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:18:62-86
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:14:19-61
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:18:19-61
 application
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:16:5-81:19
-INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:16:5-81:19
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:20:5-91:19
+INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:20:5-91:19
 MERGED from [androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:28:5-89
@@ -128,123 +140,131 @@ MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] /Users/admin/.gra
 MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/admin/.gradle/caches/8.14.3/transforms/73d363859ad57f32189c0f48c4ad8952/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
 MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/admin/.gradle/caches/8.14.3/transforms/73d363859ad57f32189c0f48c4ad8952/transformed/startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
 	android:extractNativeLibs
-		INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] /Users/admin/.gradle/caches/8.14.3/transforms/4d486a21a1051100a3c3287bad4ef073/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:24:9-35
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:28:9-35
 	android:label
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:21:9-41
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:25:9-41
 	android:roundIcon
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:23:9-54
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:27:9-54
 	android:icon
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:20:9-43
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:24:9-43
 	android:allowBackup
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:18:9-35
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:22:9-35
 	android:banner
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:19:9-42
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:23:9-42
 	android:theme
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:25:9-40
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:29:9-40
 	android:networkSecurityConfig
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:22:9-69
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:26:9-69
 	android:usesCleartextTraffic
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:26:9-44
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:30:9-44
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:17:9-28
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:21:9-28
 activity#com.yujiannatian.tv.ui.SplashActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:28:9-42:20
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:32:9-46:20
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:32:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:36:13-50
 	android:exported
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:31:13-36
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:35:13-36
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:30:13-94
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:34:13-94
 	android:theme
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:33:13-44
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:37:13-44
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:29:13-46
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:33:13-46
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LEANBACK_LAUNCHER
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:34:13-37:29
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:38:13-41:29
 action#android.intent.action.MAIN
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:35:17-69
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:39:17-69
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:35:25-66
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:39:25-66
 category#android.intent.category.LEANBACK_LAUNCHER
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:36:17-86
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:40:17-86
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:36:27-83
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:40:27-83
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:38:13-41:29
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:42:13-45:29
 category#android.intent.category.LAUNCHER
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:40:17-77
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:44:17-77
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:40:27-74
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:44:27-74
 activity#com.yujiannatian.tv.ui.MainActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:44:9-49:53
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:48:9-53:53
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:49:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:53:13-50
 	android:launchMode
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:48:13-44
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:52:13-44
 	android:exported
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:47:13-36
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:51:13-36
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:46:13-94
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:50:13-94
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:45:13-44
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:49:13-44
 activity#com.yujiannatian.tv.ui.GridActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:51:9-54:53
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:55:9-58:53
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:54:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:58:13-50
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:53:13-59
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:57:13-59
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:52:13-44
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:56:13-44
 activity#com.yujiannatian.tv.ui.DetailActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:56:9-59:53
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:60:9-63:53
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:59:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:63:13-50
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:58:13-59
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:62:13-59
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:57:13-46
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:61:13-46
 activity#com.yujiannatian.tv.ui.SearchActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:61:9-64:53
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:65:9-68:53
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:64:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:68:13-50
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:63:13-83
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:67:13-83
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:62:13-46
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:66:13-46
 activity#com.yujiannatian.tv.ui.CategoryIndexActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:66:9-69:53
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:70:9-73:53
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:69:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:73:13-50
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:68:13-59
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:72:13-59
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:67:13-53
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:71:13-53
 activity#com.yujiannatian.tv.ui.DownloadsActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:71:9-74:53
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:75:9-78:53
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:74:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:78:13-50
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:73:13-59
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:77:13-59
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:72:13-49
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:76:13-49
 activity#com.yujiannatian.tv.ui.PlaybackActivity
-ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:76:9-80:52
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:80:9-84:52
 	android:screenOrientation
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:79:13-50
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:83:13-50
 	android:configChanges
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:78:13-83
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:82:13-83
 	android:theme
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:80:13-49
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:84:13-49
 	android:name
-		ADDED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml:77:13-48
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:81:13-48
+service#com.yujiannatian.tv.core.DownloadService
+ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:87:9-90:56
+	android:exported
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:89:13-37
+	android:foregroundServiceType
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:90:13-53
+	android:name
+		ADDED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml:88:13-49
 uses-sdk
-INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
-INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
+INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
+INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/admin/.gradle/caches/8.14.3/transforms/b9e6577729817f0823a7d58333fd61bd/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /Users/admin/.gradle/caches/8.14.3/transforms/b9e6577729817f0823a7d58333fd61bd/transformed/appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.6.1] /Users/admin/.gradle/caches/8.14.3/transforms/83fcee7aa25dfd712b4be5811faa50fb/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
@@ -362,9 +382,9 @@ MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/
 MERGED from [androidx.print:print:1.0.0] /Users/admin/.gradle/caches/8.14.3/transforms/b47f0283b14dc439359245faa7f7f040/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.print:print:1.0.0] /Users/admin/.gradle/caches/8.14.3/transforms/b47f0283b14dc439359245faa7f7f040/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
 	android:targetSdkVersion
-		INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /Users/admin/Workspace/WorkBuddy/TVApps/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Workspace/WorkBuddy/ChuanHaiTV/app/src/main/AndroidManifest.xml
 provider#androidx.startup.InitializationProvider
 ADDED from [androidx.emoji2:emoji2:1.2.0] /Users/admin/.gradle/caches/8.14.3/transforms/f4ae19562d38a28291e32661b52f5199/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] /Users/admin/.gradle/caches/8.14.3/transforms/4698e4b27dc29447ca1fb80986033719/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:24:9-32:20

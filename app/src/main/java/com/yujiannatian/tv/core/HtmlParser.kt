@@ -298,9 +298,29 @@ object HtmlParser {
      */
     private fun coverFromImg(img: Element?): String {
         if (img == null) return ""
-        val url = img.attr("data-original").takeIf { it.isNotBlank() }
-            ?: img.attr("src").takeIf { it.isNotBlank() } ?: ""
-        return if (url.contains("pic.png")) "" else url
+        // 不同镜像站 / 模板用的懒加载属性不一样：TV 端常配另一个站点，
+        // 只认 data-original 会整批解析不到封面。按常见优先级依次兜底。
+        val candidates = listOf(
+            img.attr("data-original"),
+            img.attr("data-src"),
+            img.attr("data-lazy-src"),
+            img.attr("data-echo"),
+            img.attr("data-url"),
+            img.attr("srcset").substringBefore(',').trim().substringBefore(' '),
+            img.attr("src")
+        )
+        return candidates.firstOrNull { it.isNotBlank() && isRealCover(it) }?.trim() ?: ""
+    }
+
+    /** 过滤站点通用占位图（含 pic.png、loading.gif、base64 空图） */
+    private fun isRealCover(raw: String): Boolean {
+        val url = raw.trim()
+        if (url.startsWith("data:", ignoreCase = true)) return false
+        if (url.contains("pic.png", ignoreCase = true)) return false
+        return !Regex(
+            "(loading|blank|nopic|noimage|placeholder|default|lazy)[^/]*\\.(gif|png|jpe?g|webp)",
+            RegexOption.IGNORE_CASE
+        ).containsMatchIn(url)
     }
 
     private fun videoFromLi(li: Element): VideoItem? {

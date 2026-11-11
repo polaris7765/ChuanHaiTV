@@ -35,6 +35,7 @@ import com.yujiannatian.tv.R
 import com.yujiannatian.tv.core.CastController
 import com.yujiannatian.tv.core.CastDevice
 import com.yujiannatian.tv.core.DeviceKind
+import com.yujiannatian.tv.core.DownloadsStore
 import com.yujiannatian.tv.core.LibraryEntry
 import com.yujiannatian.tv.core.LibraryStore
 import com.yujiannatian.tv.core.LoadResult
@@ -74,6 +75,8 @@ class PlaybackActivity : FragmentActivity() {
         private const val EXTRA_VIDEO_PATH = "video_path"
         private const val EXTRA_VIDEO_COVER = "video_cover"
         private const val EXTRA_START_POSITION = "start_position"
+        /** 本地下载文件对应的下载 key：用它把播放进度写回 DownloadsStore */
+        private const val EXTRA_DOWNLOAD_KEY = "download_key"
 
         fun start(
             context: Context,
@@ -85,7 +88,8 @@ class PlaybackActivity : FragmentActivity() {
             index: Int,
             videoPath: String = "",
             cover: String = "",
-            startPositionMs: Long = 0L
+            startPositionMs: Long = 0L,
+            downloadKey: String = ""
         ) {
             context.startActivity(
                 Intent(context, PlaybackActivity::class.java)
@@ -98,15 +102,28 @@ class PlaybackActivity : FragmentActivity() {
                     .putExtra(EXTRA_VIDEO_PATH, videoPath)
                     .putExtra(EXTRA_VIDEO_COVER, cover)
                     .putExtra(EXTRA_START_POSITION, startPositionMs)
+                    .putExtra(EXTRA_DOWNLOAD_KEY, downloadKey)
             )
         }
 
-        /** 播放已下载的本地文件 */
-        fun startLocal(context: Context, title: String, episodeName: String, file: String) {
+        /**
+         * 播放已下载的本地文件：从下载记录里读出上次观看位置作为续播起点；
+         * 播放完成会写 0，下次从头开始。进度不写进「历史记录」，避免与在线续播混淆。
+         */
+        fun startLocal(
+            context: Context,
+            title: String,
+            episodeName: String,
+            file: String,
+            downloadKey: String
+        ) {
+            val resume = DownloadsStore.positionOf(context.applicationContext, downloadKey)
             start(
                 context, title, episodeName,
                 Uri.fromFile(File(file)).toString(),
-                emptyList(), emptyList(), 0
+                emptyList(), emptyList(), 0,
+                startPositionMs = resume,
+                downloadKey = downloadKey
             )
         }
     }
@@ -146,6 +163,10 @@ class PlaybackActivity : FragmentActivity() {
     private var episodeName: String = ""
     /** 外部传入的续播起点（毫秒），>0 时准备完成后跳转到该进度 */
     private var startPositionMs = 0L
+    /** 本地下载文件的 key：非空时把播放进度写回 DownloadsStore */
+    private var downloadKey: String = ""
+    /** 本集已播放到结尾：退出时进度清零，下次从头开始 */
+    private var completed = false
     private var paths: List<String> = emptyList()
     private var names: List<String> = emptyList()
     private var currentIndex = 0
@@ -186,6 +207,7 @@ class PlaybackActivity : FragmentActivity() {
         videoPath = intent.getStringExtra(EXTRA_VIDEO_PATH).orEmpty()
         videoCover = intent.getStringExtra(EXTRA_VIDEO_COVER).orEmpty()
         startPositionMs = intent.getLongExtra(EXTRA_START_POSITION, 0L)
+        downloadKey = intent.getStringExtra(EXTRA_DOWNLOAD_KEY).orEmpty()
 
         // 控制层显隐完全由我们自己管理：关闭 media3 的自动显隐，避免两套计时器错开。
         // 触屏 / 遥控器任意按键都会唤起控制层（四角按钮 + PlayerView 控制条一起出现），
@@ -226,6 +248,7 @@ class PlaybackActivity : FragmentActivity() {
 
     override fun onStop() {
         saveProgress()
+        saveLocalProgress()
         releasePlayer()
         super.onStop()
     }
@@ -238,6 +261,7 @@ class PlaybackActivity : FragmentActivity() {
     /** 退出播放时（返回 / 换源 / 系统销毁）保存当前进度，供历史 / 收藏续播使用 */
     override fun finish() {
         saveProgress()
+        saveLocalProgress()
         super.finish()
     }
 
@@ -291,8 +315,25 @@ class PlaybackActivity : FragmentActivity() {
         )
     }
 
+    /**
+     * 本地下载文件的播放进度写回 DownloadsStore，不进「历史记录」。
+     * 播放完毕或剩余不足 3 秒视为「看完了」，保存 0，下次从头开始播。
+     */
+    private fun saveLocalProgress() {
+        if (downloadKey.isBlank()) return
+        val p = player?.currentPosition ?: return
+        val duration = player?.duration ?: 0L
+        val finished = completed || (duration > 0 && p >= duration - 3_000L)
+        DownloadsStore.setPosition(
+            this,
+            downloadKey,
+            if (finished) 0L else p.coerceAtLeast(0L)
+        )
+    }
+
     private fun prepare(url: String) {
         currentUrl = url
+        completed = false // 换集 / 重试后重新按「未播完」计
         errorPanel.visibility = View.GONE
         releasePlayer()
         recordHistory()
@@ -323,7 +364,10 @@ class PlaybackActivity : FragmentActivity() {
             p.prepare()
             p.playWhenReady = true
             // 续播：外部传入了上次退出时的进度，准备好后直接跳到该位置继续播放
-            if (startPositionMs > 0L) p.seekTo(startPositionMs)
+            if (startPositionMs > 0L) {
+                Log.i("YuJianTV", "续播跳转 ${startPositionMs}ms（下载记录或历史记录）")
+                p.seekTo(startPositionMs)
+            }
             p.addListener(object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
                     showPlayerError(
@@ -333,7 +377,12 @@ class PlaybackActivity : FragmentActivity() {
                 }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
-                    if (playbackState == Player.STATE_ENDED && paths.isNotEmpty()) playNext()
+                    if (playbackState != Player.STATE_ENDED) return
+                    completed = true
+                    // 播放完不再保留进度：本地下载文件下次从头播
+                    saveLocalProgress()
+                    if (paths.isNotEmpty()) playNext()
+                    else titleView.text = "$videoTitle  ·  已播完"
                 }
             })
         }

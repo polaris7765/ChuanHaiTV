@@ -1,5 +1,6 @@
 package com.yujiannatian.tv.ui
 
+import android.graphics.Outline
 import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -278,7 +280,8 @@ class DetailFragment : Fragment() {
                 requireContext(),
                 detail?.title ?: fallbackTitle,
                 episode.name,
-                state.file
+                state.file,
+                episode.path
             )
             return
         }
@@ -304,6 +307,7 @@ class DetailFragment : Fragment() {
      * 底层仍是 bg_button selector，焦点高亮不受影响。
      */
     private fun applyDownloadVisual(btn: Button, state: DownloadState) {
+        ensureRoundedClip(btn)
         btn.text = downloadLabel(state)
         val progress = if (state.status == DownloadStatus.DOWNLOADING) state.progress else 0
         val layer = (btn.background as? LayerDrawable)
@@ -314,6 +318,23 @@ class DetailFragment : Fragment() {
         (layer.findDrawableByLayerId(R.id.download_progress_fill) as? ClipDrawable)?.level =
             progress.coerceIn(0, 100) * 100
         layer.invalidateSelf()
+    }
+
+    /**
+     * 进度填充层是 ClipDrawable，只会沿水平方向裁出矩形，右端仍是直角，
+     * 单靠 drawable 无法贴合 8dp 圆角；在 View 层统一做圆角 outline 裁剪，
+     * 让填充色、焦点描边、文字全部落在圆角方框内。
+     */
+    private fun ensureRoundedClip(btn: Button) {
+        if (btn.getTag(R.id.tag_rounded_clip) == true) return
+        val radius = btn.resources.getDimension(R.dimen.button_corner_radius)
+        btn.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, radius)
+            }
+        }
+        btn.clipToOutline = true
+        btn.setTag(R.id.tag_rounded_clip, true)
     }
 
     private fun updateDownloadButton(key: String) {

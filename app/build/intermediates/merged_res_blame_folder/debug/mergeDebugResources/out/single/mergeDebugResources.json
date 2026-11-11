@@ -16,8 +16,8 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/bg_overlay_chip.xml"
     },
     {
-        "merged": "com.yujiannatian.tv.app-debug-36:/layout_fragment_grid.xml.flat",
-        "source": "com.yujiannatian.tv.app-main-38:/layout/fragment_grid.xml"
+        "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable_loading_spinner.xml.flat",
+        "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/loading_spinner.xml"
     },
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_fragment_settings.xml.flat",
@@ -168,6 +168,10 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/layout/fragment_search.xml"
     },
     {
+        "merged": "com.yujiannatian.tv.app-debug-36:/layout_fragment_status.xml.flat",
+        "source": "com.yujiannatian.tv.app-main-38:/layout/fragment_status.xml"
+    },
+    {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable-xxhdpi_ic_launcher_background.png.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-pngs-32:/drawable-xxhdpi/ic_launcher_background.png"
     },
@@ -176,8 +180,16 @@
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/ic_launcher_foreground.xml"
     },
     {
+        "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable_loading_arc.xml.flat",
+        "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/loading_arc.xml"
+    },
+    {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/drawable_ic_arrow_back.xml.flat",
         "source": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-main-38:/drawable/ic_arrow_back.xml"
+    },
+    {
+        "merged": "com.yujiannatian.tv.app-debug-36:/layout_activity_playback.xml.flat",
+        "source": "com.yujiannatian.tv.app-main-38:/layout/activity_playback.xml"
     },
     {
         "merged": "/Users/admin/.gradle/daemon/8.14.3/com.yujiannatian.tv.app-debug-36:/layout_fragment_detail.xml.flat",

@@ -14,6 +14,10 @@
     <!-- SSDP 组播发现投屏设备 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 后台下载：前台服务保活 + 进度通知（Android 13+ 通知权限未授予时服务仍可运行） -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- 电视设备：无触摸屏，Leanback 启动器 -->
     <uses-feature
@@ -94,6 +98,12 @@
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/PlaybackTheme" />
+
+        <!-- 后台下载保活：dataSync 类型满足 Android 14 的前台服务类型要求 -->
+        <service
+            android:name="com.yujiannatian.tv.core.DownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

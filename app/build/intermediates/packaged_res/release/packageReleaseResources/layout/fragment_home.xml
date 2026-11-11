@@ -151,14 +151,48 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/video_grid"
+        <!-- 内容区加载态：网格之上叠一层居中小动画 + 文字说明，
+             左栏仍可操作，不会像全屏状态层那样遮住导航。 -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:descendantFocusability="afterDescendants"
-            android:focusable="false" />
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/video_grid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="false" />
+
+            <LinearLayout
+                android:id="@+id/home_loading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/bg"
+                android:clickable="false"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:indeterminate="true"
+                    android:indeterminateDrawable="@drawable/loading_spinner" />
+
+                <TextView
+                    android:id="@+id/home_loading_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center"
+                    android:text="正在加载…"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_body" />
+            </LinearLayout>
+        </FrameLayout>
 
         <TextView
             android:id="@+id/grid_hint"

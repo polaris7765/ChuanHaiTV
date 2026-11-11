@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.yujiannatian.tv.core.HtmlParserCoverTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-11T02:49:22.690Z" hostname="LeoDongs-MacBook-Pro.local" time="0.029">
+  <properties/>
+  <testcase name="多种懒加载属性都能取到真实封面且占位图被过滤" classname="com.yujiannatian.tv.core.HtmlParserCoverTest" time="0.029"/>
+  <testcase name="只有占位图时封面留空交给 ImageLoader 兜底" classname="com.yujiannatian.tv.core.HtmlParserCoverTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

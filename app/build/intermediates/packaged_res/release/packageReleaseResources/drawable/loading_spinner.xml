@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ProgressBar 的 indeterminateDrawable：RotateDrawable 会按 level 自转，
+     无需代码里启动属性动画，TV / 手机 / 低版本系统行为一致。 -->
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/loading_arc"
+    android:fromDegrees="0"
+    android:toDegrees="360"
+    android:pivotX="50%"
+    android:pivotY="50%" />

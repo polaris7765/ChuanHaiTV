@@ -1,5 +1,6 @@
 package com.yujiannatian.tv.core
 
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -15,6 +16,17 @@ object SiteHttpClient {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
             "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
+    /**
+     * 老电视盒子（Android 6/7/9）的 TLS 实现与根证书较旧，显式给出
+     * MODERN_TLS / COMPATIBLE_TLS / CLEARTEXT 三种连接规格，避免 OkHttp 在部分设备上
+     * 只协商到 TLSv1 而直接握手失败，导致整批 HTTPS 图床封面被判为「失效」。
+     */
+    private val CONNECTION_SPECS = listOf(
+        ConnectionSpec.MODERN_TLS,
+        ConnectionSpec.COMPATIBLE_TLS,
+        ConnectionSpec.CLEARTEXT
+    )
+
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .connectTimeout(12, TimeUnit.SECONDS)
@@ -23,6 +35,7 @@ object SiteHttpClient {
             .followRedirects(true)
             .followSslRedirects(true)
             .retryOnConnectionFailure(true)
+            .connectionSpecs(CONNECTION_SPECS)
             .build()
     }
 
@@ -38,6 +51,23 @@ object SiteHttpClient {
             .followRedirects(true)
             .followSslRedirects(true)
             .retryOnConnectionFailure(false)
+            .connectionSpecs(CONNECTION_SPECS)
+            .build()
+    }
+
+    /**
+     * 电视端封面专用：盒子普遍走 WiFi / 有线但 DNS 与 TLS 握手明显慢于手机，
+     * 4s / 6s 很容易在真正失败前就超时，进而把一堆 URL 永久写进「失效」负缓存。
+     * 这里放宽到 8s / 12s，并允许一次连接层重试。
+     */
+    private val imageClientRelaxed: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(8, TimeUnit.SECONDS)
+            .readTimeout(12, TimeUnit.SECONDS)
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .retryOnConnectionFailure(true)
+            .connectionSpecs(CONNECTION_SPECS)
             .build()
     }
 
@@ -130,17 +160,34 @@ object SiteHttpClient {
         }
     }
 
-    /** 封面图专用：走短超时 client，快速失败以便立即回退到 App 图标 */
-    fun imageBytes(url: String): ByteArray = imageBytes(url, emptyMap())
-
-    fun imageBytes(url: String, extraHeaders: Map<String, String>): ByteArray {
+    /**
+     * 封面图专用：短超时 client，快速失败以便立即回退到 App 图标。
+     *
+     * · [relaxedTimeout] 为 TV 设备放宽超时；
+     * · [legacyFormat] 为 true 时只接受 jpeg/png，**不协商 webp/avif**——
+     *   部分 CDN 会按 Accept 返回 AVIF，而 Android TV（常见 6~9）的 BitmapFactory
+     *   无法解码 AVIF，手机能显示、电视只显示兜底图的差异就来自这里；
+     * · Accept 常驻去掉了 avif 条目，避免首轮就拿到 TV 无法解码的格式。
+     */
+    fun imageBytes(
+        url: String,
+        extraHeaders: Map<String, String> = emptyMap(),
+        relaxedTimeout: Boolean = false,
+        legacyFormat: Boolean = false
+    ): ByteArray {
+        val accept = if (legacyFormat) {
+            "image/jpeg,image/png,image/*;q=0.8"
+        } else {
+            "image/webp,image/jpeg,image/png,image/*;q=0.8"
+        }
         val builder = Request.Builder()
             .url(url)
             .header("User-Agent", USER_AGENT)
-            .header("Accept", "image/avif,image/webp,image/apng,image/*,*/*;q=0.8")
+            .header("Accept", accept)
         extraHeaders.forEach { (k, v) -> builder.header(k, v) }
         val request = builder.build()
-        imageClient.newCall(request).execute().use { response ->
+        val http = if (relaxedTimeout) imageClientRelaxed else imageClient
+        http.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
             return response.body?.bytes() ?: throw IOException("empty body")
         }

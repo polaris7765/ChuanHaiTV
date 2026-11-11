@@ -67,5 +67,7 @@ data class DownloadRecord(
     val time: Long = 0L,
     val status: String = "done",
     val progress: Int = 100,
-    val episodePath: String = ""
+    val episodePath: String = "",
+    /** 本地播放进度（毫秒）；播放完成写 0，旧记录缺字段时默认从头播 */
+    val position: Long = 0L
 )

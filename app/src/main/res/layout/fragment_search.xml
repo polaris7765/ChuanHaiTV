@@ -29,14 +29,30 @@
             android:maxLines="1"
             android:nextFocusDown="@+id/keyboard" />
 
-        <TextView
-            android:id="@+id/search_status"
-            style="@style/TvSub"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:maxLines="2"
-            android:text="@string/search_hint" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/search_progress"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/loading_spinner"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/search_status"
+                style="@style/TvSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:maxLines="2"
+                android:text="@string/search_hint" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/keyboard"

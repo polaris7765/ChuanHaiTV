@@ -15,11 +15,17 @@
     <dimen name="text_card">14sp</dimen>
     <dimen name="text_small">12sp</dimen>
     <dimen name="text_tiny">11sp</dimen>
+    <!-- 搜索页屏上键盘：电视上字母要看得清，功能键字数多故单独用略小字号 -->
+    <dimen name="text_key">20sp</dimen>
+    <dimen name="text_key_function">14sp</dimen>
+    <dimen name="button_corner_radius">8dp</dimen>
     <!-- 左栏收窄到屏幕 1/10 后仍要单行显示「历史记录 / 我的收藏」 -->
     <dimen name="text_sidebar">12sp</dimen>
 
     <dimen name="sidebar_item_height">40dp</dimen>
     <dimen name="episode_item_height">54dp</dimen>
+    <!-- 播放页顶部「返回 / 片名·第X集 / 设置」统一高度，与 activity_main 标题栏返回按钮一致 -->
+    <dimen name="top_chip_height">36dp</dimen>
 
     <!-- 覆盖 Leanback 库默认字号：库内标题栏/卡片文字原本按 10-foot 大屏设计得过大 -->
     <dimen name="lb_browse_title_text_size">16sp</dimen>

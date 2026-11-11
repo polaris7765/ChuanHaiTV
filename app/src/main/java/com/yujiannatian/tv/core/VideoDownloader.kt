@@ -79,6 +79,28 @@ object DownloadsStore {
             }
         }
     }
+
+    /** 本地播放进度：按下载 key 存取，不依赖历史记录（清空历史不影响下载进度） */
+    @Synchronized
+    fun positionOf(context: Context, key: String): Long =
+        list(context).firstOrNull { it.key == key }?.position ?: 0L
+
+    @Synchronized
+    fun setPosition(context: Context, key: String, position: Long) {
+        val records = list(context)
+        if (records.none { it.key == key }) return
+        try {
+            indexFile(context).writeText(
+                gson.toJson(
+                    DownloadIndex(records.map {
+                        if (it.key == key) it.copy(position = position) else it
+                    })
+                )
+            )
+        } catch (t: Throwable) {
+            // 索引写失败不影响本次播放
+        }
+    }
 }
 
 /**
@@ -137,6 +159,15 @@ object VideoDownloader {
 
     fun isActive(key: String) = jobs[key]?.isActive == true
 
+    /** 供前台服务通知使用：当前并行任务数与平均进度 */
+    fun activeSummary(): Pair<Int, Int> {
+        val keys = jobs.keys.toList()
+        if (keys.isEmpty()) return 0 to 0
+        val values = keys.mapNotNull { states[it]?.progress }
+        val avg = if (values.isEmpty()) 0 else values.sum() / values.size
+        return keys.size to avg.coerceIn(0, 100)
+    }
+
     fun enqueue(
         context: Context,
         key: String,
@@ -147,6 +178,8 @@ object VideoDownloader {
         if (isActive(key)) return
         val app = context.applicationContext
         if (state(app, key).status == DownloadStatus.DONE) return
+        // 前台服务保活：App 退到后台 / 熄屏后仍继续下载
+        DownloadService.ensureStarted(app)
 
         fun save(status: String, progress: Int, file: String = "", size: Long = 0L) {
             DownloadsStore.add(
@@ -214,6 +247,8 @@ object VideoDownloader {
             } finally {
                 jobs.remove(key)
                 persistedProgress.remove(key)
+                // 最后一个任务收尾后释放前台服务与 WakeLock
+                if (jobs.isEmpty()) DownloadService.requestStop(app)
             }
         }
     }
@@ -260,6 +295,7 @@ object VideoDownloader {
             key,
             DownloadState(DownloadStatus.FAILED, progress, "已暂停 ${progress}%，可续传")
         )
+        if (jobs.isEmpty()) DownloadService.requestStop(app)
     }
 
     /** 删除任务：连同已下载文件与断点文件一起清除 */

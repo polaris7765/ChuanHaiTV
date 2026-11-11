@@ -5,4 +5,6 @@
     <item name="tag_image_shown" type="id" />
     <item name="tag_item_path" type="id" />
     <item name="tag_download_key" type="id" />
+    <!-- 下载按钮已挂圆角 outline 裁剪，避免进度刷新时反复重建 ViewOutlineProvider -->
+    <item name="tag_rounded_clip" type="id" />
 </resources>

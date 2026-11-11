@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 加载 / 错误 / 崩溃报告共用。message 用 weight 占剩余高度，
-     保证底部三个可聚焦按钮在任何电视屏幕上始终可见、可用方向键操作。 -->
+<!-- 加载 / 错误 / 崩溃报告共用。
+     加载态：屏幕正中一个小号旋转动画 + 下方文字说明（文字由 showLoading(text) 传入）。
+     错误态：感叹号图标、标题、说明（weight 占剩余高度）与底部四个可聚焦按钮
+     （返回 / 重试 / 更换地址 / 恢复默认地址）。覆盖层是全屏的，下层标题栏返回按钮
+     被遮住，因此这里显式提供「返回」出口：首页回主菜单，其它页面回上一级。
+     保证任意电视屏幕上按钮始终可见、可用方向键操作。 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,13 +16,42 @@
     android:paddingTop="@dimen/overscan_v"
     android:paddingBottom="@dimen/overscan_v">
 
-    <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:visibility="gone" />
+    <!-- 所有 showLoading() 页面统一显示这一块：动画居中，下面两行说明文字 -->
+    <LinearLayout
+        android:id="@+id/loading_block"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/loading_spinner" />
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_title" />
+
+        <TextView
+            android:id="@+id/loading_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="请稍候，正在从站点获取数据…"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_small" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/icon"
@@ -27,7 +60,8 @@
         android:text="!"
         android:textColor="@color/danger"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/title"
@@ -35,7 +69,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/message"
@@ -48,20 +83,37 @@
         android:lineSpacingExtra="3dp"
         android:maxLines="12"
         android:ellipsize="end"
-        android:textSize="13sp" />
+        android:textSize="13sp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <!-- 网络失败 / 解析异常时的出口：返回主菜单或上一级页面 -->
+        <Button
+            android:id="@+id/btn_status_back"
+            style="@style/TvButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_arrow_back"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:nextFocusRight="@id/btn_retry"
+            android:text="@string/action_back"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btn_retry"
             style="@style/TvButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:nextFocusLeft="@id/btn_status_back"
             android:nextFocusRight="@+id/btn_change"
             android:text="@string/action_retry"
             android:textAllCaps="false" />

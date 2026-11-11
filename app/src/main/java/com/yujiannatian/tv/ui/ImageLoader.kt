@@ -16,6 +16,7 @@ import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.yujiannatian.tv.R
+import com.yujiannatian.tv.core.DeviceKind
 import com.yujiannatian.tv.core.SiteConfig
 import com.yujiannatian.tv.core.SiteHttpClient
 import com.yujiannatian.tv.core.SiteRepository
@@ -79,8 +80,13 @@ object ImageLoader {
     private const val DISK_TRIM_TO_BYTES = 48L * 1024 * 1024
     private const val TRIM_CHECK_INTERVAL = 40
     private const val STATS_LOG_INTERVAL = 10
-    /** 失效封面的负缓存时长：期间直接用兜底图，6 小时后再给图床一次机会 */
+    /**
+     * 失效封面的负缓存时长：手机 6 小时；TV 缩短到 10 分钟。
+     * 电视首次启动时缓存为空、网络稍慢就可能把一批 URL 判成失效，
+     * 长时间不再重试会让封面「永久」停在兜底图，网络恢复后也无法自愈。
+     */
     private const val NEGATIVE_TTL_MS = 6 * 60 * 60 * 1000L
+    private const val NEGATIVE_TTL_TV_MS = 10 * 60 * 1000L
 
     /** 内存缓存调大到 1/8 堆：TV 上一屏 5 列网格滚动几页就会把 1/12 挤满 */
     private val cache = object : LruCache<String, Bitmap>(
@@ -120,6 +126,25 @@ object ImageLoader {
         val rate = if (r == 0) 0 else cached * 100 / r
         return "请求=$r 内存=${hitMemory.get()} 磁盘=${hitDisk.get()} " +
             "负缓存=${hitNegative.get()} 网络=${hitNetwork.get()} 失败=${failed.get()} 缓存命中率=$rate%"
+    }
+
+    /**
+     * 手动清除失效封面记录（设置页「重试封面」）：删掉 covers_failed/ 负缓存并清空
+     * 进程内熔断表，让之前被判失败的 URL 重新尝试；已成功缓存的图片保持不动。
+     * 电视上封面长期显示 App 图标时，这是不需要 adb 的自助恢复入口。
+     */
+    fun retryFailed(context: Context): Int {
+        val app = context.applicationContext
+        var removed = 0
+        runCatching {
+            failedDir(app).listFiles()?.forEach {
+                if (it.isFile && it.delete()) removed++
+            }
+        }
+        blockedHosts.clear()
+        failCount.clear()
+        Log.i(TAG, "人工清理失效封面记录 $removed 条；${cacheStats()}")
+        return removed
     }
 
     /**
@@ -218,8 +243,9 @@ object ImageLoader {
             false
         } else {
             val at = f.readText().toLongOrNull() ?: 0L
+            val ttl = if (DeviceKind.isTv(context)) NEGATIVE_TTL_TV_MS else NEGATIVE_TTL_MS
             val age = System.currentTimeMillis() - at
-            if (age in 0..NEGATIVE_TTL_MS) true
+            if (age in 0..ttl) true
             else {
                 runCatching { f.delete() } // 过期后重新给图床一次机会
                 false
@@ -334,10 +360,11 @@ object ImageLoader {
                     return@execute
                 }
 
-                // ⑥ 进程内图床熔断：跳过请求并把结果落到负缓存，重启后也不再重试
+                // ⑥ 进程内图床熔断：只跳过本次请求，绝不写负缓存。
+                // 熔断是 host 级判断，若给尚未尝试过的 URL 也落长时负缓存，
+                // 一次网络抖动就会让整批封面永久停在兜底图（TV 首启尤其明显）。
                 val host = hostOf(url)
                 if (isBlocked(host)) {
-                    markFailed(app, key)
                     hitNegative.incrementAndGet()
                     recordStats()
                     return@execute
@@ -346,7 +373,6 @@ object ImageLoader {
                     netPool.execute {
                         if (!isStillBound(target, key)) return@execute
                         if (isBlocked(host)) {
-                            markFailed(app, key)
                             hitNegative.incrementAndGet()
                             recordStats()
                             return@execute
@@ -388,25 +414,53 @@ object ImageLoader {
         }
     }
 
-    /** 带重试的封面下载与解码：短超时通道 + 最多 2 次，成功后落磁盘缓存 */
+    /**
+     * 封面下载与解码的兼容链（TV 端问题的关键修复）：
+     *  1. 正常协商 jpeg/png/webp，**不再声明 avif**（Android 11 及以下无法解码）；
+     *  2. 同 URL 再试一次「只收 jpeg/png」，排除 CDN 按 Accept 返回 TV 解不了的 WebP；
+     *  3. 原 URL 是 https 时回退到 http 明文再走一遍——老电视盒子根证书陈旧，
+     *     HTTPS 握手失败很常见，而站点本身支持明文（Manifest 已放开 cleartext）。
+     * TV 设备还会放宽连接/读取超时。每一步都写 Log.w 说明失败原因，
+     * 便于在电视上用 `adb logcat -s ImageLoader:W` 判断是网络、TLS 还是解码问题。
+     * 总时限 25s，避免失效图床长期占满网络线程池。
+     */
     private fun loadBitmapWithRetry(app: Context, url: String, host: String, key: String): Bitmap? {
         val referer = runCatching { SiteConfig.baseUrl }.getOrDefault("")
-        repeat(2) { attempt ->
-            try {
-                val bytes = if (referer.isNotBlank()) {
-                    SiteHttpClient.imageBytes(url, mapOf("Referer" to referer))
-                } else {
-                    SiteHttpClient.imageBytes(url)
-                }
-                decodeBytes(bytes)?.let {
-                    markSuccess(host)
-                    writeDisk(app, key, bytes)
-                    return it
-                }
-            } catch (t: Throwable) {
-                // 解码失败 / 网络异常都进入重试；仍失败则返回 null（保持 App 图标）
+        val headers: Map<String, String> =
+            if (referer.isNotBlank()) mapOf("Referer" to referer) else emptyMap()
+        val relaxed = DeviceKind.isTv(app)
+        val urls = buildList {
+            add(url)
+            if (url.startsWith("https://", ignoreCase = true)) {
+                add("http://" + url.substring(8))
             }
-            if (attempt < 1) runCatching { Thread.sleep(200L) }
+        }
+        val deadline = System.currentTimeMillis() + 25_000L
+        for (candidate in urls) {
+            repeat(2) { attempt ->
+                if (System.currentTimeMillis() > deadline) return null
+                try {
+                    val bytes = SiteHttpClient.imageBytes(
+                        candidate,
+                        headers,
+                        relaxedTimeout = relaxed,
+                        legacyFormat = attempt > 0
+                    )
+                    decodeBytes(bytes)?.let {
+                        markSuccess(host)
+                        writeDisk(app, key, bytes)
+                        return it
+                    }
+                    Log.w(TAG, "封面解码失败 host=$host bytes=${bytes.size} url=$candidate")
+                } catch (t: Throwable) {
+                    Log.w(
+                        TAG,
+                        "封面请求失败 host=$host url=$candidate " +
+                            "err=${t.javaClass.simpleName}: ${t.message?.take(120)}"
+                    )
+                }
+                if (attempt == 0) runCatching { Thread.sleep(150L) }
+            }
         }
         markFailure(host)
         return null

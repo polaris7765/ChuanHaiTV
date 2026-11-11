@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.yujiannatian.tv.core.HlsPlaylistTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-10T03:54:14.940Z" hostname="LeoDongs-MacBook-Pro.local" time="0.036">
+<testsuite name="com.yujiannatian.tv.core.HlsPlaylistTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-11T02:49:22.660Z" hostname="LeoDongs-MacBook-Pro.local" time="0.029">
   <properties/>
-  <testcase name="parsesMediaPlaylistWithRelativeSegmentsAndKeys" classname="com.yujiannatian.tv.core.HlsPlaylistTest" time="0.006"/>
+  <testcase name="parsesMediaPlaylistWithRelativeSegmentsAndKeys" classname="com.yujiannatian.tv.core.HlsPlaylistTest" time="0.003"/>
   <testcase name="parsesMasterPlaylistVariants" classname="com.yujiannatian.tv.core.HlsPlaylistTest" time="0.0"/>
   <testcase name="generatesSequenceIvWhenNotDeclared" classname="com.yujiannatian.tv.core.HlsPlaylistTest" time="0.0"/>
-  <testcase name="decryptsAes128Segment" classname="com.yujiannatian.tv.core.HlsPlaylistTest" time="0.029"/>
+  <testcase name="decryptsAes128Segment" classname="com.yujiannatian.tv.core.HlsPlaylistTest" time="0.025"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

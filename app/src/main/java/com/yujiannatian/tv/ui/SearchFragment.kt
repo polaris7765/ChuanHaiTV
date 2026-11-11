@@ -2,6 +2,7 @@ package com.yujiannatian.tv.ui
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.TypedValue
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var edit: EditText
     private lateinit var status: TextView
+    private lateinit var searchProgress: View
     private lateinit var resultTitle: TextView
     private lateinit var keyboard: LinearLayout
     private lateinit var grid: RecyclerView
@@ -47,6 +49,7 @@ class SearchFragment : Fragment() {
         // 电视上方向键误落到输入框时不弹出软键盘；只有点「中文输入」才主动调起
         edit.showSoftInputOnFocus = false
         status = view.findViewById(R.id.search_status)
+        searchProgress = view.findViewById(R.id.search_progress)
         resultTitle = view.findViewById(R.id.result_title)
         keyboard = view.findViewById(R.id.keyboard)
         grid = view.findViewById(R.id.result_grid)
@@ -92,26 +95,41 @@ class SearchFragment : Fragment() {
         keyboard.removeAllViews()
         keyboard.weightSum = rows.size.toFloat()
         rows.forEachIndexed { index, rowKeys ->
+            // 字母放大到 20sp 后，功能键按字数给额外宽度：
+            // 「中文输入」四字给 4 份、两字键给 2 份、单字符 1 份，保证不出现省略号。
+            val weights = rowKeys.map {
+                when {
+                    it.length >= 4 -> 4f
+                    it.length > 1 -> 2f
+                    else -> 1f
+                }
+            }
             // 每行高度 = 键盘可用高度的 1/行数，随屏幕高度自动缩放
             val row = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.HORIZONTAL
-                weightSum = 7f
+                weightSum = weights.sum()
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f
                 ).apply { if (index > 0) topMargin = gap }
             }
-            // 最后一行只有 5 个功能键，按 7 列总权重放大，保证「中文输入」等多字标签放得下
-            val keyWeight = 7f / rowKeys.size
-            rowKeys.forEach { label ->
+            rowKeys.forEachIndexed { i, label ->
                 LayoutInflater.from(requireContext())
                     .inflate(R.layout.item_key, row, true)
                 val btn = row.getChildAt(row.childCount - 1) as Button
                 (btn.layoutParams as LinearLayout.LayoutParams).apply {
                     width = 0
                     height = LinearLayout.LayoutParams.MATCH_PARENT
-                    weight = keyWeight
+                    weight = weights[i]
                 }
                 btn.text = label
+                // 单字母键用大字号（电视远距离可读）；「删除 / 清空 / 中文输入」等
+                // 多字标签单独缩小，避免在等分宽度里被截断。
+                if (label.length > 1) {
+                    btn.setTextSize(
+                        TypedValue.COMPLEX_UNIT_PX,
+                        resources.getDimension(R.dimen.text_key_function)
+                    )
+                }
                 btn.setOnClickListener { onKey(label) }
             }
             keyboard.addView(row)
@@ -189,11 +207,16 @@ class SearchFragment : Fragment() {
 
     private fun ensureIndex(force: Boolean) {
         indexJob?.cancel()
+        searchProgress.visibility = View.VISIBLE
         indexJob = guardedLaunch {
-            SearchIndex.ensure(force) { text ->
-                if (edit.text.isNullOrEmpty()) status.text = text
+            try {
+                SearchIndex.ensure(force) { text ->
+                    if (edit.text.isNullOrEmpty()) status.text = text
+                }
+                if (isAdded) refreshResults(edit.text.toString())
+            } finally {
+                if (isAdded) searchProgress.visibility = View.GONE
             }
-            if (isAdded) refreshResults(edit.text.toString())
         }
     }
 

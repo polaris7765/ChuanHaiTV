@@ -36,7 +36,7 @@
 | 本地存储 | SharedPreferences + Gson + 磁盘文件 | — | 无数据库 |
 | 拼音搜索 | pinyin4j | 2.5.1 | 内置 GB2312 首字母表兜底 |
 | 协程 | kotlinx-coroutines-android | 1.7.3 | `guardedLaunch` 统一异常兜底 |
-| 单测 | JUnit4 + org.json | 4.13.2 | 24 个用例，纯 JVM |
+| 单测 | JUnit4 + org.json | 4.13.2 | 32 个用例，纯 JVM |
 
 > ⚠️ **核心库降级（desugaring）不能去掉**：Jsoup 1.17.x 用到 `java.util.function` / `java.util.stream`，
 > 这些类在 API 24 之前不存在；关掉会在 Android 6.0 电视上直接 `NoClassDefFoundError`。
@@ -171,7 +171,7 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | `cover_placeholder.xml` 加 `corners` | 占位底本身也圆角，与裁剪叠加不冲突 |
 | **磁盘池 / 网络池分离** | 见 §6.3，避免失败网络任务堵住磁盘命中任务 |
 | **缓存写 `filesDir`** | `cacheDir` 会被系统在存储紧张时整体清掉，导致「缓存莫名其妙没了」 |
-| **URL 负缓存** | 失效封面 6 小时内直接兜底，不再每次启动重复联网 |
+| **URL 负缓存** | 失效封面手机 6 小时 / TV 10 分钟内直接兜底，不再每次启动重复联网（TV 可手动「重试封面」清除） |
 
 > 经验：**兜底图必须在绑定时同步设置，不要放到异步失败分支**。弱网 / CDN 半死状态下，
 > "失败"可能需要几十秒甚至几分钟才发生，用户看到的就是长时间空白。
@@ -190,7 +190,7 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | 离屏 / 已复用的 View 仍会跑完整个读盘 + 网络流程，白白占线程 | 每个异步任务开工前 `isStillBound(target, key)` 校验；落图时主线程二次校验 |
 | 缓存写在 `cacheDir`，系统清理后全部丢失；同一张图列表页 `http`、详情页 `https`、HTML 残留 `&amp;` / `#` 会被当成不同 key | 改 `filesDir/covers/`；`normalizeCoverKey()` 归一化；读取时兼容 4 种旧目录 / 旧 key 组合并自愈迁移 |
 | 写盘 `.tmp` 文件名固定，同一 URL 并发下载会互相覆盖导致 `renameTo` 失败 | 临时文件名加 `System.nanoTime()` 唯一后缀 |
-| 图床熔断表只在进程内，重启后要把失效 URL 全部重试一遍 | `filesDir/covers_failed/<md5>.fail` 记录时间戳，`NEGATIVE_TTL_MS = 6h`，期间直接兜底；下载成功时清除标记 |
+| 图床熔断表只在进程内，重启后要把失效 URL 全部重试一遍 | `filesDir/covers_failed/<md5>.fail` 记录时间戳，`NEGATIVE_TTL_MS = 6h` / TV `NEGATIVE_TTL_TV_MS = 10min`，期间直接兜底；下载成功时清除标记 |
 
 统计口径：`requests` 只在请求**有结论**后自增（内存 / 磁盘 / 负缓存 / 网络成功 / 确定失败），
 每 10 次在 logcat 打一行 `ImageLoader` 快照，命中率 = 未发起网络请求的比例。
@@ -213,6 +213,35 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 图床失联属于**站点侧问题，App 无法修复**。当前表现：可用图床的海报正常显示，
 失效图床显示圆角 App 图标。若需进一步提升覆盖率，可考虑：
 站点自建封面代理 / 多图床地址回退 / 按 `alt` 片名做本地缓存映射。
+
+### 6.5 TV 端封面专项（手机有、TV 没有）
+
+用户反馈「手机上部分影视有缩略图、缓存也有效，但 TV 上始终不显示」。
+排查结论（手机 AVD logcat 抓到的失败样本）：
+
+```
+W ImageLoader: 封面请求失败 host=viptulz.com ... SocketTimeoutException
+W ImageLoader: 封面解码失败 host=p.lztutu.com bytes=11545 url=http://p.lztutu.com/...webp
+W ImageLoader: 封面请求失败 host=p.lztutu.com ... ProtocolException: Unexpected status line: pe: image/webp
+I ImageLoader: 请求=10 内存=0 磁盘=0 负缓存=0 网络=4 失败=6 缓存命中率=0%
+```
+
+根因不是缓存优先级（加载顺序仍是内存 → 磁盘 → 负缓存 → 网络），而是 TV 侧更脆弱的
+图片请求链路 + 过早的负缓存：
+
+| 根因 | 处理 |
+| --- | --- |
+| TV（常见 Android 6~9）的 OkHttp / TLS 套件较旧，页面抓取 client 的协商组合在部分图床上直接失败 | `SiteHttpClient.CONNECTION_SPECS` = MODERN_TLS + COMPATIBLE_TLS + CLEARTEXT；TV 用 `imageClientRelaxed`（connect 8s / read 12s，允许连接层重试） |
+| `Accept` 里带 AVIF / WebP 时 CDN 返回 TV `BitmapFactory` 无法解码的格式，或返回畸形状态行 | 首轮 Accept 去掉 AVIF；第二次 `legacyFormat=true` 只声明 `image/jpeg,image/png,image/*`；解析属性补齐 `data-src` / `data-lazy-src` / `srcset` 并过滤 `pic.png` 等占位图 |
+| 图床 HTTPS 证书 / 协议异常，而站点页面本身是 HTTP | `loadBitmapWithRetry()` 对 `https://` 再试一次 `http://`，整条兼容链 25s 总时限，避免线程长期占用 |
+| 一次失败写进 6 小时负缓存；进程内 host 熔断也会给「未真正请求过的 URL」写负缓存，TV 上等于长期不再重试 | TV 负缓存 TTL 缩到 `NEGATIVE_TTL_TV_MS = 10min`；熔断只在真实请求失败后累加；新增 `ImageLoader.retryFailed()` 清 `covers_failed/` 与 `blockedHosts` / `failCount` |
+
+配套入口：`fragment_settings.xml` 加「重试封面」按钮，`SettingsFragment` 调
+`ImageLoader.retryFailed()` 并在状态栏显示清理结果与 `cacheStats()` 快照。
+`HtmlParserCoverTest` 新增 2 个单测覆盖懒加载属性与占位图过滤（单测总数 32）。
+
+> 本机没有 TV 真机 / TV AVD，以上兼容链是按失败日志 + 代码路径验证，上电视盒子后
+> 建议先在「设置 → 重试封面」清一次失效记录，再看 `adb logcat -s ImageLoader:W` 的失败 host。
 
 ---
 
@@ -244,6 +273,31 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 - 顶部「片名 · 第X集」(`play_title`) 与左上「返回」、右上「设置」共用
   `bg_overlay_chip.xml`：默认态仍是原来的 `#99000000` 半透明黑，焦点 / 按下态提亮加描边，
   在 XML 里覆盖 `TvChip` 样式自带的 `bg_button`，TV 上依然看得见焦点。
+- **顶部三块等高**：`dimen/top_chip_height = 36dp`（与 `activity_main.xml` 标题栏返回按钮一致），
+  `btn_back_top` / `play_title` / `btn_settings` / `btn_cast` 都显式写死该高度；两个 Button 还要
+  `minHeight="0dp"` + `paddingTop/Bottom="0dp"`——`TvButton` 的 9dp / `TvChip` 的 7dp 纵向 padding
+  加上 Button 默认 minHeight 会把按钮撑得比 `TextView` 信息条高。`play_title` 改 `gravity="center_vertical"`
+  与左右 12dp 内边距，文字垂直居中不裁切。
+  - 实测（`dumpsys activity top` 视图层级）：`btn_back_top 110,61-358,160`、
+    `play_title 413,61-729,160`、`btn_settings 1815,61-2110,160`，三者同为 `y=61..160`、高 `99px`
+    （36dp × 2.75 密度），上下边缘完全对齐。
+
+### 错误覆盖层的返回出口
+
+`activity_main.xml` 的 `overlay` 是 `match_parent` 且带背景，网络失败时下层标题栏的
+`btn_back` 完全被遮住。`StatusHost` 新增 `onStatusBack()`，`BaseTvActivity` 默认实现：
+
+```kotlin
+override fun onStatusBack() {
+    Log.i("YuJianTV", "状态页返回：${javaClass.simpleName} → 上一级")
+    clearOverlay()
+    if (this is MainActivity) showHome(false) else finish()
+}
+```
+
+`MainActivity` 覆写为 `CrashHandler.clear(this)` + `showHome(false)`（避免崩溃报告下次启动再弹）。
+`fragment_status.xml` 的 `actions` 行最左侧加 `btn_status_back`（带返回图标、`nextFocusRight=btn_retry`），
+`btn_retry` 补 `nextFocusLeft`，默认焦点仍给「重试」；加载态 `actions` 整体 `gone`，不显示按钮。
 
 ---
 
@@ -298,7 +352,7 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
   （唯一 tmp 名 + rename）；`cacheDir/covers/` 与「原始 URL 作 key」的旧文件仍只读兼容并自愈迁移。
   超过 64MB 按 lastModified 裁剪到 48MB。加载顺序：内存 LRU → 磁盘 → 负缓存 → 网络；
   命中磁盘 / 负缓存完全不发请求。图床熔断只作用于网络阶段，不影响已缓存封面。
-  `filesDir/covers_failed/<md5>.fail` 保存失效时间戳（6h TTL），避免重启后重复联网，见 §6.3。
+  `filesDir/covers_failed/<md5>.fail` 保存失效时间戳（手机 6h / TV 10min TTL），避免重启后重复联网，见 §6.3 / §6.5。
 - `VideoDownloader`：m3u8 解析 + AES-128 解密 + 分片合并；进度通过观察者回显到选集按钮，
   按钮背景用 `bg_download_progress.xml` 的 `ClipDrawable`（level = progress × 100）从左向右填充。
 - **断点续传**：
@@ -320,6 +374,36 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
     界面持续非 idle，且「取消／删除」的点击会被 rebind 吃掉。现在 `submit(newRows, host)` 先比对
     行结构键（`H:标题` / `E:record.key`），结构不变时只原地刷新屏幕上可见的条目，不触发任何 notify；
     只有增删条目／分组计数变化才整体刷新。
+- **后台持续下载（`core/DownloadService.kt`）**：下载协程本身挂在 Application 级 scope，进程活着就会跑，
+  但 Android 8+ 会限制纯后台进程、低内存优先回收，电视盒子待机还会停 CPU。
+  `VideoDownloader.enqueue()` 调 `DownloadService.ensureStarted(app)`，`onCreate()` 里
+  `startForeground(1001, ...)` + `PARTIAL_WAKE_LOCK` + 注册 `VideoDownloader.observe(listener)`，
+  通知显示任务数与平均进度（`activeSummary()`）、点击打开 `DownloadsActivity`；
+  `jobs.isEmpty()` 时 `requestStop(app)` 主动收尾，`onDestroy()` 注销 listener / 释放 wake lock。
+  Manifest 权限：`FOREGROUND_SERVICE`、`FOREGROUND_SERVICE_DATA_SYNC`、`POST_NOTIFICATIONS`，
+  service `foregroundServiceType="dataSync"`（Android 14 要求显式类型）。
+  Android 12+ 禁止后台启动前台服务，下载都由用户在前台点击发起，`ensureStarted()` 也做了异常兜底。
+  - 实测（Pixel 3a API 34）：`dumpsys activity services` 得到 `isForeground=true foregroundId=1001 types=00000001`；
+    按 HOME 切到后台 12 秒，`.ts` 从 `10,134,704` 增长到 `14,241,376` 字节，后续继续涨到 51%+。
+- **下载按钮进度不越出圆角**：`bg_download_progress.xml` 的 `download_progress_fill` 四边 inset 2dp，
+  `DetailFragment.ensureRoundedClip()` 给按钮设 `ViewOutlineProvider`（`button_corner_radius` = 8dp）+
+  `clipToOutline=true`，并用 `R.id.tag_rounded_clip` 防重复挂载。`ClipDrawable.level = progress × 100`
+  只在 `DOWNLOADING` 时填充，暂停 / 完成状态显示「继续 / 重试 / 已下载」并清零填充。
+  实测 53% 时蓝色填充完整落在圆角框内、四角无溢出。
+- **本地下载视频续播**：`DownloadRecord.position`（缺省 0L，兼容旧记录），
+  `DownloadsStore.positionOf()/setPosition()` 直接写 `index.json`，不依赖历史记录。
+  `PlaybackActivity.startLocal(..., downloadKey)` 读取续播点并传 `startPositionMs`；
+  `prepare()` 中 `seekTo()` 时打 `Log.i("YuJianTV", "续播跳转 Xms（下载记录或历史记录）")`；
+  `onStop()` / `finish()` 调 `saveLocalProgress()`，`STATE_ENDED` 或距片尾不足 3 秒写 0。
+  「我的下载」完成项显示「上次看到 mm:ss」。
+  - 实测（8 秒测试 MP4 + 一条 `done` 记录）：首次播放按返回后 `position=4533`；
+    再次打开日志 `续播跳转 4533ms`；播完后 `position=0`。
+- **加载态统一**：`StatusFragment.loading(text)` 显示 `fragment_status.xml` 的 `loading_block`
+  （中央 64dp `ProgressBar` + `loading_spinner.xml` 的 `RotateDrawable` + 主文案 + 副文案
+  「请稍候，正在从站点获取数据…」），加载时隐藏感叹号 / 重试按钮；首页内容区另有
+  `home_loading` inline 动画（`HomeFragment.loadPage()` 显示／隐藏），搜索页索引状态带
+  `search_progress`。`item_key.xml` 的字母统一 `20sp`，`SearchFragment` 按字数给每行分配
+  `1f/2f/4f` 权重、「中文输入」等功能键 `14sp`，避免 TV 上放大后被截断。
 
 ---
 
@@ -327,7 +411,7 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 
 ```bash
 ./gradlew assembleDebug            # 调试包
-./gradlew testDebugUnitTest        # 24 个 JVM 单测
+./gradlew testDebugUnitTest        # 32 个 JVM 单测
 ./gradlew assembleRelease          # 已签名发布包
 ```
 
@@ -365,6 +449,14 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
 | 取消后条目消失、无处续传 | `cancel()` 由删除记录改为标记 `paused`，「我的下载」提供「继续」按钮 |
 | 手机端点按钮要按两次才生效 | `TvButton` / `TvChip` 样式与 `item_sidebar` / `item_video` / `card_text` 都设了 `focusableInTouchMode=true`，触摸模式下第一次点按只聚焦、第二次才触发点击。由 `TouchFocus` 在非 TV 设备统一清掉该属性（`EditText` 除外，否则输入框唤不起键盘），TV 设备完全跳过、焦点属性一个都不改 |
 | 从「我的收藏」点剧集直接开始播放 | `HomeFragment.onGridClick()` 原先对历史 / 收藏都查 `LibraryEntry` 并走 `startResume()`；现对 `FAVORITES` 直接 `DetailActivity.start()`，续播只保留给历史记录 |
+| 手机有封面、TV 没有 | 不是缓存顺序，是 TV 的 TLS / Accept / 解码 / 协议兼容 + 6h 负缓存长期锁死失败 URL；按 §6.5 兼容链处理，必要时「设置 → 重试封面」 |
+| 搜索页放大字后「中文输入」被截断 | 只改字号不够，多字功能键宽度不足；`item_key.xml` 20sp + `text_key_function` 14sp + 行权重 `1f/2f/4f`，实测截图文字完整 |
+| 剧集下载进度条超出圆角方框 | `ClipDrawable` 右端是直角，且填充层贴边会盖住描边；`bg_download_progress.xml` 四边 2dp inset + `clipToOutline` 圆角裁剪 |
+| App 退到后台下载停住 | 纯 Application 级协程会被后台限制 / 待机停 CPU 回收；改 `DownloadService` 前台服务 + wake lock，实测后台 12s 文件持续增长 |
+| 下载打开的视频不记忆进度 | 旧逻辑只有在线播放写 `LibraryStore`；现 `DownloadRecord.position` + `startLocal(downloadKey)` + `saveLocalProgress()`，播完写 0 |
+| 所有 loading 页只有一行文字 / 显示感叹号与重试 | `StatusFragment` 旧 loading 写死「首次加载会抓取站点地图…」并复用错误态布局；现拆 `loading_block`（spinner + 主/副文案），首页 / 搜索页另补 inline loading |
+| 网络失败提示页没有返回按钮、只能靠遥控器硬返回 | `overlay` 全屏盖住标题栏 `btn_back`；`StatusFragment` 错误态新增 `btn_status_back`，`StatusHost.onStatusBack()` 让首页回主菜单、其它页 `finish()` 回上一级，见 §7 |
+| 播放页返回 / 设置按钮比「第X集」信息条高 | Button 自带 minHeight + `TvChip` 7dp 纵向 padding；统一 `top_chip_height=36dp`、`minHeight=0dp`、纵向 padding 归零，`play_title` 改 `center_vertical`，见 §7 |
 
 ---
 
@@ -374,7 +466,8 @@ DetailFragment → SiteRepository.playback(episodePath) → zanpiancms_player JS
    但还需补 `app/build/`、`*.apk`，并用 `git rm -r --cached` 清理首次提交误入的
    2000+ 个构建产物；根目录仍留有两个 `copy.apk`。
 2. 版本号发版时递增 `versionCode` / `versionName`（当前仍是 1）。
-3. 真机 TV 回归：D-pad 焦点链、播放源对话框、播放按钮圆角、返回键行为
-   （本机无 TV AVD，这几项主要靠布局 + 代码核对 + 单测覆盖）。
+3. 真机 TV 回归：D-pad 焦点链、播放源对话框、播放按钮圆角、返回键行为，
+   以及本轮的 TV 封面兼容链与「设置 → 重试封面」、放大后的搜索键、分类索引多列网格
+   （本机无 TV AVD，这几项主要靠布局 + 代码核对 + 手机 AVD 截图 + 单测覆盖）。
 4. 图床失效是长期外部风险，可评估封面代理或标题兜底图生成策略。
 5. `release-key.jks` 口令与密钥离线备份，避免无法升级发布。

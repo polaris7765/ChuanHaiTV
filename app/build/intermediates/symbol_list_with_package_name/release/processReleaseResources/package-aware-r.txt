@@ -830,6 +830,7 @@ dimen abc_text_size_subhead_material
 dimen abc_text_size_subtitle_material_toolbar
 dimen abc_text_size_title_material
 dimen abc_text_size_title_material_toolbar
+dimen button_corner_radius
 dimen card_cover_height
 dimen card_height
 dimen card_width
@@ -1154,6 +1155,8 @@ dimen picker_separator_horizontal_padding
 dimen sidebar_item_height
 dimen text_body
 dimen text_card
+dimen text_key
+dimen text_key_function
 dimen text_sidebar
 dimen text_small
 dimen text_tiny
@@ -1166,6 +1169,7 @@ dimen tooltip_precise_anchor_threshold
 dimen tooltip_vertical_padding
 dimen tooltip_y_offset_non_touch
 dimen tooltip_y_offset_touch
+dimen top_chip_height
 drawable abc_ab_share_pack_mtrl_alpha
 drawable abc_action_bar_item_background_material
 drawable abc_btn_borderless_material
@@ -1407,6 +1411,8 @@ drawable lb_text_dot_one
 drawable lb_text_dot_one_small
 drawable lb_text_dot_two
 drawable lb_text_dot_two_small
+drawable loading_arc
+drawable loading_spinner
 drawable notification_action_background
 drawable notification_bg
 drawable notification_bg_low
@@ -1552,11 +1558,13 @@ id btn_prev
 id btn_refresh
 id btn_reset
 id btn_retry
+id btn_retry_covers
 id btn_save
 id btn_settings
 id btn_settings_cast
 id btn_settings_close
 id btn_source
+id btn_status_back
 id btn_test
 id button
 id buttonPanel
@@ -1737,6 +1745,8 @@ id header
 id hide_ime_id
 id home
 id homeAsUp
+id home_loading
+id home_loading_text
 id home_root
 id hovercard_panel
 id icon
@@ -1796,6 +1806,10 @@ id line1
 id line3
 id listMode
 id list_item
+id loading_block
+id loading_hint
+id loading_spinner
+id loading_text
 id logo
 id main
 id mainOnly
@@ -1843,7 +1857,6 @@ id playback_progress
 id player_view
 id playing
 id pooling_container_listener_holder_tag
-id progress
 id progress_circular
 id progress_horizontal
 id query_edit
@@ -1872,6 +1885,7 @@ id search_go_btn
 id search_mag_icon
 id search_orb
 id search_plate
+id search_progress
 id search_src_text
 id search_status
 id search_voice_btn
@@ -1920,6 +1934,7 @@ id tag_item_path
 id tag_on_apply_window_listener
 id tag_on_receive_content_listener
 id tag_on_receive_content_mime_types
+id tag_rounded_clip
 id tag_screen_reader_focusable
 id tag_state_description
 id tag_transition_group

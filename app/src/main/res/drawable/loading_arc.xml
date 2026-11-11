@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 旋转动画用的弧形：sweep 渐变从透明过渡到主题蓝，配合 loading_spinner.xml 的
+     RotateDrawable（ProgressBar 的 indeterminate level 会驱动 0→360 度旋转）。 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="ring"
+    android:innerRadiusRatio="3.2"
+    android:thicknessRatio="9"
+    android:useLevel="false">
+
+    <gradient
+        android:type="sweep"
+        android:centerX="0.5"
+        android:centerY="0.5"
+        android:startColor="#0054A0FF"
+        android:centerColor="#FF54A0FF"
+        android:endColor="#FF54A0FF" />
+</shape>

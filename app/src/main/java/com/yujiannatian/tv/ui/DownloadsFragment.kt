@@ -55,7 +55,8 @@ class DownloadsFragment : Fragment() {
         list.addItemDecoration(GridSpacingDecoration(1, 8))
         adapter = DlAdapter(
             onPlay = {
-                PlaybackActivity.startLocal(requireContext(), it.title, it.episode, it.file)
+                // 带上下载 key：播放页据此把进度写回下载记录，下次打开自动续播
+                PlaybackActivity.startLocal(requireContext(), it.title, it.episode, it.file, it.key)
             },
             onContinue = { record ->
                 val app = requireContext().applicationContext
@@ -119,6 +120,14 @@ class DownloadsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun formatPosition(ms: Long): String {
+        val total = ms / 1000
+        val h = total / 3600
+        val m = (total % 3600) / 60
+        val s = total % 60
+        return if (h > 0) "%d:%02d:%02d".format(h, m, s) else "%02d:%02d".format(m, s)
     }
 
     private fun formatSize(bytes: Long): String =
@@ -197,8 +206,11 @@ class DownloadsFragment : Fragment() {
 
             v.findViewById<TextView>(R.id.dl_title).text = "${r.title}  ·  ${r.episode}"
             val info = v.findViewById<TextView>(R.id.dl_info)
+            val resumeHint = if (!active && r.position > 0L) {
+                "  ·  上次看到 ${formatPosition(r.position)}"
+            } else ""
             info.text = if (!active) {
-                "${formatSize(r.size)}  ·  ${fmt.format(Date(r.time))}"
+                "${formatSize(r.size)}  ·  ${fmt.format(Date(r.time))}$resumeHint"
             } else when {
                 canResume -> "已暂停 ${r.progress}%  ·  已缓存 ${formatSize(r.size)}，点「继续」从断点续传"
                 state.status == DownloadStatus.FAILED -> "下载失败 · 点「继续」可重试（已下载部分自动续传）"

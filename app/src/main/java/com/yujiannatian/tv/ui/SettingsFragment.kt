@@ -80,6 +80,11 @@ class SettingsFragment : Fragment() {
                 check(prev, applyChange = true)
             }
         }
+        // 电视端封面长期显示兜底图时，让用户不用 adb 就能清掉失效负缓存重新拉取
+        view.findViewById<Button>(R.id.btn_retry_covers).setOnClickListener {
+            ImageLoader.retryFailed(requireContext().applicationContext)
+            status.text = "已清除失效封面记录，返回列表即可重新拉取。\n${ImageLoader.cacheStats()}"
+        }
         setupSourceButton(view)
         probeRealSources()
         // 进入设置默认聚焦左上角「返回」按钮（而非地址输入框），避免输入法/键盘弹窗干扰

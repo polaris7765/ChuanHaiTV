@@ -151,9 +151,28 @@
                 android:layout_marginStart="18dp"
                 android:nextFocusUp="@id/edit_url"
                 android:nextFocusLeft="@id/btn_default"
+                android:nextFocusRight="@+id/btn_retry_covers"
                 android:text="@string/action_prev_site"
                 android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_retry_covers"
+                style="@style/TvButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:nextFocusLeft="@id/btn_prev"
+                android:text="重试封面"
+                android:textAllCaps="false" />
         </LinearLayout>
+
+        <TextView
+            style="@style/TvSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="封面只显示 App 图标时，点「重试封面」可清除失效记录并重新拉取（电视端常用）。"
+            android:textColor="@color/text_secondary" />
 
         <TextView
             style="@style/TvSub"

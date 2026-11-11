@@ -40,6 +40,9 @@ class HomeFragment : Fragment() {
     private lateinit var grid: RecyclerView
     private lateinit var sectionTitle: TextView
     private lateinit var sectionInfo: TextView
+    /** 内容区加载动画（不遮左栏）与其说明文字 */
+    private lateinit var homeLoading: View
+    private lateinit var homeLoadingText: TextView
     private lateinit var sidebarAdapter: SidebarAdapter
     private lateinit var gridAdapter: VideoGridAdapter
     private lateinit var btnPrev: Button
@@ -76,6 +79,8 @@ class HomeFragment : Fragment() {
         grid = view.findViewById(R.id.video_grid)
         sectionTitle = view.findViewById(R.id.section_title)
         sectionInfo = view.findViewById(R.id.section_info)
+        homeLoading = view.findViewById(R.id.home_loading)
+        homeLoadingText = view.findViewById(R.id.home_loading_text)
         btnPrev = view.findViewById(R.id.btn_prev)
         btnNext = view.findViewById(R.id.btn_next)
         btnRefresh = view.findViewById(R.id.btn_refresh)
@@ -238,6 +243,7 @@ class HomeFragment : Fragment() {
         }
         gridAdapter.replace(list)
         grid.scrollToPosition(0)
+        homeLoading.visibility = View.GONE // 本地列表无需联网，确保动画不残留
         sectionInfo.text = if (list.isEmpty()) {
             if (item.type == NavType.HISTORY) {
                 "还没有观看记录 · 播放任意剧集后会自动出现在这里"
@@ -328,6 +334,8 @@ class HomeFragment : Fragment() {
         loading = true
         val act = activity as? MainActivity ?: return
         sectionInfo.text = "正在加载第 $target 页…"
+        homeLoadingText.text = "正在加载第 $target 页…"
+        homeLoading.visibility = View.VISIBLE
         guardedLaunch {
             val result: LoadResult<PageResult> = if (item.type == NavType.HOT) {
                 LoadResult.Ok(
@@ -348,6 +356,7 @@ class HomeFragment : Fragment() {
             }
             if (result is LoadResult.Err) {
                 loading = false
+                homeLoading.visibility = View.GONE
                 act.showError(result.error)
                 return@guardedLaunch
             }
@@ -365,6 +374,7 @@ class HomeFragment : Fragment() {
                 append("第 $page/$totalPages 页  ·  共 ${pageResult.total} 部")
                 append(if (autoLoad) "  ·  下移自动加载更多" else "  ·  用上一页/下一页翻页")
             }
+            homeLoading.visibility = View.GONE
             btnPrev.alpha = if (page > 1) 1.0f else 0.45f
             btnNext.alpha = if (page < totalPages) 1.0f else 0.45f
             loading = false

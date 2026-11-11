@@ -2,6 +2,7 @@ package com.yujiannatian.tv.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -100,5 +101,16 @@ abstract class BaseTvActivity : FragmentActivity(), StatusHost {
     override fun onStatusResetSite() {
         SiteConfig.reset()
         onStatusRetry()
+    }
+
+    /**
+     * 网络失败 / 解析异常 / 崩溃报告页的「返回」：
+     * 首页（根页面）回主菜单，其它页面直接 finish 回到上一级 Activity。
+     * 错误覆盖层是全屏的，下层标题栏的返回按钮被遮住，必须在这里提供出口。
+     */
+    override fun onStatusBack() {
+        Log.i("YuJianTV", "状态页返回：${javaClass.simpleName} → 上一级")
+        clearOverlay()
+        if (this is MainActivity) showHome(false) else finish()
     }
 }

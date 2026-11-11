@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -15,7 +14,15 @@ import com.yujiannatian.tv.core.SiteError
 import com.yujiannatian.tv.core.advice
 import com.yujiannatian.tv.core.title
 
-/** 统一的加载 / 网络失败 / 解析异常 / 地址问题反馈页，全部按钮可用方向键聚焦 */
+/**
+ * 统一的加载 / 网络失败 / 解析异常 / 地址问题反馈页。
+ *
+ * 所有页面都通过 [BaseTvActivity.showLoading] 进入加载态，因此这里统一呈现
+ * 「屏幕正中旋转小动画 + 下方文字说明」：主文案就是调用方传入的 text，
+ * 副文案是通用提示，不再像旧版那样写死「首次加载会抓取站点地图」。
+ * 错误态仍保留感叹号、标题、原因说明与可方向键聚焦的按钮，并额外提供「返回」
+ * （首页回主菜单、其它页面回上一级），避免全屏覆盖层挡住下层标题栏的返回入口。
+ */
 class StatusFragment : Fragment() {
 
     companion object {
@@ -60,28 +67,27 @@ class StatusFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val args = arguments ?: bundleOf()
         val loading = args.getBoolean(K_LOADING, false)
-        val progress = view.findViewById<ProgressBar>(R.id.progress)
-        val icon = view.findViewById<TextView>(R.id.icon)
+        val loadingBlock = view.findViewById<View>(R.id.loading_block)
+        val loadingText = view.findViewById<TextView>(R.id.loading_text)
+        val icon = view.findViewById<View>(R.id.icon)
         val titleView = view.findViewById<TextView>(R.id.title)
         val message = view.findViewById<TextView>(R.id.message)
         val actions = view.findViewById<View>(R.id.actions)
-
-        titleView.text = args.getString(K_TITLE).orEmpty()
+        val errorViews = listOf(icon, titleView, message, actions)
 
         if (loading) {
-            progress.visibility = View.VISIBLE
-            icon.visibility = View.GONE
-            actions.visibility = View.GONE
-            message.text = "首次加载会抓取站点地图与分类，请稍候…"
+            loadingBlock.visibility = View.VISIBLE
+            errorViews.forEach { it.visibility = View.GONE }
+            loadingText.text = args.getString(K_TITLE).orEmpty().ifBlank { "正在加载…" }
             // 加载层自身接管焦点，避免方向键落到被遮挡的下层列表
             view.isFocusable = true
             view.post { view.requestFocus() }
             return
         }
 
-        progress.visibility = View.GONE
-        icon.visibility = View.VISIBLE
-        actions.visibility = View.VISIBLE
+        loadingBlock.visibility = View.GONE
+        errorViews.forEach { it.visibility = View.VISIBLE }
+        titleView.text = args.getString(K_TITLE).orEmpty()
         val detail = args.getString(K_DETAIL).orEmpty().take(700)
         message.text = buildString {
             append(args.getString(K_MSG).orEmpty())
@@ -91,6 +97,9 @@ class StatusFragment : Fragment() {
         }.trim()
 
         val host = activity as? StatusHost
+        // 覆盖层遮住了标题栏的返回按钮，错误态必须自带一个可聚焦的出口
+        view.findViewById<Button>(R.id.btn_status_back)
+            .setOnClickListener { host?.onStatusBack() }
         view.findViewById<Button>(R.id.btn_retry).setOnClickListener { host?.onStatusRetry() }
         view.findViewById<Button>(R.id.btn_change).setOnClickListener { host?.onStatusChangeSite() }
         view.findViewById<Button>(R.id.btn_reset).setOnClickListener { host?.onStatusResetSite() }
